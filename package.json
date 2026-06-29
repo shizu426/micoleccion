@@ -1,0 +1,8 @@
+{
+  "name": "micoleccion-backend",
+  "version": "1.0.0",
+  "description": "Backend Netlify Functions para MiColección - búsqueda de portadas",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

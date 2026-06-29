@@ -1,0 +1,54 @@
+{
+  "name": "Mi Colección Manga",
+  "short_name": "MiColección",
+  "description": "Tracker personal de Manga, Manhwa, Manhua y Anime",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0d0d14",
+  "theme_color": "#e94560",
+  "orientation": "portrait-primary",
+  "lang": "es",
+  "categories": ["entertainment", "lifestyle"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Mi Colección Manga"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mi Colección Manga"
+    }
+  ]
+}
