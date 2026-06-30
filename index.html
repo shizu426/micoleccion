@@ -828,13 +828,19 @@
 
   function initTouchAndClick() {
     document.querySelectorAll('.card[data-id]').forEach(card => {
+      // Quitar listeners viejos clonando
+      const newCard = card.cloneNode(true);
+      card.parentNode.replaceChild(newCard, card);
+    });
+
+    document.querySelectorAll('.card[data-id]').forEach(card => {
       let touchTimer = null;
       let isDragging = false;
 
       // Click normal (solo si no fue drag)
-      card.onclick = e => {
-        if (!e.target.closest('a') && !isDragging) openEdit(card.dataset.id);
-      };
+      card.addEventListener('click', e => {
+        if (!isDragging) openEdit(card.dataset.id);
+      });
 
       // Touch start
       card.addEventListener('touchstart', e => {
@@ -997,12 +1003,19 @@
     const tipoItems = items.filter(i => i.tipo === itemA.tipo);
     const posA = itemA.position ?? tipoItems.findIndex(i => i.id === idA);
     const posB = itemB.position ?? tipoItems.findIndex(i => i.id === idB);
+
+    // Actualizar localmente SIN recargar desde Firebase
+    itemA.position = posB;
+    itemB.position = posA;
+
+    // Guardar en Firebase en background (sin await que bloquee)
     const ref = db.ref('users/' + currentUser.uid + '/mangas');
-    await Promise.all([
-      ref.child(idA).update({ position: posB }),
-      ref.child(idB).update({ position: posA }),
-    ]);
-    await loadItems();
+    ref.child(idA).update({ position: posB });
+    ref.child(idB).update({ position: posA });
+
+    // Re-renderizar solo la grilla del tipo afectado sin mostrar loading
+    renderList();
+    setTimeout(initTouchAndClick, 50);
   }
 
   function switchCategory(cat) {
@@ -1112,14 +1125,9 @@
       gridAnime.innerHTML = `<div class="empty"><div class="icon">🎌</div><p>No hay animes.<br>¡Agregá tu primer anime!</p></div>`;
     } else {
       gridAnime.innerHTML = animeItems.map(item => `
-        <div class="card" draggable="true" data-id="${item.id}" data-tipo="${item.tipo}"
-          ondragstart="onDragStart(event)"
-          ondragover="onDragOver(event)"
-          ondragleave="onDragLeave(event)"
-          ondrop="onDrop(event)"
-          ondragend="onDragEnd(event)">
+        <div class="card" data-id="${item.id}" data-tipo="${item.tipo}" onclick="openEdit('${item.id}')">
           <span class="card-type">ANIME</span>
-          <div class="drag-handle" style="cursor:grab;">⠿</div>
+          <div class="card-drag-handle" title="Arrastrar para reordenar">⠿</div>
           ${item.img ? `<img class="card-img" src="${item.img}" onerror="this.style.display='none'" alt="${item.nombre}">` : ''}
           <div class="card-img-placeholder" ${item.img ? 'style="display:none"' : ''}>🎌</div>
           <div class="card-body">
@@ -1582,12 +1590,6 @@
           if (data.opciones?.length) {
             opciones = data.opciones;
             fuente = data.fuente || 'scraping';
-            // Auto-detectar tipo según fuente
-            if (!esAnime && data.fuente) {
-              if (data.fuente.includes('MHS') || data.fuente.toLowerCase().includes('mhs')) {
-                autoDetectarTipo('Manhwa');
-              }
-            }
             console.log(`%c[Portada] Fuente: ${fuente} — ${opciones.length} opciones (${Date.now()-t0}ms)`, 'color:#3b82f6;font-weight:bold');
           }
         }
