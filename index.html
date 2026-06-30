@@ -1003,16 +1003,19 @@
     const tipoItems = items.filter(i => i.tipo === itemA.tipo);
     const posA = itemA.position ?? tipoItems.findIndex(i => i.id === idA);
     const posB = itemB.position ?? tipoItems.findIndex(i => i.id === idB);
-
-    // Actualizar localmente sin recargar Firebase (evita el spinner)
+    // Actualizar localmente sin recargar Firebase
     itemA.position = posB;
     itemB.position = posA;
-
+    items.sort((a, b) => {
+      if (a.position !== undefined && b.position !== undefined) return a.position - b.position;
+      if (a.position !== undefined) return -1;
+      if (b.position !== undefined) return 1;
+      return (b.createdAt || 0) - (a.createdAt || 0);
+    });
     // Guardar en Firebase sin bloquear la UI
     const ref = db.ref('users/' + currentUser.uid + '/mangas');
     ref.child(idA).update({ position: posB });
     ref.child(idB).update({ position: posA });
-
     // Re-renderizar sin spinner
     renderList();
     setTimeout(initTouchAndClick, 50);
