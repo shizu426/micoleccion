@@ -1004,16 +1004,16 @@
     const posA = itemA.position ?? tipoItems.findIndex(i => i.id === idA);
     const posB = itemB.position ?? tipoItems.findIndex(i => i.id === idB);
 
-    // Actualizar localmente SIN recargar desde Firebase
+    // Actualizar localmente sin recargar Firebase (evita el spinner)
     itemA.position = posB;
     itemB.position = posA;
 
-    // Guardar en Firebase en background (sin await que bloquee)
+    // Guardar en Firebase sin bloquear la UI
     const ref = db.ref('users/' + currentUser.uid + '/mangas');
     ref.child(idA).update({ position: posB });
     ref.child(idB).update({ position: posA });
 
-    // Re-renderizar solo la grilla del tipo afectado sin mostrar loading
+    // Re-renderizar sin spinner
     renderList();
     setTimeout(initTouchAndClick, 50);
   }
