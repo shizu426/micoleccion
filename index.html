@@ -1003,7 +1003,6 @@
     const tipoItems = items.filter(i => i.tipo === itemA.tipo);
     const posA = itemA.position ?? tipoItems.findIndex(i => i.id === idA);
     const posB = itemB.position ?? tipoItems.findIndex(i => i.id === idB);
-    // Actualizar localmente sin spinner
     itemA.position = posB;
     itemB.position = posA;
     items.sort((a, b) => {
@@ -1012,7 +1011,6 @@
       if (b.position !== undefined) return 1;
       return (b.createdAt || 0) - (a.createdAt || 0);
     });
-    // Guardar en Firebase sin bloquear UI
     const ref = db.ref('users/' + currentUser.uid + '/mangas');
     ref.child(idA).update({ position: posB });
     ref.child(idB).update({ position: posA });
@@ -1604,7 +1602,7 @@
       if (olympusImgs.length) {
         opciones = olympusImgs;
         fuente = 'Olympus (proxy)';
-        autoDetectarTipo('Manhwa');
+        if (typeof autoDetectarTipo === 'function') autoDetectarTipo('Manhwa');
         autoDetectarTipo('Manhwa'); // Olympus es principalmente Manhwa
         console.log(`%c[Portada] Fuente: ${fuente} — ${opciones.length} opciones`, 'color:#a855f7;font-weight:bold');
       }
@@ -1637,10 +1635,6 @@
       if (Object.keys(stats).length) console.table(stats);
     }
 
-    // Detectar tipo desde MangaDex
-    if (!esAnime && opciones.length > 0 && typeof detectarTipoMangaDex === 'function') {
-      detectarTipoMangaDex(nombre).then(tipo => { if (tipo) autoDetectarTipo(tipo); });
-    }
     // saveCoverCache deshabilitado
 
     console.log(`[Portada] Total: ${opciones.length} opciones | Tiempo: ${Date.now()-t0}ms | Fuente: ${fuente}`);
