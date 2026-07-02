@@ -1003,19 +1003,12 @@
     const tipoItems = items.filter(i => i.tipo === itemA.tipo);
     const posA = itemA.position ?? tipoItems.findIndex(i => i.id === idA);
     const posB = itemB.position ?? tipoItems.findIndex(i => i.id === idB);
-    itemA.position = posB;
-    itemB.position = posA;
-    items.sort((a, b) => {
-      if (a.position !== undefined && b.position !== undefined) return a.position - b.position;
-      if (a.position !== undefined) return -1;
-      if (b.position !== undefined) return 1;
-      return (b.createdAt || 0) - (a.createdAt || 0);
-    });
     const ref = db.ref('users/' + currentUser.uid + '/mangas');
-    ref.child(idA).update({ position: posB });
-    ref.child(idB).update({ position: posA });
-    renderList();
-    setTimeout(initTouchAndClick, 50);
+    await Promise.all([
+      ref.child(idA).update({ position: posB }),
+      ref.child(idB).update({ position: posA }),
+    ]);
+    await loadItems();
   }
 
   function switchCategory(cat) {
@@ -1590,6 +1583,7 @@
           if (data.opciones?.length) {
             opciones = data.opciones;
             fuente = data.fuente || 'scraping';
+            if (!esAnime && data.tipoDetectado) autoDetectarTipo(data.tipoDetectado);
             console.log(`%c[Portada] Fuente: ${fuente} — ${opciones.length} opciones (${Date.now()-t0}ms)`, 'color:#3b82f6;font-weight:bold');
           }
         }
@@ -1602,7 +1596,6 @@
       if (olympusImgs.length) {
         opciones = olympusImgs;
         fuente = 'Olympus (proxy)';
-        if (typeof autoDetectarTipo === 'function') autoDetectarTipo('Manhwa');
         autoDetectarTipo('Manhwa'); // Olympus es principalmente Manhwa
         console.log(`%c[Portada] Fuente: ${fuente} — ${opciones.length} opciones`, 'color:#a855f7;font-weight:bold');
       }
@@ -1610,7 +1603,7 @@
 
     // Detectar tipo desde MangaDex si aún no se auto-detectó
     if (!esAnime && opciones.length > 0) {
-      detectarTipoMangaDex(nombre).then(tipo => { if (tipo) autoDetectarTipo(tipo); });
+      // detectarTipoMangaDex deshabilitado (CORS bloqueado desde GitHub Pages)
     }
 
     // 4. APIs directas — SOLO para anime
