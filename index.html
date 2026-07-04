@@ -1438,17 +1438,19 @@
   }
 
   // Detectar tipo desde MangaDex por idioma original
-  async function detectarTipoMangaDex(nombre) {
-    try {
-      const r = await fetch('https://api.mangadex.org/manga?title=' + encodeURIComponent(nombre) + '&limit=3&order[relevance]=desc');
-      const d = await r.json();
-      const media = d?.data?.[0];
-      if (!media) return null;
-      const lang = media.attributes?.originalLanguage;
-      if (lang === 'ja') return 'Manga';
-      if (lang === 'ko') return 'Manhwa';
-      if (lang === 'zh' || lang === 'zh-hk') return 'Manhua';
-    } catch(e) {}
+  function detectarTipoPorNombre(nombre) {
+    const n = nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const manhwa = ['murim','manhwa','hunter','dungeon','sistema','estatus','renacimiento','regreso',
+      'solo leveling','tower','ranker','reencarnacion','sabueso','goblin','ssss','sss','guild',
+      'kim','han','lee','park','choi','jung','yoon','shin','baek','moon','lim','kang','seoul',
+      'corea','venganza','inmortal','demonio rey','portador del sistema','nivel 99','nivel 100',
+      'heroe de nivel','lider kim','manager kim'];
+    const manhua = ['manhua','cultivo','dao','qi','xiao','yuan','chen','wei','tang','zhang',
+      'wang','liu','yang','wu','zhu','luo','lin','feng','bai','lan','jade','dragón imperial',
+      'secta','sect','clan','xianxia','xuanhuan','wuxia','apocalipsis intercambio','latas por oro',
+      'contrabandista del apocalipsis','mundo post-apocaliptico','oro del mundo'];
+    for (const kw of manhwa) { if (n.includes(kw)) return 'Manhwa'; }
+    for (const kw of manhua) { if (n.includes(kw)) return 'Manhua'; }
     return null;
   }
 
@@ -1603,7 +1605,11 @@
 
     // Detectar tipo desde MangaDex si aún no se auto-detectó
     if (!esAnime && opciones.length > 0) {
-      // detectarTipoMangaDex deshabilitado (CORS bloqueado desde GitHub Pages)
+      // Detectar tipo por palabras clave del nombre
+      if (opciones.length > 0) {
+        const tipoLocal = detectarTipoPorNombre(nombre);
+        if (tipoLocal) autoDetectarTipo(tipoLocal);
+      }
     }
 
     // 4. APIs directas — SOLO para anime
