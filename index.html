@@ -539,7 +539,8 @@
     </div>
     <div class="form-group">
       <label>🔗 Link donde lo estás leyendo (opcional)</label>
-      <input type="text" id="inputLink" placeholder="Ej: https://manhuaus.com/manga/...">
+      <input type="text" id="inputLink" placeholder="Ej: https://manhuaus.com/manga/..."
+        oninput="const t=detectarTipoDesdeUrl(this.value); if(t) autoDetectarTipo(t);">
     </div>
     <div class="form-group" id="searchCoverGroup">
       <button type="button" onclick="fetchCover()" style="width:100%;padding:11px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.4);border-radius:10px;color:#7c3aed;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">🔍 Buscar portada automáticamente</button>
@@ -1458,8 +1459,15 @@
   function detectarTipoDesdeUrl(url) {
     if (!url) return null;
     const u = url.toLowerCase();
-    if (u.includes('olympusxyz.com')) return 'Manhwa'; // Olympus es principalmente Manhwa
+    // Manhwa (coreano)
+    if (u.includes('olympusxyz.com')) return 'Manhwa';
     if (u.includes('mhscans.com')) return 'Manhwa';
+    if (u.includes('manhwatop') || u.includes('manhwahere') || u.includes('manhwaclan')) return 'Manhwa';
+    if (u.includes('webtoon') || u.includes('lezhin')) return 'Manhwa';
+    // Manhua (chino)
+    if (u.includes('manhuaus') || u.includes('manhuafast') || u.includes('manhuabox')) return 'Manhua';
+    if (u.includes('manhuascan') || u.includes('manhuaplus') || u.includes('isekaiscan')) return 'Manhua';
+    // MangaCrab puede tener ambos — no auto-detectar
     return null;
   }
 
@@ -1565,6 +1573,12 @@
     const t0 = Date.now();
     let opciones = [];
     let fuente = 'desconocida';
+    // Detectar tipo desde el URL del link si ya está puesto
+    const linkActual = document.getElementById('inputLink')?.value?.trim();
+    if (linkActual && !esAnime) {
+      const tipoUrl = detectarTipoDesdeUrl(linkActual);
+      if (tipoUrl) autoDetectarTipo(tipoUrl);
+    }
 
     // 1. Verificar caché en Firebase primero
     const cached = await getCoverCache(nombre, esAnime);
