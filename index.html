@@ -1439,19 +1439,25 @@
   }
 
   // Detectar tipo desde MangaDex por idioma original
-  function detectarTipoPorNombre(nombre) {
-    const n = nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-    const manhwa = ['murim','manhwa','hunter','dungeon','sistema','estatus','renacimiento','regreso',
-      'solo leveling','tower','ranker','reencarnacion','sabueso','goblin','ssss','sss','guild',
-      'kim','han','lee','park','choi','jung','yoon','shin','baek','moon','lim','kang','seoul',
-      'corea','venganza','inmortal','demonio rey','portador del sistema','nivel 99','nivel 100',
-      'heroe de nivel','lider kim','manager kim'];
-    const manhua = ['manhua','cultivo','dao','qi','xiao','yuan','chen','wei','tang','zhang',
-      'wang','liu','yang','wu','zhu','luo','lin','feng','bai','lan','jade','dragón imperial',
-      'secta','sect','clan','xianxia','xuanhuan','wuxia','apocalipsis intercambio','latas por oro',
-      'contrabandista del apocalipsis','mundo post-apocaliptico','oro del mundo'];
-    for (const kw of manhwa) { if (n.includes(kw)) return 'Manhwa'; }
-    for (const kw of manhua) { if (n.includes(kw)) return 'Manhua'; }
+  async function detectarTipoPorNombre(nombre) {
+    // Intentar con AniList (acepta CORS desde browsers)
+    try {
+      const query = `query($s:String){Page(perPage:3){media(search:$s,type:MANGA,sort:SEARCH_MATCH){title{romaji english}countryOfOrigin}}}`;
+      const r = await fetch('https://graphql.anilist.co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ query, variables: { s: nombre } })
+      });
+      const d = await r.json();
+      const media = d?.data?.Page?.media;
+      if (media?.length) {
+        const pais = media[0].countryOfOrigin;
+        console.log('[AutoTipo] AniList país:', pais, 'para:', nombre);
+        if (pais === 'JP') return 'Manga';
+        if (pais === 'KR') return 'Manhwa';
+        if (pais === 'CN' || pais === 'TW') return 'Manhua';
+      }
+    } catch(e) { console.warn('[AutoTipo] AniList falló:', e.message); }
     return null;
   }
 
@@ -1619,10 +1625,9 @@
 
     // Detectar tipo desde MangaDex si aún no se auto-detectó
     if (!esAnime && opciones.length > 0) {
-      // Detectar tipo por palabras clave del nombre
+      // Detectar tipo via AniList
       if (opciones.length > 0) {
-        const tipoLocal = detectarTipoPorNombre(nombre);
-        if (tipoLocal) autoDetectarTipo(tipoLocal);
+        detectarTipoPorNombre(nombre).then(tipo => { if (tipo) autoDetectarTipo(tipo); });
       }
     }
 
