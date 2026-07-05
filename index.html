@@ -1585,6 +1585,18 @@
       const tipoUrl = detectarTipoDesdeUrl(linkActual);
       if (tipoUrl) autoDetectarTipo(tipoUrl);
     }
+    // Consultar Olympus en paralelo para detectar tipo (sin esperar resultado)
+    if (!esAnime && !linkActual) {
+      const proxyUrl = 'https://velvety-squirrel-d023bf.netlify.app/.netlify/functions/olympus-proxy?nombre=' + encodeURIComponent(nombre);
+      fetch(proxyUrl).then(r => r.json()).then(data => {
+        if (data.series?.length > 0 && data.series[0].score >= 0.5) {
+          console.log('[AutoTipo] Olympus encontró:', data.series[0].name, '→ Manhwa');
+          autoDetectarTipo('Manhwa');
+        }
+      }).catch(() => {});
+      // También consultar AniList en paralelo
+      detectarTipoPorNombre(nombre).then(tipo => { if (tipo) autoDetectarTipo(tipo); });
+    }
 
     // 1. Verificar caché en Firebase primero
     const cached = await getCoverCache(nombre, esAnime);
@@ -1623,11 +1635,16 @@
       }
     }
 
-    // Detectar tipo desde MangaDex si aún no se auto-detectó
+    // Detectar tipo — solo si no se detectó ya desde la fuente
     if (!esAnime && opciones.length > 0) {
-      // Detectar tipo via AniList
-      if (opciones.length > 0) {
-        detectarTipoPorNombre(nombre).then(tipo => { if (tipo) autoDetectarTipo(tipo); });
+      const tipoActual = document.getElementById('inputTipo')?.value;
+      const indAuto = document.getElementById('tipoAutoIndicador');
+      const yaDetectado = indAuto && indAuto.style.display !== 'none' && indAuto.textContent.includes('Detectado');
+      if (!yaDetectado) {
+        // Solo consultar AniList si no vino de Olympus/MHS
+        if (fuente !== 'Olympus (proxy)') {
+          detectarTipoPorNombre(nombre).then(tipo => { if (tipo) autoDetectarTipo(tipo); });
+        }
       }
     }
 
