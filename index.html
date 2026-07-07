@@ -806,26 +806,68 @@
 
   async function deleteAllAnimes() {
     if (!currentUser) return;
-    // Contar cuántos animes hay primero
     const snap = await db.ref('users/' + currentUser.uid + '/mangas').once('value');
     const data = snap.val() || {};
     const animes = Object.entries(data).filter(([id, val]) => val.tipo === 'Anime');
-    if (animes.length === 0) { alert('No tenés animes para eliminar.'); return; }
+    if (animes.length === 0) { mostrarModalInfo('No tenés animes para eliminar.'); return; }
+    mostrarModalConfirmAnimes(animes);
+  }
 
-    // Primera confirmación
-    if (!confirm(`⚠️ Estás por eliminar ${animes.length} anime(s) de tu lista.\n\n¿Estás seguro?`)) return;
+  function mostrarModalConfirmAnimes(animes) {
+    // Crear modal de confirmación
+    const overlay = document.createElement('div');
+    overlay.id = 'confirmModal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    overlay.innerHTML = `
+      <div style="background:#1e1e28;border:1px solid #e94560;border-radius:16px;padding:24px;max-width:360px;width:100%;text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:8px;">⚠️</div>
+        <h3 style="color:#e94560;margin:0 0 8px;">¿Eliminar ${animes.length} anime(s)?</h3>
+        <p style="color:#7a7a99;font-size:0.85rem;margin:0 0 16px;">Esta acción es <strong style="color:#e94560;">IRREVERSIBLE</strong>. No podrás recuperar tus datos.</p>
+        <p style="color:#f0f0f5;font-size:0.85rem;margin:0 0 8px;">Escribí <strong>CONFIRMAR</strong> para continuar:</p>
+        <input id="confirmInput" type="text" placeholder="CONFIRMAR"
+          style="width:100%;padding:10px;border-radius:8px;border:1px solid #2a2a38;background:#0d0d14;color:#f0f0f5;font-size:1rem;box-sizing:border-box;text-align:center;margin-bottom:16px;">
+        <div style="display:flex;gap:10px;">
+          <button onclick="document.getElementById('confirmModal').remove()"
+            style="flex:1;padding:10px;border-radius:8px;border:1px solid #2a2a38;background:transparent;color:#7a7a99;cursor:pointer;font-size:0.9rem;">
+            Cancelar
+          </button>
+          <button onclick="ejecutarDeleteAnimes()" id="btnConfirmDelete"
+            style="flex:1;padding:10px;border-radius:8px;border:none;background:#e94560;color:#fff;cursor:pointer;font-size:0.9rem;font-weight:600;">
+            Eliminar
+          </button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    document.getElementById('confirmInput').focus();
+  }
 
-    // Segunda confirmación — escribir CONFIRMAR
-    const texto = prompt(`🚨 Esta acción es IRREVERSIBLE.\n\nEscribí CONFIRMAR (en mayúsculas) para continuar:`);
-    if (texto !== 'CONFIRMAR') {
-      alert('❌ Cancelado — no se eliminó nada.');
+  async function ejecutarDeleteAnimes() {
+    const input = document.getElementById('confirmInput');
+    if (!input || input.value !== 'CONFIRMAR') {
+      input.style.border = '2px solid #e94560';
+      input.placeholder = 'Escribí CONFIRMAR exacto';
+      input.value = '';
       return;
     }
-
-    const promises = animes.map(([id]) => db.ref('users/' + currentUser.uid + '/mangas/' + id).remove());
-    await Promise.all(promises);
+    document.getElementById('confirmModal').remove();
+    const snap = await db.ref('users/' + currentUser.uid + '/mangas').once('value');
+    const data = snap.val() || {};
+    const animes = Object.entries(data).filter(([id, val]) => val.tipo === 'Anime');
+    await Promise.all(animes.map(([id]) => db.ref('users/' + currentUser.uid + '/mangas/' + id).remove()));
     await loadItems();
-    alert('✅ Animes eliminados.');
+    mostrarModalInfo('✅ Animes eliminados correctamente.');
+  }
+
+  function mostrarModalInfo(msg) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    overlay.innerHTML = `
+      <div style="background:#1e1e28;border:1px solid #2a2a38;border-radius:16px;padding:24px;max-width:320px;width:100%;text-align:center;">
+        <p style="color:#f0f0f5;margin:0 0 16px;">${msg}</p>
+        <button onclick="this.closest('div').parentElement.remove()"
+          style="padding:10px 24px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;">OK</button>
+      </div>`;
+    document.body.appendChild(overlay);
   }
 
   // UI - CATEGORY TABS (Netflix style)
