@@ -172,6 +172,7 @@
   .status-pill[data-val="porempezar"].selected { border-color: var(--porempezar); background: rgba(245,158,11,0.15); color: var(--porempezar); }
   .status-pill[data-val="pendiente"].selected { border-color: var(--pendiente); background: rgba(168,85,247,0.15); color: var(--pendiente); }
   .status-pill[data-val="abandonado"].selected { border-color: var(--abandonado); background: rgba(239,68,68,0.15); color: var(--abandonado); }
+  .status-pill[data-val="espera"].selected { border-color: var(--espera); background: rgba(6,182,212,0.15); color: var(--espera); }
 
   .donate-section {
     margin: 0 16px 16px;
@@ -330,6 +331,13 @@
     border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
   .tipo-color-row .tipo-color-label { flex: 1; font-size: 0.85rem; color: var(--text); }
   .tipo-color-row input[type="color"] { width: 36px; height: 36px; border: none; border-radius: 8px; padding: 0; background: none; cursor: pointer; }
+  .swatch-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent; cursor: pointer;
+    padding: 0; transition: transform 0.1s; flex-shrink: 0; }
+  .swatch:hover { transform: scale(1.12); }
+  .swatch.selected { border-color: var(--text); box-shadow: 0 0 0 2px var(--card), 0 0 0 3px var(--text); }
+  .custom-color-toggle { background: none; border: none; color: var(--muted); font-size: 0.7rem;
+    cursor: pointer; text-decoration: underline; font-family: 'Inter', sans-serif; padding: 0; margin-top: 2px; }
   .settings-close { width: 100%; margin-top: 16px; padding: 12px; background: rgba(233,69,96,0.15);
     border: 1px solid var(--accent); border-radius: 10px; color: var(--accent); font-size: 0.9rem;
     cursor: pointer; font-family: 'Inter', sans-serif; }
@@ -492,7 +500,7 @@
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manga','porempezar',this)">🟡 Por empezar</button>
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manga','pendiente',this)">🟣 Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manga','abandonado',this)">🔴 Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manga','espera',this)">🩵 En espera de nueva temporada</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manga','espera',this)">📺 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="grid"></div>
     </div>
@@ -506,7 +514,7 @@
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhwa','porempezar',this)">🟡 Por empezar</button>
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhwa','pendiente',this)">🟣 Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhwa','abandonado',this)">🔴 Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhwa','espera',this)">🩵 En espera de nueva temporada</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhwa','espera',this)">📺 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="gridManhwa"></div>
     </div>
@@ -520,7 +528,7 @@
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhua','porempezar',this)">🟡 Por empezar</button>
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhua','pendiente',this)">🟣 Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhua','abandonado',this)">🔴 Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhua','espera',this)">🩵 En espera de nueva temporada</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhua','espera',this)">📺 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="gridManhua"></div>
     </div>
@@ -537,7 +545,7 @@
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('anime','porempezar',this)">🟡 Por ver</button>
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('anime','pendiente',this)">🟣 Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('anime','abandonado',this)">🔴 Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('anime','espera',this)">🩵 En espera de nueva temporada</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('anime','espera',this)">📺 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="gridAnime"></div>
     </div>
@@ -616,7 +624,7 @@
         <button class="status-pill" data-val="porempezar" onclick="selectStatus(this)">🟡 Por empezar</button>
         <button class="status-pill" data-val="pendiente" onclick="selectStatus(this)">🟣 Pendiente</button>
         <button class="status-pill" data-val="abandonado" onclick="selectStatus(this)">🔴 Abandonado</button>
-        <button class="status-pill" data-val="espera" onclick="selectStatus(this)">🩵 En espera de nueva temporada</button>
+        <button class="status-pill" data-val="espera" onclick="selectStatus(this)">📺 En espera de nueva temporada</button>
       </div>
     </div>
     <div class="form-group">
@@ -705,8 +713,11 @@
     <div class="settings-section active" id="ssec-tags">
       <h3>TUS TAGS (Manga y Anime)</h3>
       <div id="tagsManagerList"></div>
+      <div style="margin-top:14px;">
+        <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:8px;">Elegí un color para el nuevo tag:</label>
+        <div id="newTagSwatches"></div>
+      </div>
       <div class="add-tag-form">
-        <input type="color" id="newTagColor" value="#e94560">
         <input type="text" id="newTagName" placeholder="Nombre del tag (ej: Acción)">
         <button onclick="agregarTag()">+ Agregar</button>
       </div>
@@ -717,20 +728,20 @@
       <h3>COLOR POR TIPO</h3>
       <div class="tipo-color-row">
         <span class="tipo-color-label">📚 Manga</span>
-        <input type="color" id="colorTipoManga" onchange="guardarColorTipo('Manga', this.value)">
       </div>
+      <div id="swatchesManga" style="margin:-4px 0 12px;"></div>
       <div class="tipo-color-row">
         <span class="tipo-color-label">Manhwa</span>
-        <input type="color" id="colorTipoManhwa" onchange="guardarColorTipo('Manhwa', this.value)">
       </div>
+      <div id="swatchesManhwa" style="margin:-4px 0 12px;"></div>
       <div class="tipo-color-row">
         <span class="tipo-color-label">Manhua</span>
-        <input type="color" id="colorTipoManhua" onchange="guardarColorTipo('Manhua', this.value)">
       </div>
+      <div id="swatchesManhua" style="margin:-4px 0 12px;"></div>
       <div class="tipo-color-row">
         <span class="tipo-color-label">🎌 Anime</span>
-        <input type="color" id="colorTipoAnime" onchange="guardarColorTipo('Anime', this.value)">
       </div>
+      <div id="swatchesAnime" style="margin:-4px 0 12px;"></div>
     </div>
 
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
@@ -775,6 +786,15 @@
   let tagsConfig = []; // [{id, nombre, color}]
   let tipoColores = { Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e' };
   let selectedTags = [];
+  const PRESET_COLORS = ['#e94560','#ec4899','#7c3aed','#a855f7','#3b82f6','#06b6d4','#22c55e','#84cc16','#f59e0b','#f97316','#ef4444','#64748b'];
+  let nuevoTagColor = PRESET_COLORS[0];
+  let swatchOpenTagId = null;
+
+  function swatchRow(selectedColor, onClickAttr) {
+    return `<div class="swatch-row">${PRESET_COLORS.map(c =>
+      `<button type="button" class="swatch ${c.toLowerCase() === (selectedColor||'').toLowerCase() ? 'selected' : ''}" style="background:${c}" onclick="${onClickAttr}('${c}')"></button>`
+    ).join('')}</div>`;
+  }
 
   // AUTH - detecta sesión existente automáticamente (incluso al reabrir el navegador)
   auth.onAuthStateChanged(user => {
@@ -929,13 +949,18 @@
 
   function agregarTag() {
     const nombreInput = document.getElementById('newTagName');
-    const colorInput = document.getElementById('newTagColor');
     const nombre = nombreInput.value.trim();
     if (!nombre) return;
-    tagsConfig.push({ id: uid4(), nombre, color: colorInput.value });
+    tagsConfig.push({ id: uid4(), nombre, color: nuevoTagColor });
     nombreInput.value = '';
     guardarTagsConfig();
     renderTagsManager();
+  }
+
+  function elegirNuevoTagColor(color) {
+    nuevoTagColor = color;
+    const cont = document.getElementById('newTagSwatches');
+    if (cont) cont.innerHTML = swatchRow(nuevoTagColor, 'elegirNuevoTagColor');
   }
 
   function eliminarTag(id) {
@@ -957,6 +982,13 @@
   function cambiarColorTag(id, color) {
     const t = tagsConfig.find(t => t.id === id);
     if (t) { t.color = color; guardarTagsConfig(); }
+    swatchOpenTagId = null;
+    renderTagsManager();
+  }
+
+  function toggleTagColorEditor(id) {
+    swatchOpenTagId = swatchOpenTagId === id ? null : id;
+    renderTagsManager();
   }
 
   function renderTagsManager() {
@@ -968,12 +1000,17 @@
     }
     cont.innerHTML = tagsConfig.map((t, idx) => `
       <div class="tag-row">
-        <input type="color" value="${t.color}" onchange="cambiarColorTag('${t.id}', this.value)">
+        <button type="button" class="swatch" style="background:${t.color};width:22px;height:22px;" title="Cambiar color" onclick="toggleTagColorEditor('${t.id}')"></button>
         <span class="tag-row-name">${t.nombre}</span>
         <button class="tag-row-btn" title="Subir" onclick="moverTag('${t.id}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
         <button class="tag-row-btn" title="Bajar" onclick="moverTag('${t.id}', 1)" ${idx === tagsConfig.length - 1 ? 'disabled' : ''}>↓</button>
         <button class="tag-row-btn danger" title="Eliminar" onclick="eliminarTag('${t.id}')">🗑️</button>
-      </div>`).join('');
+      </div>
+      ${swatchOpenTagId === t.id ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(t.color, `cambiarColorTag_${t.id.replace(/[^a-zA-Z0-9]/g,'')}`)}</div>` : ''}`).join('');
+    // wire up dynamic per-tag color handlers (avoids quote-escaping issues in inline onclick)
+    tagsConfig.forEach(t => {
+      window['cambiarColorTag_' + t.id.replace(/[^a-zA-Z0-9]/g,'')] = (color) => cambiarColorTag(t.id, color);
+    });
   }
 
   async function guardarColorTipo(tipo, color) {
@@ -988,19 +1025,23 @@
       const tipoKey = tipo === 'ANIME' ? 'Anime' : tipo;
       if (tipoColores[tipoKey]) el.style.background = tipoColores[tipoKey];
     });
-    const inputManga = document.getElementById('colorTipoManga');
-    const inputManhwa = document.getElementById('colorTipoManhwa');
-    const inputManhua = document.getElementById('colorTipoManhua');
-    const inputAnime = document.getElementById('colorTipoAnime');
-    if (inputManga) inputManga.value = tipoColores.Manga;
-    if (inputManhwa) inputManhwa.value = tipoColores.Manhwa;
-    if (inputManhua) inputManhua.value = tipoColores.Manhua;
-    if (inputAnime) inputAnime.value = tipoColores.Anime;
+    const map = { Manga: 'swatchesManga', Manhwa: 'swatchesManhwa', Manhua: 'swatchesManhua', Anime: 'swatchesAnime' };
+    Object.keys(map).forEach(tipo => {
+      const cont = document.getElementById(map[tipo]);
+      if (cont) cont.innerHTML = swatchRow(tipoColores[tipo], 'guardarColorTipo_' + tipo);
+    });
   }
+  // Handlers puente para cada tipo (para no romper comillas dentro de onclick)
+  function guardarColorTipo_Manga(color) { guardarColorTipo('Manga', color); }
+  function guardarColorTipo_Manhwa(color) { guardarColorTipo('Manhwa', color); }
+  function guardarColorTipo_Manhua(color) { guardarColorTipo('Manhua', color); }
+  function guardarColorTipo_Anime(color) { guardarColorTipo('Anime', color); }
 
   function openSettings() {
     renderTagsManager();
     aplicarColoresTipos();
+    const cont = document.getElementById('newTagSwatches');
+    if (cont) cont.innerHTML = swatchRow(nuevoTagColor, 'elegirNuevoTagColor');
     document.getElementById('settingsPanel').classList.add('open');
   }
   function closeSettings() { document.getElementById('settingsPanel').classList.remove('open'); }
