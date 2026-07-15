@@ -21,7 +21,8 @@
     --bg: #0e0e12; --surface: #17171e; --card: #1e1e28; --border: #2a2a38;
     --accent: #e94560; --accent2: #7c3aed; --text: #f0f0f5; --muted: #7a7a99;
     --emision: #22c55e; --terminado: #3b82f6; --porempezar: #f59e0b;
-    --pendiente: #a855f7; --abandonado: #ef4444;
+    --pendiente: #a855f7; --abandonado: #ef4444; --espera: #06b6d4;
+    --tipo-manga: #e94560; --tipo-manhwa: #7c3aed; --tipo-manhua: #f59e0b; --tipo-anime: #22c55e;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
@@ -130,6 +131,7 @@
   .status-dot.porempezar { background: var(--porempezar); }
   .status-dot.pendiente { background: var(--pendiente); box-shadow: 0 0 6px var(--pendiente); }
   .status-dot.abandonado { background: var(--abandonado); }
+  .status-dot.espera { background: var(--espera); box-shadow: 0 0 6px var(--espera); }
   .card-type { position: absolute; top: 8px; left: 8px; font-size: 0.6rem; font-weight: 700;
     padding: 2px 7px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
     background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); color: var(--text); }
@@ -278,6 +280,61 @@
   .cat-filter-btn.fs-porempezar.active { border-color: var(--porempezar); background: rgba(245,158,11,0.1); color: var(--porempezar); }
   .cat-filter-btn.fs-pendiente.active { border-color: var(--pendiente); background: rgba(168,85,247,0.1); color: var(--pendiente); }
   .cat-filter-btn.fs-abandonado.active { border-color: var(--abandonado); background: rgba(239,68,68,0.1); color: var(--abandonado); }
+  .cat-filter-btn.fs-espera.active { border-color: var(--espera); background: rgba(6,182,212,0.1); color: var(--espera); }
+
+  /* TAG CHIPS (on cards) */
+  .tag-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .tag-chip { font-size: 0.62rem; padding: 2px 7px; border-radius: 20px; font-weight: 600;
+    white-space: nowrap; }
+
+  /* TAG PICKER (in add/edit modal) */
+  .tag-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag-pick-btn { padding: 6px 12px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--muted); font-size: 0.78rem; cursor: pointer;
+    font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .tag-pick-btn.selected { color: #fff; border-color: transparent; }
+  .tag-picker-empty { color: var(--muted); font-size: 0.78rem; }
+
+  /* SETTINGS PANEL */
+  #settingsPanel { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 999;
+    align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 16px; }
+  #settingsPanel.open { display: flex; }
+  .settings-box { background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+    padding: 24px 20px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
+  .settings-box h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px;
+    color: var(--accent); margin-bottom: 6px; text-align: center; }
+  .settings-tabs { display: flex; background: var(--surface); border-radius: 10px; margin: 16px 0; padding: 4px; }
+  .settings-tab { flex: 1; padding: 9px; text-align: center; border-radius: 8px; cursor: pointer;
+    font-size: 0.8rem; color: var(--muted); border: none; background: none; font-family: 'Inter', sans-serif; }
+  .settings-tab.active { background: var(--accent); color: white; font-weight: 600; }
+  .settings-section { display: none; }
+  .settings-section.active { display: block; }
+  .settings-section h3 { font-size: 0.85rem; color: var(--muted); margin-bottom: 10px; letter-spacing: 0.5px; }
+  .tag-row { display: flex; align-items: center; gap: 8px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; margin-bottom: 8px; }
+  .tag-row-name { flex: 1; font-size: 0.85rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tag-row input[type="color"] { width: 30px; height: 30px; border: none; border-radius: 6px; padding: 0; background: none; cursor: pointer; }
+  .tag-row-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--card); color: var(--muted); cursor: pointer; font-size: 0.8rem; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; }
+  .tag-row-btn:hover { border-color: var(--accent); color: var(--text); }
+  .tag-row-btn.danger:hover { border-color: var(--abandonado); color: var(--abandonado); }
+  .add-tag-form { display: flex; gap: 8px; margin-top: 12px; }
+  .add-tag-form input[type="text"] { flex: 1; padding: 10px 12px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.85rem;
+    font-family: 'Inter', sans-serif; outline: none; }
+  .add-tag-form input[type="color"] { width: 40px; height: 40px; border: none; border-radius: 8px; padding: 0; background: none; cursor: pointer; }
+  .add-tag-form button { padding: 0 16px; background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 10px; color: white; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .tipo-color-row { display: flex; align-items: center; gap: 10px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+  .tipo-color-row .tipo-color-label { flex: 1; font-size: 0.85rem; color: var(--text); }
+  .tipo-color-row input[type="color"] { width: 36px; height: 36px; border: none; border-radius: 8px; padding: 0; background: none; cursor: pointer; }
+  .settings-close { width: 100%; margin-top: 16px; padding: 12px; background: rgba(233,69,96,0.15);
+    border: 1px solid var(--accent); border-radius: 10px; color: var(--accent); font-size: 0.9rem;
+    cursor: pointer; font-family: 'Inter', sans-serif; }
+  .settings-btn-header { padding: 6px 10px; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 8px; color: #7c3aed; font-size: 0.75rem; cursor: pointer; font-family: 'Inter', sans-serif; }
 
   /* ADMIN PANEL */
   #adminPanel { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 999;
@@ -386,6 +443,7 @@
     <div class="user-info">
       <span class="user-email" id="userEmailDisplay"></span>
       <button id="btnAdminSecret" onclick="openAdmin()" style="display:none;padding:6px 10px;background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.3);border-radius:8px;color:#e94560;font-size:0.75rem;cursor:pointer;font-family:Inter,sans-serif;">🔐</button>
+      <button class="settings-btn-header" onclick="openSettings()">⚙️ Config</button>
       <div class="theme-wrapper">
         <button class="theme-btn" id="themeBtnToggle" onclick="toggleThemeDropdown()">🌙 Tema</button>
         <div class="theme-dropdown" id="themeDropdown">
@@ -434,6 +492,7 @@
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manga','porempezar',this)">🟡 Por empezar</button>
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manga','pendiente',this)">🟣 Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manga','abandonado',this)">🔴 Abandonado</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manga','espera',this)">🩵 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="grid"></div>
     </div>
@@ -447,6 +506,7 @@
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhwa','porempezar',this)">🟡 Por empezar</button>
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhwa','pendiente',this)">🟣 Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhwa','abandonado',this)">🔴 Abandonado</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhwa','espera',this)">🩵 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="gridManhwa"></div>
     </div>
@@ -460,13 +520,16 @@
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhua','porempezar',this)">🟡 Por empezar</button>
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhua','pendiente',this)">🟣 Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhua','abandonado',this)">🔴 Abandonado</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhua','espera',this)">🩵 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="gridManhua"></div>
     </div>
 
     <!-- ANIME SECTION -->
     <div class="category-section" id="sec-anime">
-      
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+        <button onclick="deleteAllAnimes()" style="font-size:0.7rem;padding:4px 10px;background:rgba(233,69,96,0.15);border:1px solid #e94560;border-radius:8px;color:#e94560;cursor:pointer;font-family:Inter,sans-serif;">🗑️ Limpiar animes</button>
+      </div>
       <div class="cat-filters">
         <button class="cat-filter-btn active" onclick="setCatFilter('anime','todos',this)">Todos</button>
         <button class="cat-filter-btn fs-emision" onclick="setCatFilter('anime','emision',this)">🟢 Viendo</button>
@@ -474,6 +537,7 @@
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('anime','porempezar',this)">🟡 Por ver</button>
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('anime','pendiente',this)">🟣 Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('anime','abandonado',this)">🔴 Abandonado</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('anime','espera',this)">🩵 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="gridAnime"></div>
     </div>
@@ -552,7 +616,12 @@
         <button class="status-pill" data-val="porempezar" onclick="selectStatus(this)">🟡 Por empezar</button>
         <button class="status-pill" data-val="pendiente" onclick="selectStatus(this)">🟣 Pendiente</button>
         <button class="status-pill" data-val="abandonado" onclick="selectStatus(this)">🔴 Abandonado</button>
+        <button class="status-pill" data-val="espera" onclick="selectStatus(this)">🩵 En espera de nueva temporada</button>
       </div>
+    </div>
+    <div class="form-group">
+      <label>🏷️ Tags</label>
+      <div class="tag-picker" id="tagPickerContainer"></div>
     </div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
@@ -623,6 +692,52 @@
   </div>
 </div>
 
+<!-- SETTINGS PANEL (Config general) -->
+<div id="settingsPanel">
+  <div class="settings-box">
+    <h2>⚙️ Configuración</h2>
+    <div class="settings-tabs">
+      <button class="settings-tab active" id="stab-tags" onclick="switchSettingsTab('tags')">🏷️ Tags</button>
+      <button class="settings-tab" id="stab-tipos" onclick="switchSettingsTab('tipos')">🎨 Colores de tipos</button>
+    </div>
+
+    <!-- TAGS MANAGER -->
+    <div class="settings-section active" id="ssec-tags">
+      <h3>TUS TAGS (Manga y Anime)</h3>
+      <div id="tagsManagerList"></div>
+      <div class="add-tag-form">
+        <input type="color" id="newTagColor" value="#e94560">
+        <input type="text" id="newTagName" placeholder="Nombre del tag (ej: Acción)">
+        <button onclick="agregarTag()">+ Agregar</button>
+      </div>
+    </div>
+
+    <!-- TYPE COLORS -->
+    <div class="settings-section" id="ssec-tipos">
+      <h3>COLOR POR TIPO</h3>
+      <div class="tipo-color-row">
+        <span class="tipo-color-label">📚 Manga</span>
+        <input type="color" id="colorTipoManga" onchange="guardarColorTipo('Manga', this.value)">
+      </div>
+      <div class="tipo-color-row">
+        <span class="tipo-color-label">Manhwa</span>
+        <input type="color" id="colorTipoManhwa" onchange="guardarColorTipo('Manhwa', this.value)">
+      </div>
+      <div class="tipo-color-row">
+        <span class="tipo-color-label">Manhua</span>
+        <input type="color" id="colorTipoManhua" onchange="guardarColorTipo('Manhua', this.value)">
+      </div>
+      <div class="tipo-color-row">
+        <span class="tipo-color-label">🎌 Anime</span>
+        <input type="color" id="colorTipoAnime" onchange="guardarColorTipo('Anime', this.value)">
+      </div>
+    </div>
+
+    <button class="settings-close" onclick="closeSettings()">Cerrar</button>
+  </div>
+</div>
+
+
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyCjp1DCkt83B_hEd2eFDI5YWUKqeaND7YY",
@@ -657,6 +772,9 @@
   let currentUser = null;
   let currentCategory = 'manga';
   let catFilters = { manga: 'todos', manhwa: 'todos', manhua: 'todos', anime: 'todos' };
+  let tagsConfig = []; // [{id, nombre, color}]
+  let tipoColores = { Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e' };
+  let selectedTags = [];
 
   // AUTH - detecta sesión existente automáticamente (incluso al reabrir el navegador)
   auth.onAuthStateChanged(user => {
@@ -679,6 +797,7 @@
       const adminImgBtns = document.getElementById('adminImgBtns');
       if (adminImgBtns) adminImgBtns.classList.toggle('visible', user.uid === ADMIN_UID);
       registrarPresencia();
+      cargarConfig();
       loadItems();
     } else {
       currentUser = null;
@@ -784,6 +903,136 @@
       renderList();
     }
   }
+
+  // ─── CONFIGURACIÓN GENERAL (tags y colores) ─────────────────────────
+  async function cargarConfig() {
+    if (!currentUser) return;
+    try {
+      const snap = await db.ref('users/' + currentUser.uid + '/config').once('value');
+      const cfg = snap.val() || {};
+      tagsConfig = Array.isArray(cfg.tags) ? cfg.tags : (cfg.tags ? Object.values(cfg.tags) : []);
+      tipoColores = Object.assign({ Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e' }, cfg.tipoColores || {});
+    } catch(e) {
+      tagsConfig = [];
+    }
+    aplicarColoresTipos();
+  }
+
+  async function guardarTagsConfig() {
+    if (!currentUser) return;
+    await db.ref('users/' + currentUser.uid + '/config/tags').set(tagsConfig);
+  }
+
+  function uid4() {
+    return 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  function agregarTag() {
+    const nombreInput = document.getElementById('newTagName');
+    const colorInput = document.getElementById('newTagColor');
+    const nombre = nombreInput.value.trim();
+    if (!nombre) return;
+    tagsConfig.push({ id: uid4(), nombre, color: colorInput.value });
+    nombreInput.value = '';
+    guardarTagsConfig();
+    renderTagsManager();
+  }
+
+  function eliminarTag(id) {
+    if (!confirm('¿Eliminar este tag? Se quitará de todos los ítems que lo tengan.')) return;
+    tagsConfig = tagsConfig.filter(t => t.id !== id);
+    guardarTagsConfig();
+    renderTagsManager();
+  }
+
+  function moverTag(id, dir) {
+    const i = tagsConfig.findIndex(t => t.id === id);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= tagsConfig.length) return;
+    [tagsConfig[i], tagsConfig[j]] = [tagsConfig[j], tagsConfig[i]];
+    guardarTagsConfig();
+    renderTagsManager();
+  }
+
+  function cambiarColorTag(id, color) {
+    const t = tagsConfig.find(t => t.id === id);
+    if (t) { t.color = color; guardarTagsConfig(); }
+  }
+
+  function renderTagsManager() {
+    const cont = document.getElementById('tagsManagerList');
+    if (!cont) return;
+    if (tagsConfig.length === 0) {
+      cont.innerHTML = '<p class="tag-picker-empty">Todavía no creaste ningún tag. Agregá uno abajo 👇</p>';
+      return;
+    }
+    cont.innerHTML = tagsConfig.map((t, idx) => `
+      <div class="tag-row">
+        <input type="color" value="${t.color}" onchange="cambiarColorTag('${t.id}', this.value)">
+        <span class="tag-row-name">${t.nombre}</span>
+        <button class="tag-row-btn" title="Subir" onclick="moverTag('${t.id}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+        <button class="tag-row-btn" title="Bajar" onclick="moverTag('${t.id}', 1)" ${idx === tagsConfig.length - 1 ? 'disabled' : ''}>↓</button>
+        <button class="tag-row-btn danger" title="Eliminar" onclick="eliminarTag('${t.id}')">🗑️</button>
+      </div>`).join('');
+  }
+
+  async function guardarColorTipo(tipo, color) {
+    tipoColores[tipo] = color;
+    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/tipoColores/' + tipo).set(color);
+    aplicarColoresTipos();
+  }
+
+  function aplicarColoresTipos() {
+    document.querySelectorAll('.card-type').forEach(el => {
+      const tipo = el.textContent.trim();
+      const tipoKey = tipo === 'ANIME' ? 'Anime' : tipo;
+      if (tipoColores[tipoKey]) el.style.background = tipoColores[tipoKey];
+    });
+    const inputManga = document.getElementById('colorTipoManga');
+    const inputManhwa = document.getElementById('colorTipoManhwa');
+    const inputManhua = document.getElementById('colorTipoManhua');
+    const inputAnime = document.getElementById('colorTipoAnime');
+    if (inputManga) inputManga.value = tipoColores.Manga;
+    if (inputManhwa) inputManhwa.value = tipoColores.Manhwa;
+    if (inputManhua) inputManhua.value = tipoColores.Manhua;
+    if (inputAnime) inputAnime.value = tipoColores.Anime;
+  }
+
+  function openSettings() {
+    renderTagsManager();
+    aplicarColoresTipos();
+    document.getElementById('settingsPanel').classList.add('open');
+  }
+  function closeSettings() { document.getElementById('settingsPanel').classList.remove('open'); }
+  function switchSettingsTab(tab) {
+    document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('stab-' + tab).classList.add('active');
+    document.getElementById('ssec-' + tab).classList.add('active');
+  }
+
+  // ─── TAG PICKER (dentro del modal de agregar/editar) ─────────────────
+  function renderTagPicker() {
+    const cont = document.getElementById('tagPickerContainer');
+    if (!cont) return;
+    if (tagsConfig.length === 0) {
+      cont.innerHTML = '<span class="tag-picker-empty">No hay tags todavía. Creá algunos en ⚙️ Config.</span>';
+      return;
+    }
+    cont.innerHTML = tagsConfig.map(t => {
+      const sel = selectedTags.includes(t.id);
+      const style = sel ? `background:${t.color};border-color:${t.color};` : '';
+      return `<button type="button" class="tag-pick-btn ${sel ? 'selected' : ''}" style="${style}" onclick="toggleTagPick('${t.id}')">${t.nombre}</button>`;
+    }).join('');
+  }
+
+  function toggleTagPick(id) {
+    if (selectedTags.includes(id)) selectedTags = selectedTags.filter(t => t !== id);
+    else selectedTags.push(id);
+    renderTagPicker();
+  }
+
+
 
   async function saveToFirestore(item) {
     const ref = db.ref('users/' + currentUser.uid + '/mangas');
@@ -1121,6 +1370,16 @@
     const manhuaItems = filterItems('Manhua');
     const animeItems = filterItems('Anime');
 
+    function tagsHtml(item) {
+      if (!item.tags || item.tags.length === 0) return '';
+      const chips = item.tags.map(tid => {
+        const t = tagsConfig.find(t => t.id === tid);
+        if (!t) return '';
+        return `<span class="tag-chip" style="background:${t.color};color:#fff;">${t.nombre}</span>`;
+      }).join('');
+      return chips ? `<div class="tag-chips">${chips}</div>` : '';
+    }
+
     function makeCard(item, capLabel='Cap.') {
       return `
         <div class="card" draggable="true" data-id="${item.id}" data-tipo="${item.tipo}"
@@ -1129,7 +1388,7 @@
           ondragleave="onDragLeave(event)"
           ondrop="onDrop(event)"
           ondragend="onDragEnd(event)">
-          <span class="card-type">${item.tipo}</span>
+          <span class="card-type" style="background:${tipoColores[item.tipo] || 'rgba(0,0,0,0.75)'};">${item.tipo}</span>
           <div class="drag-handle" style="cursor:grab;">⠿</div>
           ${item.img ? `<img class="card-img" src="${item.img}" onerror="this.style.display='none'" alt="${item.nombre}">` : ''}
           <div class="card-img-placeholder" ${item.img ? 'style="display:none"' : ''}>📖</div>
@@ -1139,6 +1398,7 @@
               <span class="cap-badge">${capLabel} ${item.cap}</span>
               <span class="status-dot ${item.status}"></span>
             </div>
+            ${tagsHtml(item)}
             ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="display:block;margin-top:6px;font-size:0.7rem;color:#7c3aed;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 Leer aquí</a>` : ''}
           </div>
         </div>`;
@@ -1169,7 +1429,7 @@
     } else {
       gridAnime.innerHTML = animeItems.map(item => `
         <div class="card" data-id="${item.id}" data-tipo="${item.tipo}" onclick="openEdit('${item.id}')">
-          <span class="card-type">ANIME</span>
+          <span class="card-type" style="background:${tipoColores.Anime || 'rgba(0,0,0,0.75)'};">ANIME</span>
           <div class="card-drag-handle" title="Arrastrar para reordenar">⠿</div>
           ${item.img ? `<img class="card-img" src="${item.img}" onerror="this.style.display='none'" alt="${item.nombre}">` : ''}
           <div class="card-img-placeholder" ${item.img ? 'style="display:none"' : ''}>🎌</div>
@@ -1179,6 +1439,7 @@
               <span class="cap-badge">Ep. ${item.cap}</span>
               <span class="status-dot ${item.status}"></span>
             </div>
+            ${tagsHtml(item)}
             ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="display:block;margin-top:6px;font-size:0.7rem;color:#7c3aed;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 Ver aquí</a>` : ''}
           </div>
         </div>
@@ -1186,6 +1447,7 @@
     }
     // Inicializar touch + click en todas las cards
     setTimeout(initTouchAndClick, 50);
+    aplicarColoresTipos();
   }
 
   function openAnimeModal() {
@@ -1209,6 +1471,8 @@
     document.getElementById('btnDelete').style.display = 'none';
     document.getElementById('inputTipo').closest('.form-group').style.display = 'none';
     selectStatusByVal('emision');
+    selectedTags = [];
+    renderTagPicker();
     document.getElementById('modalOverlay').classList.add('open');
   }
 
@@ -1233,6 +1497,8 @@
     document.getElementById('imgLabel').textContent = 'Tocá para agregar portada desde tu galería';
     document.getElementById('btnDelete').style.display = 'none';
     selectStatusByVal('emision');
+    selectedTags = [];
+    renderTagPicker();
     document.getElementById('modalOverlay').classList.add('open');
   }
 
@@ -1259,6 +1525,8 @@
     }
     document.getElementById('btnDelete').style.display = 'block';
     selectStatusByVal(item.status);
+    selectedTags = Array.isArray(item.tags) ? [...item.tags] : [];
+    renderTagPicker();
     document.getElementById('modalOverlay').classList.add('open');
   }
 
@@ -1309,7 +1577,8 @@
       cap: parseInt(document.getElementById('inputCap').value) || 0,
       img: document.getElementById('inputImg').value,
       link: document.getElementById('inputLink').value.trim(),
-      status: selectedStatus
+      status: selectedStatus,
+      tags: selectedTags
     };
     try {
       await saveToFirestore(item);
@@ -2285,4 +2554,3 @@
 </script>
 </body>
 </html>
-
