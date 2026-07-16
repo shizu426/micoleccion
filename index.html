@@ -485,16 +485,16 @@
 
     <!-- CATEGORY TABS (Netflix style) -->
     <div class="category-tabs">
-      <button class="cat-tab active" id="tab-manga" onclick="switchCategory('manga')">📚 Manga <span class="cat-count" id="cnt-manga">0</span></button>
-      <button class="cat-tab" id="tab-manhwa" onclick="switchCategory('manhwa')">Manhwa <span class="cat-count" id="cnt-manhwa">0</span></button>
-      <button class="cat-tab" id="tab-manhua" onclick="switchCategory('manhua')">Manhua <span class="cat-count" id="cnt-manhua">0</span></button>
-      <button class="cat-tab" id="tab-anime" onclick="switchCategory('anime')">🎌 Anime <span class="cat-count" id="cnt-anime">0</span></button>
+      <button class="cat-tab active" id="tab-manga" onclick="switchCategory('manga')"><span class="cat-label" id="lbl-manga">📚 Manga</span> <span class="cat-count" id="cnt-manga">0</span></button>
+      <button class="cat-tab" id="tab-manhwa" onclick="switchCategory('manhwa')"><span class="cat-label" id="lbl-manhwa">Manhwa</span> <span class="cat-count" id="cnt-manhwa">0</span></button>
+      <button class="cat-tab" id="tab-manhua" onclick="switchCategory('manhua')"><span class="cat-label" id="lbl-manhua">Manhua</span> <span class="cat-count" id="cnt-manhua">0</span></button>
+      <button class="cat-tab" id="tab-anime" onclick="switchCategory('anime')"><span class="cat-label" id="lbl-anime">🎌 Anime</span> <span class="cat-count" id="cnt-anime">0</span></button>
     </div>
 
     <!-- MANGA SECTION -->
     <div class="category-section active" id="sec-manga">
       <div class="cat-filters">
-        <button class="cat-filter-btn active" onclick="setCatFilter('manga','todos',this)">Todos</button>
+        <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manga','todos',this)">Todos</button>
         <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manga','emision',this)">🟢 En emisión</button>
         <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manga','terminado',this)">🔵 Terminado</button>
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manga','porempezar',this)">🟡 Por empezar</button>
@@ -508,7 +508,7 @@
     <!-- MANHWA SECTION -->
     <div class="category-section" id="sec-manhwa">
       <div class="cat-filters">
-        <button class="cat-filter-btn active" onclick="setCatFilter('manhwa','todos',this)">Todos</button>
+        <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manhwa','todos',this)">Todos</button>
         <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manhwa','emision',this)">🟢 En emisión</button>
         <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manhwa','terminado',this)">🔵 Terminado</button>
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhwa','porempezar',this)">🟡 Por empezar</button>
@@ -522,7 +522,7 @@
     <!-- MANHUA SECTION -->
     <div class="category-section" id="sec-manhua">
       <div class="cat-filters">
-        <button class="cat-filter-btn active" onclick="setCatFilter('manhua','todos',this)">Todos</button>
+        <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manhua','todos',this)">Todos</button>
         <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manhua','emision',this)">🟢 En emisión</button>
         <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manhua','terminado',this)">🔵 Terminado</button>
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhua','porempezar',this)">🟡 Por empezar</button>
@@ -539,7 +539,7 @@
         <button onclick="deleteAllAnimes()" style="font-size:0.7rem;padding:4px 10px;background:rgba(233,69,96,0.15);border:1px solid #e94560;border-radius:8px;color:#e94560;cursor:pointer;font-family:Inter,sans-serif;">🗑️ Limpiar animes</button>
       </div>
       <div class="cat-filters">
-        <button class="cat-filter-btn active" onclick="setCatFilter('anime','todos',this)">Todos</button>
+        <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('anime','todos',this)">Todos</button>
         <button class="cat-filter-btn fs-emision" onclick="setCatFilter('anime','emision',this)">🟢 Viendo</button>
         <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('anime','terminado',this)">🔵 Completado</button>
         <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('anime','porempezar',this)">🟡 Por ver</button>
@@ -747,8 +747,10 @@
 
     <!-- CATEGORY TAB ORDER -->
     <div class="settings-section" id="ssec-orden">
-      <h3>ORDEN DE LAS PESTAÑAS</h3>
+      <h3>ORDEN Y NOMBRE DE LAS CATEGORÍAS</h3>
       <div id="tabOrderList"></div>
+      <h3 style="margin-top:18px;">ORDEN Y NOMBRE DE LOS ESTADOS</h3>
+      <div id="statusOrderList"></div>
     </div>
 
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
@@ -799,6 +801,14 @@
   let editingTagId = null;
   let tabOrder = ['manga', 'manhwa', 'manhua', 'anime'];
   const TAB_LABELS = { manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime' };
+  let catLabels = { manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime' };
+  let editingCatId = null;
+  let statusOrder = ['emision', 'terminado', 'porempezar', 'pendiente', 'abandonado', 'espera'];
+  let statusLabels = {
+    emision: '🟢 En emisión', terminado: '🔵 Terminado', porempezar: '🟡 Por empezar',
+    pendiente: '🟣 Pendiente', abandonado: '🔴 Abandonado', espera: '📺 En espera de nueva temporada'
+  };
+  let editingStatusId = null;
 
   function swatchRow(selectedColor, onClickAttr) {
     return `<div class="swatch-row">${PRESET_COLORS.map(c =>
@@ -943,11 +953,20 @@
       tagsConfig = Array.isArray(cfg.tags) ? cfg.tags : (cfg.tags ? Object.values(cfg.tags) : []);
       tipoColores = Object.assign({ Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e' }, cfg.tipoColores || {});
       if (Array.isArray(cfg.tabOrder) && cfg.tabOrder.length === 4) tabOrder = cfg.tabOrder;
+      catLabels = Object.assign({ manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime' }, cfg.catLabels || {});
+      if (Array.isArray(cfg.statusOrder) && cfg.statusOrder.length === 6) statusOrder = cfg.statusOrder;
+      statusLabels = Object.assign({
+        emision: '🟢 En emisión', terminado: '🔵 Terminado', porempezar: '🟡 Por empezar',
+        pendiente: '🟣 Pendiente', abandonado: '🔴 Abandonado', espera: '📺 En espera de nueva temporada'
+      }, cfg.statusLabels || {});
     } catch(e) {
       tagsConfig = [];
     }
     aplicarColoresTipos();
     aplicarTabOrder();
+    aplicarCatLabels();
+    aplicarStatusOrder();
+    aplicarStatusLabels();
   }
 
   async function guardarTabOrder() {
@@ -973,15 +992,127 @@
     });
   }
 
+  function aplicarCatLabels() {
+    Object.keys(catLabels).forEach(cat => {
+      const lbl = document.getElementById('lbl-' + cat);
+      if (lbl) lbl.textContent = catLabels[cat];
+    });
+  }
+
+  async function guardarCatLabel(cat, nombre) {
+    catLabels[cat] = nombre;
+    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/catLabels/' + cat).set(nombre);
+    aplicarCatLabels();
+  }
+
+  function toggleRenombrarCat(cat) {
+    editingCatId = editingCatId === cat ? null : cat;
+    renderTabOrderManager();
+  }
+
+  function confirmarRenombrarCat(cat) {
+    const inp = document.getElementById('renameCatInput_' + cat);
+    if (!inp) return;
+    const nuevo = inp.value.trim();
+    if (nuevo) guardarCatLabel(cat, nuevo);
+    editingCatId = null;
+    renderTabOrderManager();
+  }
+
   function renderTabOrderManager() {
     const cont = document.getElementById('tabOrderList');
     if (!cont) return;
     cont.innerHTML = tabOrder.map((cat, idx) => `
       <div class="tag-row">
-        <span class="tag-row-name">${TAB_LABELS[cat]}</span>
+        ${editingCatId === cat
+          ? `<input type="text" id="renameCatInput_${cat}" value="${catLabels[cat]}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarCat('${cat}')">`
+          : `<span class="tag-row-name">${catLabels[cat]}</span>`}
+        ${editingCatId === cat
+          ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarCat('${cat}')">✔️</button>`
+          : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarCat('${cat}')">✏️</button>`}
         <button class="tag-row-btn" title="Subir" onclick="moverTab('${cat}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
         <button class="tag-row-btn" title="Bajar" onclick="moverTab('${cat}', 1)" ${idx === tabOrder.length - 1 ? 'disabled' : ''}>↓</button>
       </div>`).join('');
+    if (editingCatId) {
+      const inp = document.getElementById('renameCatInput_' + editingCatId);
+      if (inp) { inp.focus(); inp.select(); }
+    }
+  }
+
+  // ─── ORDEN Y NOMBRES DE ESTADOS (En emisión, Terminado, etc.) ─────────
+  async function guardarStatusOrder() {
+    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/statusOrder').set(statusOrder);
+  }
+
+  function moverEstado(key, dir) {
+    const i = statusOrder.indexOf(key);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= statusOrder.length) return;
+    [statusOrder[i], statusOrder[j]] = [statusOrder[j], statusOrder[i]];
+    guardarStatusOrder();
+    aplicarStatusOrder();
+    renderStatusOrderManager();
+  }
+
+  function aplicarStatusOrder() {
+    ['manga', 'manhwa', 'manhua', 'anime'].forEach(cat => {
+      const cont = document.querySelector('#sec-' + cat + ' .cat-filters');
+      if (!cont) return;
+      const todosBtn = cont.querySelector('.cat-filter-todos');
+      statusOrder.forEach(st => {
+        const btn = cont.querySelector('.cat-filter-btn.fs-' + st);
+        if (btn) cont.appendChild(btn);
+      });
+      if (todosBtn) cont.insertBefore(todosBtn, cont.firstChild);
+    });
+  }
+
+  async function guardarStatusLabel(key, nombre) {
+    statusLabels[key] = nombre;
+    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/statusLabels/' + key).set(nombre);
+    aplicarStatusLabels();
+  }
+
+  function aplicarStatusLabels() {
+    Object.keys(statusLabels).forEach(st => {
+      document.querySelectorAll('.cat-filter-btn.fs-' + st).forEach(btn => { btn.textContent = statusLabels[st]; });
+      const pill = document.querySelector('.status-pill[data-val="' + st + '"]');
+      if (pill) pill.textContent = statusLabels[st];
+    });
+  }
+
+  function toggleRenombrarEstado(key) {
+    editingStatusId = editingStatusId === key ? null : key;
+    renderStatusOrderManager();
+  }
+
+  function confirmarRenombrarEstado(key) {
+    const inp = document.getElementById('renameEstadoInput_' + key);
+    if (!inp) return;
+    const nuevo = inp.value.trim();
+    if (nuevo) guardarStatusLabel(key, nuevo);
+    editingStatusId = null;
+    renderStatusOrderManager();
+  }
+
+  function renderStatusOrderManager() {
+    const cont = document.getElementById('statusOrderList');
+    if (!cont) return;
+    cont.innerHTML = statusOrder.map((key, idx) => `
+      <div class="tag-row">
+        ${editingStatusId === key
+          ? `<input type="text" id="renameEstadoInput_${key}" value="${statusLabels[key]}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarEstado('${key}')">`
+          : `<span class="tag-row-name">${statusLabels[key]}</span>`}
+        ${editingStatusId === key
+          ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarEstado('${key}')">✔️</button>`
+          : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarEstado('${key}')">✏️</button>`}
+        <button class="tag-row-btn" title="Subir" onclick="moverEstado('${key}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+        <button class="tag-row-btn" title="Bajar" onclick="moverEstado('${key}', 1)" ${idx === statusOrder.length - 1 ? 'disabled' : ''}>↓</button>
+      </div>`).join('');
+    if (editingStatusId) {
+      const inp = document.getElementById('renameEstadoInput_' + editingStatusId);
+      if (inp) { inp.focus(); inp.select(); }
+    }
   }
 
   async function guardarTagsConfig() {
@@ -1116,6 +1247,7 @@
     renderTagsManager();
     aplicarColoresTipos();
     renderTabOrderManager();
+    renderStatusOrderManager();
     const cont = document.getElementById('newTagSwatches');
     if (cont) cont.innerHTML = swatchRow(nuevoTagColor, 'elegirNuevoTagColor');
     document.getElementById('settingsPanel').classList.add('open');
