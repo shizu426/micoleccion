@@ -282,6 +282,10 @@
   .cat-filter-btn.fs-pendiente.active { border-color: var(--pendiente); background: rgba(168,85,247,0.1); color: var(--pendiente); }
   .cat-filter-btn.fs-abandonado.active { border-color: var(--abandonado); background: rgba(239,68,68,0.1); color: var(--abandonado); }
   .cat-filter-btn.fs-espera.active { border-color: var(--espera); background: rgba(6,182,212,0.1); color: var(--espera); }
+  .cat-filter-btn input.inline-rename-input {
+    background: transparent; border: none; outline: none; color: inherit;
+    font-size: 0.75rem; font-family: 'Inter', sans-serif; width: 100%;
+    min-width: 60px; padding: 0; text-align: center; }
 
   /* TAG CHIPS (on cards) */
   .tag-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
@@ -495,12 +499,12 @@
     <div class="category-section active" id="sec-manga">
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manga','todos',this)">Todos</button>
-        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manga','emision',this)">🟢 En emisión</button>
-        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manga','terminado',this)">🔵 Terminado</button>
-        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manga','porempezar',this)">🟡 Por empezar</button>
-        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manga','pendiente',this)">🟣 Pendiente</button>
-        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manga','abandonado',this)">🔴 Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manga','espera',this)">📺 En espera de nueva temporada</button>
+        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manga','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">🟢 En emisión</button>
+        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manga','terminado',this)" ondblclick="renombrarEstadoInline(event, 'terminado')">🔵 Terminado</button>
+        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manga','porempezar',this)" ondblclick="renombrarEstadoInline(event, 'porempezar')">🟡 Por empezar</button>
+        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manga','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">🟣 Pendiente</button>
+        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manga','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">🔴 Abandonado</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manga','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">📺 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="grid"></div>
     </div>
@@ -509,12 +513,12 @@
     <div class="category-section" id="sec-manhwa">
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manhwa','todos',this)">Todos</button>
-        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manhwa','emision',this)">🟢 En emisión</button>
-        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manhwa','terminado',this)">🔵 Terminado</button>
-        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhwa','porempezar',this)">🟡 Por empezar</button>
-        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhwa','pendiente',this)">🟣 Pendiente</button>
-        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhwa','abandonado',this)">🔴 Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhwa','espera',this)">📺 En espera de nueva temporada</button>
+        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manhwa','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">🟢 En emisión</button>
+        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manhwa','terminado',this)" ondblclick="renombrarEstadoInline(event, 'terminado')">🔵 Terminado</button>
+        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhwa','porempezar',this)" ondblclick="renombrarEstadoInline(event, 'porempezar')">🟡 Por empezar</button>
+        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhwa','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">🟣 Pendiente</button>
+        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhwa','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">🔴 Abandonado</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhwa','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">📺 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="gridManhwa"></div>
     </div>
@@ -523,12 +527,12 @@
     <div class="category-section" id="sec-manhua">
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manhua','todos',this)">Todos</button>
-        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manhua','emision',this)">🟢 En emisión</button>
-        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manhua','terminado',this)">🔵 Terminado</button>
-        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhua','porempezar',this)">🟡 Por empezar</button>
-        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhua','pendiente',this)">🟣 Pendiente</button>
-        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhua','abandonado',this)">🔴 Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhua','espera',this)">📺 En espera de nueva temporada</button>
+        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manhua','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">🟢 En emisión</button>
+        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manhua','terminado',this)" ondblclick="renombrarEstadoInline(event, 'terminado')">🔵 Terminado</button>
+        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhua','porempezar',this)" ondblclick="renombrarEstadoInline(event, 'porempezar')">🟡 Por empezar</button>
+        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhua','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">🟣 Pendiente</button>
+        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhua','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">🔴 Abandonado</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhua','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">📺 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="gridManhua"></div>
     </div>
@@ -540,12 +544,12 @@
       </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('anime','todos',this)">Todos</button>
-        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('anime','emision',this)">🟢 Viendo</button>
-        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('anime','terminado',this)">🔵 Completado</button>
-        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('anime','porempezar',this)">🟡 Por ver</button>
-        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('anime','pendiente',this)">🟣 Pendiente</button>
-        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('anime','abandonado',this)">🔴 Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('anime','espera',this)">📺 En espera de nueva temporada</button>
+        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('anime','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">🟢 Viendo</button>
+        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('anime','terminado',this)" ondblclick="renombrarEstadoInline(event, 'terminado')">🔵 Completado</button>
+        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('anime','porempezar',this)" ondblclick="renombrarEstadoInline(event, 'porempezar')">🟡 Por ver</button>
+        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('anime','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">🟣 Pendiente</button>
+        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('anime','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">🔴 Abandonado</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('anime','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">📺 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="gridAnime"></div>
     </div>
@@ -1079,6 +1083,42 @@
       const pill = document.querySelector('.status-pill[data-val="' + st + '"]');
       if (pill) pill.textContent = statusLabels[st];
     });
+  }
+
+  function renombrarEstadoInline(evt, key) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    const btn = evt.currentTarget;
+    if (btn.querySelector('input')) return; // ya está editando
+
+    const original = statusLabels[key];
+    btn.dataset.originalText = original;
+    btn.textContent = '';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'inline-rename-input';
+    input.value = original;
+    input.onclick = e => e.stopPropagation();
+    input.ondblclick = e => e.stopPropagation();
+    input.onkeydown = e => {
+      e.stopPropagation();
+      if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+      if (e.key === 'Escape') { input.dataset.cancel = '1'; input.blur(); }
+    };
+    input.onblur = () => {
+      const cancelado = input.dataset.cancel === '1';
+      const nuevo = input.value.trim();
+      if (!cancelado && nuevo && nuevo !== original) {
+        guardarStatusLabel(key, nuevo);
+      } else {
+        btn.textContent = original;
+      }
+    };
+
+    btn.appendChild(input);
+    input.focus();
+    input.select();
   }
 
   function toggleRenombrarEstado(key) {
