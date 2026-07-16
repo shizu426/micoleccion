@@ -706,7 +706,8 @@
     <h2>⚙️ Configuración</h2>
     <div class="settings-tabs">
       <button class="settings-tab active" id="stab-tags" onclick="switchSettingsTab('tags')">🏷️ Tags</button>
-      <button class="settings-tab" id="stab-tipos" onclick="switchSettingsTab('tipos')">🎨 Colores de tipos</button>
+      <button class="settings-tab" id="stab-tipos" onclick="switchSettingsTab('tipos')">🎨 Colores</button>
+      <button class="settings-tab" id="stab-orden" onclick="switchSettingsTab('orden')">📑 Orden</button>
     </div>
 
     <!-- TAGS MANAGER -->
@@ -742,6 +743,12 @@
         <span class="tipo-color-label">🎌 Anime</span>
       </div>
       <div id="swatchesAnime" style="margin:-4px 0 12px;"></div>
+    </div>
+
+    <!-- CATEGORY TAB ORDER -->
+    <div class="settings-section" id="ssec-orden">
+      <h3>ORDEN DE LAS PESTAÑAS</h3>
+      <div id="tabOrderList"></div>
     </div>
 
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
@@ -789,6 +796,9 @@
   const PRESET_COLORS = ['#e94560','#ec4899','#7c3aed','#a855f7','#3b82f6','#06b6d4','#22c55e','#84cc16','#f59e0b','#f97316','#ef4444','#64748b'];
   let nuevoTagColor = PRESET_COLORS[0];
   let swatchOpenTagId = null;
+  let editingTagId = null;
+  let tabOrder = ['manga', 'manhwa', 'manhua', 'anime'];
+  const TAB_LABELS = { manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime' };
 
   function swatchRow(selectedColor, onClickAttr) {
     return `<div class="swatch-row">${PRESET_COLORS.map(c =>
@@ -932,10 +942,46 @@
       const cfg = snap.val() || {};
       tagsConfig = Array.isArray(cfg.tags) ? cfg.tags : (cfg.tags ? Object.values(cfg.tags) : []);
       tipoColores = Object.assign({ Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e' }, cfg.tipoColores || {});
+      if (Array.isArray(cfg.tabOrder) && cfg.tabOrder.length === 4) tabOrder = cfg.tabOrder;
     } catch(e) {
       tagsConfig = [];
     }
     aplicarColoresTipos();
+    aplicarTabOrder();
+  }
+
+  async function guardarTabOrder() {
+    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/tabOrder').set(tabOrder);
+  }
+
+  function moverTab(cat, dir) {
+    const i = tabOrder.indexOf(cat);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= tabOrder.length) return;
+    [tabOrder[i], tabOrder[j]] = [tabOrder[j], tabOrder[i]];
+    guardarTabOrder();
+    aplicarTabOrder();
+    renderTabOrderManager();
+  }
+
+  function aplicarTabOrder() {
+    const cont = document.querySelector('.category-tabs');
+    if (!cont) return;
+    tabOrder.forEach(cat => {
+      const btn = document.getElementById('tab-' + cat);
+      if (btn) cont.appendChild(btn);
+    });
+  }
+
+  function renderTabOrderManager() {
+    const cont = document.getElementById('tabOrderList');
+    if (!cont) return;
+    cont.innerHTML = tabOrder.map((cat, idx) => `
+      <div class="tag-row">
+        <span class="tag-row-name">${TAB_LABELS[cat]}</span>
+        <button class="tag-row-btn" title="Subir" onclick="moverTab('${cat}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+        <button class="tag-row-btn" title="Bajar" onclick="moverTab('${cat}', 1)" ${idx === tabOrder.length - 1 ? 'disabled' : ''}>↓</button>
+      </div>`).join('');
   }
 
   async function guardarTagsConfig() {
@@ -988,6 +1034,7 @@
 
   function toggleTagColorEditor(id) {
     swatchOpenTagId = swatchOpenTagId === id ? null : id;
+    editingTagId = null;
     renderTagsManager();
   }
 
@@ -1001,7 +1048,12 @@
     cont.innerHTML = tagsConfig.map((t, idx) => `
       <div class="tag-row">
         <button type="button" class="swatch" style="background:${t.color};width:22px;height:22px;" title="Cambiar color" onclick="toggleTagColorEditor('${t.id}')"></button>
-        <span class="tag-row-name">${t.nombre}</span>
+        ${editingTagId === t.id
+          ? `<input type="text" id="renameInput_${t.id}" value="${t.nombre}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarTag('${t.id}')">`
+          : `<span class="tag-row-name">${t.nombre}</span>`}
+        ${editingTagId === t.id
+          ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarTag('${t.id}')">✔️</button>`
+          : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarTag('${t.id}')">✏️</button>`}
         <button class="tag-row-btn" title="Subir" onclick="moverTag('${t.id}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
         <button class="tag-row-btn" title="Bajar" onclick="moverTag('${t.id}', 1)" ${idx === tagsConfig.length - 1 ? 'disabled' : ''}>↓</button>
         <button class="tag-row-btn danger" title="Eliminar" onclick="eliminarTag('${t.id}')">🗑️</button>
@@ -1011,7 +1063,30 @@
     tagsConfig.forEach(t => {
       window['cambiarColorTag_' + t.id.replace(/[^a-zA-Z0-9]/g,'')] = (color) => cambiarColorTag(t.id, color);
     });
+    if (editingTagId) {
+      const inp = document.getElementById('renameInput_' + editingTagId);
+      if (inp) { inp.focus(); inp.select(); }
+    }
   }
+
+  function toggleRenombrarTag(id) {
+    editingTagId = editingTagId === id ? null : id;
+    swatchOpenTagId = null;
+    renderTagsManager();
+  }
+
+  function confirmarRenombrarTag(id) {
+    const inp = document.getElementById('renameInput_' + id);
+    if (!inp) return;
+    const nuevoNombre = inp.value.trim();
+    if (nuevoNombre) {
+      const t = tagsConfig.find(t => t.id === id);
+      if (t) { t.nombre = nuevoNombre; guardarTagsConfig(); }
+    }
+    editingTagId = null;
+    renderTagsManager();
+  }
+
 
   async function guardarColorTipo(tipo, color) {
     tipoColores[tipo] = color;
@@ -1040,6 +1115,7 @@
   function openSettings() {
     renderTagsManager();
     aplicarColoresTipos();
+    renderTabOrderManager();
     const cont = document.getElementById('newTagSwatches');
     if (cont) cont.innerHTML = swatchRow(nuevoTagColor, 'elegirNuevoTagColor');
     document.getElementById('settingsPanel').classList.add('open');
