@@ -1,5 +1,5 @@
 // sw.js — Service Worker para MiColección PWA
-const CACHE_NAME = 'micoleccion-v2';
+const CACHE_NAME = 'micoleccion-v3';
 const CACHE_URLS = [
   '/manifest.json',
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap',

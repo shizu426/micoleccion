@@ -2925,7 +2925,21 @@
   // PWA - Service Worker registration
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW error:', e));
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
+        // Forzar chequeo de versión nueva apenas carga la página
+        reg.update().catch(() => {});
+        // Volver a chequear cada 1 hora por si la pestaña queda abierta mucho tiempo
+        setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+      }).catch(e => console.warn('SW error:', e));
+
+      // Cuando el Service Worker nuevo toma el control, recargar la página sola
+      // (así el usuario nunca ve contenido viejo ni necesita forzar refresh)
+      let refrescando = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refrescando) return;
+        refrescando = true;
+        window.location.reload();
+      });
     });
   }
 
