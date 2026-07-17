@@ -480,10 +480,11 @@
   <div class="container">
     <button class="add-btn" onclick="openModal()">+ Agregar Manga / Manhwa / Manhua</button>
     <button class="add-btn" onclick="openAnimeModal()" style="margin-top:-6px;background:linear-gradient(135deg,#7c3aed,#e94560);">🎌 Agregar Anime</button>
+    <button class="add-btn" onclick="openNovelaModal()" style="margin-top:-6px;background:linear-gradient(135deg,#06b6d4,#3b82f6);">📖 Agregar Novela</button>
     <!-- statsRow oculto, solo se usan las pestañas -->
     <div style="display:none">
       <strong id="statManga"></strong><strong id="statManhwa"></strong>
-      <strong id="statManhua"></strong><strong id="statAnime"></strong>
+      <strong id="statManhua"></strong><strong id="statAnime"></strong><strong id="statNovela"></strong>
     </div>
     <input class="search-bar" type="text" placeholder="🔍 Buscar por nombre..." oninput="renderList()" id="searchInput">
 
@@ -493,6 +494,7 @@
       <button class="cat-tab" id="tab-manhwa" onclick="switchCategory('manhwa')"><span class="cat-label" id="lbl-manhwa">Manhwa</span> <span class="cat-count" id="cnt-manhwa">0</span></button>
       <button class="cat-tab" id="tab-manhua" onclick="switchCategory('manhua')"><span class="cat-label" id="lbl-manhua">Manhua</span> <span class="cat-count" id="cnt-manhua">0</span></button>
       <button class="cat-tab" id="tab-anime" onclick="switchCategory('anime')"><span class="cat-label" id="lbl-anime">🎌 Anime</span> <span class="cat-count" id="cnt-anime">0</span></button>
+      <button class="cat-tab" id="tab-novela" onclick="switchCategory('novela')"><span class="cat-label" id="lbl-novela">📖 Novela</span> <span class="cat-count" id="cnt-novela">0</span></button>
     </div>
 
     <!-- MANGA SECTION -->
@@ -552,6 +554,20 @@
         <button class="cat-filter-btn fs-espera" onclick="setCatFilter('anime','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">📺 En espera de nueva temporada</button>
       </div>
       <div class="grid" id="gridAnime"></div>
+    </div>
+
+    <!-- NOVELA SECTION -->
+    <div class="category-section" id="sec-novela">
+      <div class="cat-filters">
+        <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('novela','todos',this)">Todos</button>
+        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('novela','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">🟢 En emisión</button>
+        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('novela','terminado',this)" ondblclick="renombrarEstadoInline(event, 'terminado')">🔵 Terminado</button>
+        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('novela','porempezar',this)" ondblclick="renombrarEstadoInline(event, 'porempezar')">🟡 Por empezar</button>
+        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('novela','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">🟣 Pendiente</button>
+        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('novela','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">🔴 Abandonado</button>
+        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('novela','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">📺 En espera de nueva temporada</button>
+      </div>
+      <div class="grid" id="gridNovela"></div>
     </div>
   </div>
 </div>
@@ -625,6 +641,7 @@
         <option value="Manhwa">Manhwa</option>
         <option value="Manhua">Manhua</option>
         <option value="Anime">Anime</option>
+        <option value="Novela">Novela</option>
       </select>
     </div>
     <div class="form-group">
@@ -780,6 +797,10 @@
         <span class="tipo-color-label">🎌 Anime</span>
       </div>
       <div id="swatchesAnime" style="margin:-4px 0 12px;"></div>
+      <div class="tipo-color-row">
+        <span class="tipo-color-label">📖 Novela</span>
+      </div>
+      <div id="swatchesNovela" style="margin:-4px 0 12px;"></div>
     </div>
 
     <!-- CATEGORY TAB ORDER -->
@@ -828,17 +849,17 @@
   let selectedStatus = 'emision';
   let currentUser = null;
   let currentCategory = 'manga';
-  let catFilters = { manga: 'todos', manhwa: 'todos', manhua: 'todos', anime: 'todos' };
+  let catFilters = { manga: 'todos', manhwa: 'todos', manhua: 'todos', anime: 'todos', novela: 'todos' };
   let tagsConfig = []; // [{id, nombre, color}]
-  let tipoColores = { Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e' };
+  let tipoColores = { Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e', Novela: '#06b6d4' };
   let selectedTags = [];
   const PRESET_COLORS = ['#e94560','#ec4899','#7c3aed','#a855f7','#3b82f6','#06b6d4','#22c55e','#84cc16','#f59e0b','#f97316','#ef4444','#64748b'];
   let nuevoTagColor = PRESET_COLORS[0];
   let swatchOpenTagId = null;
   let editingTagId = null;
-  let tabOrder = ['manga', 'manhwa', 'manhua', 'anime'];
-  const TAB_LABELS = { manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime' };
-  let catLabels = { manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime' };
+  let tabOrder = ['manga', 'manhwa', 'manhua', 'anime', 'novela'];
+  const TAB_LABELS = { manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime', novela: '📖 Novela' };
+  let catLabels = { manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime', novela: '📖 Novela' };
   let editingCatId = null;
   let statusOrder = ['emision', 'terminado', 'porempezar', 'pendiente', 'abandonado', 'espera'];
   let statusLabels = {
@@ -1689,14 +1710,17 @@
     const totalManhwa = items.filter(i => i.tipo === 'Manhwa').length;
     const totalManhua = items.filter(i => i.tipo === 'Manhua').length;
     const totalAnime = items.filter(i => i.tipo === 'Anime').length;
+    const totalNovela = items.filter(i => i.tipo === 'Novela').length;
     document.getElementById('statManga').textContent = totalManga;
     document.getElementById('statManhwa').textContent = totalManhwa;
     document.getElementById('statManhua').textContent = totalManhua;
     document.getElementById('statAnime').textContent = totalAnime;
+    document.getElementById('statNovela').textContent = totalNovela;
     document.getElementById('cnt-manga').textContent = totalManga;
     document.getElementById('cnt-manhwa').textContent = totalManhwa;
     document.getElementById('cnt-manhua').textContent = totalManhua;
     document.getElementById('cnt-anime').textContent = totalAnime;
+    document.getElementById('cnt-novela').textContent = totalNovela;
 
     function filterItems(tipo) {
       const f = catFilters[tipo.toLowerCase()];
@@ -1712,6 +1736,7 @@
     const manhwaItems = filterItems('Manhwa');
     const manhuaItems = filterItems('Manhua');
     const animeItems = filterItems('Anime');
+    const novelaItems = filterItems('Novela');
 
     function tagsHtml(item) {
       if (!item.tags || item.tags.length === 0) return '';
@@ -1765,6 +1790,12 @@
       ? `<div class="empty"><div class="icon">📭</div><p>No hay manhuas.<br>¡Agregá tu primer manhua!</p></div>`
       : manhuaItems.map(i => makeCard(i, 'Cap.')).join('');
 
+    // Novela grid
+    const gridNovela = document.getElementById('gridNovela');
+    gridNovela.innerHTML = novelaItems.length === 0
+      ? `<div class="empty"><div class="icon">📖</div><p>No hay novelas.<br>¡Agregá tu primera novela!</p></div>`
+      : novelaItems.map(i => makeCard(i, 'Cap.')).join('');
+
     // Anime grid
     const gridAnime = document.getElementById('gridAnime');
     if (animeItems.length === 0) {
@@ -1806,6 +1837,32 @@
     document.getElementById('inputLink').value = '';
     document.getElementById('inputLink').placeholder = 'Ej: https://www.crunchyroll.com/...';
     document.getElementById('inputLink').closest('.form-group').querySelector('label').textContent = '🔗 Link donde lo estás viendo (opcional)';
+    document.getElementById('inputImg').value = '';
+    document.getElementById('inputImgFile').value = '';
+    document.getElementById('imgPreview').src = '';
+    document.getElementById('imgPreviewBox').style.display = 'none';
+    document.getElementById('imgLabel').textContent = 'Tocá para agregar portada desde tu galería';
+    document.getElementById('btnDelete').style.display = 'none';
+    document.getElementById('inputTipo').closest('.form-group').style.display = 'none';
+    selectStatusByVal('emision');
+    selectedTags = [];
+    renderTagPicker();
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function openNovelaModal() {
+    document.getElementById('searchCoverGroup').style.display = 'block';
+    editingId = null;
+    document.getElementById('modalTitle').textContent = 'Agregar Novela';
+    document.getElementById('inputNombre').value = '';
+    document.getElementById('inputNombre').placeholder = 'Ej: Solo Leveling, Omniscient Reader...';
+    document.getElementById('inputTipo').value = 'Novela';
+    document.getElementById('inputCap').value = '';
+    document.getElementById('inputCap').placeholder = 'Ej: 320';
+    document.getElementById('inputCap').closest('.form-group').querySelector('label').textContent = 'Capítulo actual';
+    document.getElementById('inputLink').value = '';
+    document.getElementById('inputLink').placeholder = 'Ej: https://novelarrow.com/novel/...';
+    document.getElementById('inputLink').closest('.form-group').querySelector('label').textContent = '🔗 Link donde la estás leyendo (opcional)';
     document.getElementById('inputImg').value = '';
     document.getElementById('inputImgFile').value = '';
     document.getElementById('imgPreview').src = '';
