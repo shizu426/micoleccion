@@ -568,6 +568,7 @@
     <div class="donate-tabs" style="display:flex;gap:8px;margin-bottom:18px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px;">
       <button class="donate-tab-btn active" data-tab="mp" onclick="setDonateTab('mp', this)" style="flex:1;padding:10px 6px;background:rgba(0,158,227,0.15);border:1px solid rgba(0,158,227,0.5);border-radius:10px;color:#009ee3;font-weight:700;font-size:0.8rem;cursor:pointer;">🇦🇷 Mercado Pago</button>
       <button class="donate-tab-btn" data-tab="kofi" onclick="setDonateTab('kofi', this)" style="flex:1;padding:10px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--muted);font-weight:700;font-size:0.8rem;cursor:pointer;">🌍 Ko-fi</button>
+      <button class="donate-tab-btn" data-tab="patreon" onclick="setDonateTab('patreon', this)" style="flex:1;padding:10px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--muted);font-weight:700;font-size:0.8rem;cursor:pointer;">🌍 Patreon</button>
     </div>
 
     <!-- PANEL: MERCADO PAGO -->
@@ -593,6 +594,17 @@
         <p style="font-size:0.75rem;color:var(--muted);">Vas a ser redirigido a ko-fi.com/lucas2004 para elegir el monto. ¡Gracias por apoyar el proyecto! 🙌</p>
       </div>
     </div>
+
+    <!-- PANEL: PATREON -->
+    <div class="donate-panel" id="donate-panel-patreon" style="display:none;">
+      <div class="donate-body">
+        <div class="mp-logo">🧡</div>
+        <p>También podés apoyar el proyecto desde Patreon, con pagos en cualquier país del mundo, de forma segura 🔒</p>
+        <a href="https://patreon.com/cw/Lucas6575" target="_blank" style="display:block;padding:16px 8px;background:rgba(255,66,77,0.15);border:1px solid rgba(255,66,77,0.4);border-radius:10px;color:#ff424d;font-weight:700;font-size:1rem;text-decoration:none;text-align:center;margin-bottom:16px;">🧡 Donar en Patreon</a>
+        <p style="font-size:0.75rem;color:var(--muted);">Vas a ser redirigido a patreon.com/cw/Lucas6575 para elegir el monto. ¡Gracias por apoyar el proyecto! 🙌</p>
+      </div>
+    </div>
+
 
   </div>
 </div>
@@ -1640,7 +1652,8 @@
     });
     btn.classList.add('active');
     const colors = { mp: ['rgba(0,158,227,0.15)', 'rgba(0,158,227,0.5)', '#009ee3'],
-                      kofi: ['rgba(255,90,95,0.15)', 'rgba(255,90,95,0.5)', '#ff5a5f'] };
+                      kofi: ['rgba(255,90,95,0.15)', 'rgba(255,90,95,0.5)', '#ff5a5f'],
+                      patreon: ['rgba(255,66,77,0.15)', 'rgba(255,66,77,0.5)', '#ff424d'] };
     const c = colors[tab] || colors.mp;
     btn.style.background = c[0];
     btn.style.borderColor = c[1];
