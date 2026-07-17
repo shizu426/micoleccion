@@ -472,7 +472,7 @@
   <div class="donate-banner" onclick="document.getElementById('donateModal').classList.add('open')" style="cursor:pointer;">
     <div class="donate-text">
       <strong>💙 ¿Te gusta la app?</strong>
-      Apoyanos con una donación voluntaria vía Mercado Pago
+      Apoyanos con una donación voluntaria
     </div>
     <span class="donate-btn">Donar 💙</span>
   </div>
@@ -563,16 +563,37 @@
       <h2>💙 Apoyá el proyecto</h2>
       <button class="donate-close" onclick="document.getElementById('donateModal').classList.remove('open')">✕</button>
     </div>
-    <div class="donate-body">
-      <div class="mp-logo">💙</div>
-      <p>Si la app te es útil, podés apoyar el desarrollo con una donación voluntaria. Tocá el monto y serás redirigido a Mercado Pago para completar el pago de forma segura 🔒</p>
-      <div style="display:flex;gap:10px;margin-bottom:16px;">
-        <a href="https://mpago.la/1sNK18U" target="_blank" style="flex:1;padding:16px 8px;background:rgba(0,158,227,0.15);border:1px solid rgba(0,158,227,0.4);border-radius:10px;color:#009ee3;font-weight:700;font-size:1rem;text-decoration:none;text-align:center;">$3.000</a>
-        <a href="https://mpago.la/1QJbjgp" target="_blank" style="flex:1;padding:16px 8px;background:rgba(0,158,227,0.15);border:1px solid rgba(0,158,227,0.4);border-radius:10px;color:#009ee3;font-weight:700;font-size:1rem;text-decoration:none;text-align:center;">$5.000</a>
-        <a href="https://mpago.la/1rdWhTH" target="_blank" style="flex:1;padding:16px 8px;background:rgba(0,158,227,0.15);border:1px solid rgba(0,158,227,0.4);border-radius:10px;color:#009ee3;font-weight:700;font-size:1rem;text-decoration:none;text-align:center;">$10.000</a>
-      </div>
-      <p style="font-size:0.75rem;color:var(--muted);">¡Gracias por apoyar el proyecto! 🙌</p>
+
+    <!-- PESTAÑAS DE PLATAFORMAS -->
+    <div class="donate-tabs" style="display:flex;gap:8px;margin-bottom:18px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px;">
+      <button class="donate-tab-btn active" data-tab="mp" onclick="setDonateTab('mp', this)" style="flex:1;padding:10px 6px;background:rgba(0,158,227,0.15);border:1px solid rgba(0,158,227,0.5);border-radius:10px;color:#009ee3;font-weight:700;font-size:0.8rem;cursor:pointer;">🇦🇷 Mercado Pago</button>
+      <button class="donate-tab-btn" data-tab="kofi" onclick="setDonateTab('kofi', this)" style="flex:1;padding:10px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--muted);font-weight:700;font-size:0.8rem;cursor:pointer;">🌍 Ko-fi</button>
     </div>
+
+    <!-- PANEL: MERCADO PAGO -->
+    <div class="donate-panel" id="donate-panel-mp">
+      <div class="donate-body">
+        <div class="mp-logo">💙</div>
+        <p>Si la app te es útil, podés apoyar el desarrollo con una donación voluntaria. Tocá el monto y serás redirigido a Mercado Pago para completar el pago de forma segura 🔒</p>
+        <div style="display:flex;gap:10px;margin-bottom:16px;">
+          <a href="https://mpago.la/1sNK18U" target="_blank" style="flex:1;padding:16px 8px;background:rgba(0,158,227,0.15);border:1px solid rgba(0,158,227,0.4);border-radius:10px;color:#009ee3;font-weight:700;font-size:1rem;text-decoration:none;text-align:center;">$3.000</a>
+          <a href="https://mpago.la/1QJbjgp" target="_blank" style="flex:1;padding:16px 8px;background:rgba(0,158,227,0.15);border:1px solid rgba(0,158,227,0.4);border-radius:10px;color:#009ee3;font-weight:700;font-size:1rem;text-decoration:none;text-align:center;">$5.000</a>
+          <a href="https://mpago.la/1rdWhTH" target="_blank" style="flex:1;padding:16px 8px;background:rgba(0,158,227,0.15);border:1px solid rgba(0,158,227,0.4);border-radius:10px;color:#009ee3;font-weight:700;font-size:1rem;text-decoration:none;text-align:center;">$10.000</a>
+        </div>
+        <p style="font-size:0.75rem;color:var(--muted);">Ideal si sos de Argentina 🇦🇷 ¡Gracias por apoyar el proyecto! 🙌</p>
+      </div>
+    </div>
+
+    <!-- PANEL: KO-FI -->
+    <div class="donate-panel" id="donate-panel-kofi" style="display:none;">
+      <div class="donate-body">
+        <div class="mp-logo">☕</div>
+        <p>¿Sos de otro país? Podés donar desde cualquier lugar del mundo con tarjeta a través de Ko-fi, de forma segura 🔒</p>
+        <a href="https://ko-fi.com/lucas2004" target="_blank" style="display:block;padding:16px 8px;background:rgba(255,90,95,0.15);border:1px solid rgba(255,90,95,0.4);border-radius:10px;color:#ff5a5f;font-weight:700;font-size:1rem;text-decoration:none;text-align:center;margin-bottom:16px;">☕ Donar en Ko-fi</a>
+        <p style="font-size:0.75rem;color:var(--muted);">Vas a ser redirigido a ko-fi.com/lucas2004 para elegir el monto. ¡Gracias por apoyar el proyecto! 🙌</p>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1608,6 +1629,26 @@
     if (tabEl) tabEl.classList.add('active');
     if (secEl) secEl.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function setDonateTab(tab, btn) {
+    document.querySelectorAll('.donate-tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.style.background = 'rgba(255,255,255,0.05)';
+      b.style.borderColor = 'rgba(255,255,255,0.15)';
+      b.style.color = 'var(--muted)';
+    });
+    btn.classList.add('active');
+    const colors = { mp: ['rgba(0,158,227,0.15)', 'rgba(0,158,227,0.5)', '#009ee3'],
+                      kofi: ['rgba(255,90,95,0.15)', 'rgba(255,90,95,0.5)', '#ff5a5f'] };
+    const c = colors[tab] || colors.mp;
+    btn.style.background = c[0];
+    btn.style.borderColor = c[1];
+    btn.style.color = c[2];
+
+    document.querySelectorAll('.donate-panel').forEach(p => p.style.display = 'none');
+    const panel = document.getElementById('donate-panel-' + tab);
+    if (panel) panel.style.display = 'block';
   }
 
   function setCatFilter(cat, filter, btn) {
