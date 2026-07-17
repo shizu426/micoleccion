@@ -1009,9 +1009,11 @@
       const snap = await db.ref('users/' + currentUser.uid + '/config').once('value');
       const cfg = snap.val() || {};
       tagsConfig = Array.isArray(cfg.tags) ? cfg.tags : (cfg.tags ? Object.values(cfg.tags) : []);
-      tipoColores = Object.assign({ Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e' }, cfg.tipoColores || {});
-      if (Array.isArray(cfg.tabOrder) && cfg.tabOrder.length === 4) tabOrder = cfg.tabOrder;
-      catLabels = Object.assign({ manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime' }, cfg.catLabels || {});
+      tipoColores = Object.assign({ Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e', Novela: '#06b6d4' }, cfg.tipoColores || {});
+      if (Array.isArray(cfg.tabOrder) && cfg.tabOrder.length >= 4) {
+        tabOrder = cfg.tabOrder.includes('novela') ? cfg.tabOrder : [...cfg.tabOrder, 'novela'];
+      }
+      catLabels = Object.assign({ manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime', novela: '📖 Novela' }, cfg.catLabels || {});
       if (Array.isArray(cfg.statusOrder) && cfg.statusOrder.length === 6) statusOrder = cfg.statusOrder;
       statusLabels = Object.assign({
         emision: '🟢 En emisión', terminado: '🔵 Terminado', porempezar: '🟡 Por empezar',
@@ -2141,6 +2143,13 @@
   function autoDetectarTipo(tipo) {
     const sel = document.getElementById('inputTipo');
     if (!sel) return;
+    // Si el campo Tipo está oculto, significa que está fijo (modal de Anime o Novela)
+    // y no debe ser sobreescrito por la detección automática.
+    const grupo = sel.closest('.form-group');
+    if (grupo && grupo.style.display === 'none') {
+      console.log('[AutoTipo] Ignorado (tipo bloqueado en este modal):', tipo);
+      return;
+    }
     const valido = ['Manga', 'Manhwa', 'Manhua', 'Anime'];
     if (valido.includes(tipo)) {
       sel.value = tipo;
