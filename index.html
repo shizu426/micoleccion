@@ -312,20 +312,20 @@
   .tag-pick-x { font-size: 0.85rem; font-weight: 700; line-height: 1; opacity: 0.85; }
   .tag-pick-btn.selected:hover .tag-pick-x { opacity: 1; }
 
-  /* BOTÓN "AGREGAR TAGS" — llamativo, con el color de acento de la app */
+  /* BOTÓN "AGREGAR TAGS" — llamativo, dorado */
   .btn-agregar-tags {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 9px 18px;
-    background: linear-gradient(135deg, var(--accent), #ff6b81);
+    background: linear-gradient(135deg, #ffc107, #ff9800);
     border: none; border-radius: 999px;
-    color: #fff; font-weight: 700; font-size: 0.8rem;
+    color: #1a1a1a; font-weight: 700; font-size: 0.8rem;
     font-family: 'Inter', sans-serif; cursor: pointer;
-    box-shadow: 0 3px 12px rgba(233, 69, 96, 0.4), 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 12px rgba(255, 152, 0, 0.35), 0 1px 3px rgba(0,0,0,0.2);
     transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
   }
   .btn-agregar-tags:hover {
     transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 6px 18px rgba(233, 69, 96, 0.55), 0 2px 6px rgba(0,0,0,0.25);
+    box-shadow: 0 6px 18px rgba(255, 152, 0, 0.5), 0 2px 6px rgba(0,0,0,0.25);
     filter: brightness(1.08);
   }
   .btn-agregar-tags:active { transform: translateY(0) scale(0.98); }
