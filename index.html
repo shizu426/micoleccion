@@ -22,6 +22,8 @@
     --accent: #e94560; --accent2: #7c3aed; --text: #f0f0f5; --muted: #7a7a99;
     --emision: #22c55e; --terminado: #3b82f6; --porempezar: #f59e0b;
     --pendiente: #a855f7; --abandonado: #ef4444; --espera: #06b6d4;
+    --emision-dot: #22c55e; --terminado-dot: #3b82f6; --porempezar-dot: #f59e0b;
+    --pendiente-dot: #a855f7; --abandonado-dot: #ef4444; --espera-dot: #06b6d4;
     --tipo-manga: #e94560; --tipo-manhwa: #7c3aed; --tipo-manhua: #f59e0b; --tipo-anime: #22c55e;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -126,12 +128,12 @@
   .card-meta { display: flex; justify-content: space-between; align-items: center; }
   .cap-badge { font-size: 0.7rem; color: var(--muted); background: var(--surface); padding: 2px 7px; border-radius: 6px; }
   .status-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .status-dot.emision { background: var(--emision); box-shadow: 0 0 6px var(--emision); }
-  .status-dot.terminado { background: var(--terminado); }
-  .status-dot.porempezar { background: var(--porempezar); }
-  .status-dot.pendiente { background: var(--pendiente); box-shadow: 0 0 6px var(--pendiente); }
-  .status-dot.abandonado { background: var(--abandonado); }
-  .status-dot.espera { background: var(--espera); box-shadow: 0 0 6px var(--espera); }
+  .status-dot.emision { background: var(--emision-dot); box-shadow: 0 0 6px var(--emision-dot); }
+  .status-dot.terminado { background: var(--terminado-dot); }
+  .status-dot.porempezar { background: var(--porempezar-dot); }
+  .status-dot.pendiente { background: var(--pendiente-dot); box-shadow: 0 0 6px var(--pendiente-dot); }
+  .status-dot.abandonado { background: var(--abandonado-dot); }
+  .status-dot.espera { background: var(--espera-dot); box-shadow: 0 0 6px var(--espera-dot); }
   .card-type { position: absolute; top: 8px; left: 8px; font-size: 0.6rem; font-weight: 700;
     padding: 2px 7px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
     background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); color: var(--text); }
@@ -1552,8 +1554,8 @@
   }
 
   function aplicarStatusColores() {
-    const VAR_MAP = { emision: '--emision', terminado: '--terminado', porempezar: '--porempezar',
-      pendiente: '--pendiente', abandonado: '--abandonado', espera: '--espera' };
+    const VAR_MAP = { emision: '--emision-dot', terminado: '--terminado-dot', porempezar: '--porempezar-dot',
+      pendiente: '--pendiente-dot', abandonado: '--abandonado-dot', espera: '--espera-dot' };
     Object.keys(VAR_MAP).forEach(key => {
       if (statusColores[key]) document.documentElement.style.setProperty(VAR_MAP[key], statusColores[key]);
     });
