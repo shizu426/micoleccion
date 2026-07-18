@@ -988,6 +988,14 @@
         }
       });
 
+      // Activar automáticamente la primera categoría que SÍ está compartida,
+      // para no depender de que el visitante haga click en la pestaña.
+      const primeraCatVisible = tabOrder.find(cat => compartirCategorias[cat] !== false);
+      if (primeraCatVisible) {
+        const btnPrimera = document.getElementById('tab-' + primeraCatVisible);
+        if (btnPrimera) switchCategory(primeraCatVisible);
+      }
+
       renderList();
     } catch (e) {
       console.error('[Compartido] Error cargando biblioteca:', e);
