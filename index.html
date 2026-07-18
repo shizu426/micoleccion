@@ -1853,7 +1853,7 @@
   }
 
   function openNovelaModal() {
-    document.getElementById('searchCoverGroup').style.display = 'block';
+    document.getElementById('searchCoverGroup').style.display = 'none';
     editingId = null;
     document.getElementById('modalTitle').textContent = 'Agregar Novela';
     document.getElementById('inputNombre').value = '';
@@ -1909,6 +1909,7 @@
     if (!item) return;
     editingId = id;
     document.getElementById('inputTipo').closest('.form-group').style.display = 'block';
+    document.getElementById('searchCoverGroup').style.display = (item.tipo === 'Novela') ? 'none' : 'block';
     document.getElementById('modalTitle').textContent = 'Editar';
     document.getElementById('inputNombre').value = item.nombre;
     document.getElementById('inputTipo').value = item.tipo;
