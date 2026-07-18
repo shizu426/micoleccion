@@ -530,6 +530,9 @@
 
     <!-- MANGA SECTION -->
     <div class="category-section active" id="sec-manga">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+        <button class="btn-agregar-tags" onclick="openTagsManager()">🏷️ Agregar Tags</button>
+      </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manga','todos',this)">Todos</button>
         <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manga','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">🟢 En emisión</button>
@@ -544,6 +547,9 @@
 
     <!-- MANHWA SECTION -->
     <div class="category-section" id="sec-manhwa">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+        <button class="btn-agregar-tags" onclick="openTagsManager()">🏷️ Agregar Tags</button>
+      </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manhwa','todos',this)">Todos</button>
         <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manhwa','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">🟢 En emisión</button>
@@ -558,6 +564,9 @@
 
     <!-- MANHUA SECTION -->
     <div class="category-section" id="sec-manhua">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+        <button class="btn-agregar-tags" onclick="openTagsManager()">🏷️ Agregar Tags</button>
+      </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manhua','todos',this)">Todos</button>
         <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manhua','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">🟢 En emisión</button>
@@ -573,7 +582,7 @@
     <!-- ANIME SECTION -->
     <div class="category-section" id="sec-anime">
       <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
-        <button class="btn-agregar-tags" onclick="openSettings(); switchSettingsTab('tags')">🏷️ Agregar Tags</button>
+        <button class="btn-agregar-tags" onclick="openTagsManager()">🏷️ Agregar Tags</button>
       </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('anime','todos',this)">Todos</button>
@@ -589,6 +598,9 @@
 
     <!-- NOVELA SECTION -->
     <div class="category-section" id="sec-novela">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+        <button class="btn-agregar-tags" onclick="openTagsManager()">🏷️ Agregar Tags</button>
+      </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('novela','todos',this)">Todos</button>
         <button class="cat-filter-btn fs-emision" onclick="setCatFilter('novela','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">🟢 En emisión</button>
@@ -790,56 +802,15 @@
   <div class="settings-box">
     <h2>⚙️ Configuración</h2>
     <div class="settings-tabs">
-      <button class="settings-tab active" id="stab-tags" onclick="switchSettingsTab('tags')">🏷️ Tags</button>
-      <button class="settings-tab" id="stab-tipos" onclick="switchSettingsTab('tipos')">🎨 Colores</button>
-      <button class="settings-tab" id="stab-orden" onclick="switchSettingsTab('orden')">📑 Orden</button>
+      <button class="settings-tab active" id="stab-orden" onclick="switchSettingsTab('orden')">📑 Orden</button>
       <button class="settings-tab" id="stab-compartir" onclick="switchSettingsTab('compartir')">🔗 Compartir</button>
     </div>
 
-    <!-- TAGS MANAGER -->
-    <div class="settings-section active" id="ssec-tags">
-      <h3>TUS TAGS (Manga y Anime)</h3>
-      <div id="tagsManagerList"></div>
-      <div style="margin-top:14px;">
-        <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:8px;">Elegí un color para el nuevo tag:</label>
-        <div id="newTagSwatches"></div>
-      </div>
-      <div class="add-tag-form">
-        <input type="text" id="newTagName" placeholder="Nombre del tag (ej: Acción)">
-        <button onclick="agregarTag()">+ Agregar</button>
-      </div>
-    </div>
-
-    <!-- TYPE COLORS -->
-    <div class="settings-section" id="ssec-tipos">
-      <h3>COLOR POR TIPO</h3>
-      <div class="tipo-color-row">
-        <span class="tipo-color-label">📚 Manga</span>
-      </div>
-      <div id="swatchesManga" style="margin:-4px 0 12px;"></div>
-      <div class="tipo-color-row">
-        <span class="tipo-color-label">Manhwa</span>
-      </div>
-      <div id="swatchesManhwa" style="margin:-4px 0 12px;"></div>
-      <div class="tipo-color-row">
-        <span class="tipo-color-label">Manhua</span>
-      </div>
-      <div id="swatchesManhua" style="margin:-4px 0 12px;"></div>
-      <div class="tipo-color-row">
-        <span class="tipo-color-label">🎌 Anime</span>
-      </div>
-      <div id="swatchesAnime" style="margin:-4px 0 12px;"></div>
-      <div class="tipo-color-row">
-        <span class="tipo-color-label">📖 Novela</span>
-      </div>
-      <div id="swatchesNovela" style="margin:-4px 0 12px;"></div>
-    </div>
-
     <!-- CATEGORY TAB ORDER -->
-    <div class="settings-section" id="ssec-orden">
-      <h3>ORDEN Y NOMBRE DE LAS CATEGORÍAS</h3>
+    <div class="settings-section active" id="ssec-orden">
+      <h3>ORDEN, NOMBRE Y COLOR DE LAS CATEGORÍAS</h3>
       <div id="tabOrderList"></div>
-      <h3 style="margin-top:18px;">ORDEN Y NOMBRE DE LOS ESTADOS</h3>
+      <h3 style="margin-top:18px;">ORDEN, NOMBRE Y COLOR DE LOS ESTADOS</h3>
       <div id="statusOrderList"></div>
     </div>
 
@@ -860,10 +831,28 @@
       <p id="compartirCopiadoMsg" style="font-size:0.75rem;color:#22c55e;margin-top:8px;display:none;">✅ Link copiado al portapapeles</p>
     </div>
 
-
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
   </div>
 </div>
+
+<!-- TAGS MANAGER PANEL (standalone, abierto desde "Agregar Tags") -->
+<div id="tagsManagerPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:16px;">
+  <div class="settings-box">
+    <h2>🏷️ Tus Tags</h2>
+    <div style="font-size:0.75rem;color:var(--muted);text-align:center;margin-bottom:14px;">Para Manga, Manhwa, Manhua, Anime y Novela</div>
+    <div id="tagsManagerList"></div>
+    <div style="margin-top:14px;">
+      <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:8px;">Elegí un color para el nuevo tag:</label>
+      <div id="newTagSwatches"></div>
+    </div>
+    <div class="add-tag-form">
+      <input type="text" id="newTagName" placeholder="Nombre del tag (ej: Acción)">
+      <button onclick="agregarTag()">+ Agregar</button>
+    </div>
+    <button class="settings-close" onclick="closeTagsManager()">Cerrar</button>
+  </div>
+</div>
+
 
 
 <script>
@@ -920,6 +909,13 @@
     pendiente: '🟣 Pendiente', abandonado: '🔴 Abandonado', espera: '📺 En espera de nueva temporada'
   };
   let editingStatusId = null;
+  let statusColores = {
+    emision: '#22c55e', terminado: '#3b82f6', porempezar: '#f59e0b',
+    pendiente: '#a855f7', abandonado: '#ef4444', espera: '#06b6d4'
+  };
+  const CAT_KEY_TO_TIPO = { manga: 'Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: 'Anime', novela: 'Novela' };
+  let swatchOpenCatId = null;
+  let swatchOpenStatusId = null;
 
   function swatchRow(selectedColor, onClickAttr) {
     return `<div class="swatch-row">${PRESET_COLORS.map(c =>
@@ -1189,6 +1185,10 @@
         emision: '🟢 En emisión', terminado: '🔵 Terminado', porempezar: '🟡 Por empezar',
         pendiente: '🟣 Pendiente', abandonado: '🔴 Abandonado', espera: '📺 En espera de nueva temporada'
       }, cfg.statusLabels || {});
+      statusColores = Object.assign({
+        emision: '#22c55e', terminado: '#3b82f6', porempezar: '#f59e0b',
+        pendiente: '#a855f7', abandonado: '#ef4444', espera: '#06b6d4'
+      }, cfg.statusColores || {});
     } catch(e) {
       tagsConfig = [];
     }
@@ -1197,6 +1197,7 @@
     aplicarCatLabels();
     aplicarStatusOrder();
     aplicarStatusLabels();
+    aplicarStatusColores();
   }
 
   async function guardarTabOrder() {
@@ -1237,6 +1238,7 @@
 
   function toggleRenombrarCat(cat) {
     editingCatId = editingCatId === cat ? null : cat;
+    swatchOpenCatId = null;
     renderTabOrderManager();
   }
 
@@ -1252,21 +1254,36 @@
   function renderTabOrderManager() {
     const cont = document.getElementById('tabOrderList');
     if (!cont) return;
-    cont.innerHTML = tabOrder.map((cat, idx) => `
+    cont.innerHTML = tabOrder.map((cat, idx) => {
+      const tipoKey = CAT_KEY_TO_TIPO[cat];
+      const color = tipoColores[tipoKey] || '#888';
+      return `
       <div class="tag-row">
         ${editingCatId === cat
           ? `<input type="text" id="renameCatInput_${cat}" value="${catLabels[cat]}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarCat('${cat}')">`
           : `<span class="tag-row-name">${catLabels[cat]}</span>`}
+        <button type="button" class="swatch" style="background:${color};width:22px;height:22px;" title="Cambiar color" onclick="toggleCatColorEditor('${cat}')"></button>
         ${editingCatId === cat
           ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarCat('${cat}')">✔️</button>`
           : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarCat('${cat}')">✏️</button>`}
         <button class="tag-row-btn" title="Subir" onclick="moverTab('${cat}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
         <button class="tag-row-btn" title="Bajar" onclick="moverTab('${cat}', 1)" ${idx === tabOrder.length - 1 ? 'disabled' : ''}>↓</button>
-      </div>`).join('');
+      </div>
+      ${swatchOpenCatId === cat ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(color, `guardarColorCat_${cat}`)}</div>` : ''}`;
+    }).join('');
     if (editingCatId) {
       const inp = document.getElementById('renameCatInput_' + editingCatId);
       if (inp) { inp.focus(); inp.select(); }
     }
+    tabOrder.forEach(cat => {
+      window['guardarColorCat_' + cat] = (color) => { guardarColorTipo(CAT_KEY_TO_TIPO[cat], color); swatchOpenCatId = null; renderTabOrderManager(); };
+    });
+  }
+
+  function toggleCatColorEditor(cat) {
+    swatchOpenCatId = swatchOpenCatId === cat ? null : cat;
+    editingCatId = null;
+    renderTabOrderManager();
   }
 
   // ─── ORDEN Y NOMBRES DE ESTADOS (En emisión, Terminado, etc.) ─────────
@@ -1349,6 +1366,7 @@
 
   function toggleRenombrarEstado(key) {
     editingStatusId = editingStatusId === key ? null : key;
+    swatchOpenStatusId = null;
     renderStatusOrderManager();
   }
 
@@ -1364,22 +1382,38 @@
   function renderStatusOrderManager() {
     const cont = document.getElementById('statusOrderList');
     if (!cont) return;
-    cont.innerHTML = statusOrder.map((key, idx) => `
+    cont.innerHTML = statusOrder.map((key, idx) => {
+      const color = statusColores[key] || '#888';
+      return `
       <div class="tag-row">
         ${editingStatusId === key
           ? `<input type="text" id="renameEstadoInput_${key}" value="${statusLabels[key]}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarEstado('${key}')">`
           : `<span class="tag-row-name">${statusLabels[key]}</span>`}
+        <button type="button" class="swatch" style="background:${color};width:22px;height:22px;" title="Cambiar color" onclick="toggleStatusColorEditor('${key}')"></button>
         ${editingStatusId === key
           ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarEstado('${key}')">✔️</button>`
           : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarEstado('${key}')">✏️</button>`}
         <button class="tag-row-btn" title="Subir" onclick="moverEstado('${key}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
         <button class="tag-row-btn" title="Bajar" onclick="moverEstado('${key}', 1)" ${idx === statusOrder.length - 1 ? 'disabled' : ''}>↓</button>
-      </div>`).join('');
+      </div>
+      ${swatchOpenStatusId === key ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(color, `guardarColorEstado_${key}`)}</div>` : ''}`;
+    }).join('');
     if (editingStatusId) {
       const inp = document.getElementById('renameEstadoInput_' + editingStatusId);
       if (inp) { inp.focus(); inp.select(); }
     }
+    statusOrder.forEach(key => {
+      window['guardarColorEstado_' + key] = (color) => { guardarColorEstado(key, color); swatchOpenStatusId = null; renderStatusOrderManager(); };
+    });
   }
+
+  function toggleStatusColorEditor(key) {
+    swatchOpenStatusId = swatchOpenStatusId === key ? null : key;
+    editingStatusId = null;
+    renderStatusOrderManager();
+  }
+
+
 
   async function guardarTagsConfig() {
     if (!currentUser) return;
@@ -1497,26 +1531,27 @@
       const tipoKey = tipo === 'ANIME' ? 'Anime' : tipo;
       if (tipoColores[tipoKey]) el.style.background = tipoColores[tipoKey];
     });
-    const map = { Manga: 'swatchesManga', Manhwa: 'swatchesManhwa', Manhua: 'swatchesManhua', Anime: 'swatchesAnime' };
-    Object.keys(map).forEach(tipo => {
-      const cont = document.getElementById(map[tipo]);
-      if (cont) cont.innerHTML = swatchRow(tipoColores[tipo], 'guardarColorTipo_' + tipo);
+  }
+
+  async function guardarColorEstado(key, color) {
+    statusColores[key] = color;
+    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/statusColores/' + key).set(color);
+    aplicarStatusColores();
+  }
+
+  function aplicarStatusColores() {
+    const VAR_MAP = { emision: '--emision', terminado: '--terminado', porempezar: '--porempezar',
+      pendiente: '--pendiente', abandonado: '--abandonado', espera: '--espera' };
+    Object.keys(VAR_MAP).forEach(key => {
+      if (statusColores[key]) document.documentElement.style.setProperty(VAR_MAP[key], statusColores[key]);
     });
   }
-  // Handlers puente para cada tipo (para no romper comillas dentro de onclick)
-  function guardarColorTipo_Manga(color) { guardarColorTipo('Manga', color); }
-  function guardarColorTipo_Manhwa(color) { guardarColorTipo('Manhwa', color); }
-  function guardarColorTipo_Manhua(color) { guardarColorTipo('Manhua', color); }
-  function guardarColorTipo_Anime(color) { guardarColorTipo('Anime', color); }
 
   function openSettings() {
-    renderTagsManager();
     aplicarColoresTipos();
     renderTabOrderManager();
     renderStatusOrderManager();
     renderCompartirSettings();
-    const cont = document.getElementById('newTagSwatches');
-    if (cont) cont.innerHTML = swatchRow(nuevoTagColor, 'elegirNuevoTagColor');
     document.getElementById('settingsPanel').classList.add('open');
   }
   function closeSettings() { document.getElementById('settingsPanel').classList.remove('open'); }
@@ -1525,6 +1560,18 @@
     document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
     document.getElementById('stab-' + tab).classList.add('active');
     document.getElementById('ssec-' + tab).classList.add('active');
+  }
+
+  // ─── PANEL INDEPENDIENTE DE TAGS (botón "Agregar Tags") ───────────────
+  function openTagsManager() {
+    renderTagsManager();
+    const cont = document.getElementById('newTagSwatches');
+    if (cont) cont.innerHTML = swatchRow(nuevoTagColor, 'elegirNuevoTagColor');
+    document.getElementById('tagsManagerPanel').style.display = 'flex';
+  }
+  function closeTagsManager() {
+    document.getElementById('tagsManagerPanel').style.display = 'none';
+    renderList(); // refrescar chips de tags en las cards por si se editó algo
   }
 
   // ─── TAG PICKER (dentro del modal de agregar/editar) ─────────────────
