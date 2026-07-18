@@ -1232,8 +1232,11 @@
 
   async function guardarCatLabel(cat, nombre) {
     catLabels[cat] = nombre;
-    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/catLabels/' + cat).set(nombre);
     aplicarCatLabels();
+    if (currentUser) {
+      try { await db.ref('users/' + currentUser.uid + '/config/catLabels/' + cat).set(nombre); }
+      catch(e) { console.warn('[Config] No se pudo guardar catLabel:', e.message); }
+    }
   }
 
   function toggleRenombrarCat(cat) {
@@ -1316,8 +1319,11 @@
 
   async function guardarStatusLabel(key, nombre) {
     statusLabels[key] = nombre;
-    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/statusLabels/' + key).set(nombre);
     aplicarStatusLabels();
+    if (currentUser) {
+      try { await db.ref('users/' + currentUser.uid + '/config/statusLabels/' + key).set(nombre); }
+      catch(e) { console.warn('[Config] No se pudo guardar statusLabel:', e.message); }
+    }
   }
 
   function aplicarStatusLabels() {
@@ -1521,8 +1527,11 @@
 
   async function guardarColorTipo(tipo, color) {
     tipoColores[tipo] = color;
-    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/tipoColores/' + tipo).set(color);
     aplicarColoresTipos();
+    if (currentUser) {
+      try { await db.ref('users/' + currentUser.uid + '/config/tipoColores/' + tipo).set(color); }
+      catch(e) { console.warn('[Config] No se pudo guardar colorTipo:', e.message); }
+    }
   }
 
   function aplicarColoresTipos() {
@@ -1535,8 +1544,11 @@
 
   async function guardarColorEstado(key, color) {
     statusColores[key] = color;
-    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/statusColores/' + key).set(color);
     aplicarStatusColores();
+    if (currentUser) {
+      try { await db.ref('users/' + currentUser.uid + '/config/statusColores/' + key).set(color); }
+      catch(e) { console.warn('[Config] No se pudo guardar colorEstado:', e.message); }
+    }
   }
 
   function aplicarStatusColores() {
