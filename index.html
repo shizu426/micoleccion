@@ -2273,6 +2273,7 @@
     const tipoSelect = document.getElementById('inputTipo') || document.getElementById('inputTipoAnime');
     const tipoVal = tipoSelect ? tipoSelect.value : 'Manga';
     const esAnime = tipoVal === 'Anime';
+    const esNovela = tipoVal === 'Novela';
 
     // ── NUEVO: Si hay URL de lectura, extraer portada directamente ──
     const linkInput = document.getElementById('inputLink')?.value?.trim();
@@ -2295,6 +2296,36 @@
         console.warn('[fetchCover] Error extrayendo desde URL:', e.message);
       }
       msg.textContent = '⚠️ No se pudo extraer del link, buscando en APIs...';
+    }
+
+    // ── Para NOVELAS: no tiene sentido buscar por nombre en APIs de manga/anime.
+    // Vamos directo al campo de "pegá el link", que es el método confiable acá. ──
+    if (esNovela) {
+      msg.textContent = 'Pegá el link de la novela para extraer la portada';
+      document.getElementById('csSub').textContent = 'Pegá el link de la página de la novela';
+      document.getElementById('coverOptionsGrid').innerHTML = `
+        <div class="cs-loading" style="grid-column:1/-1;text-align:center;padding:16px 0;">
+          <div style="font-size:2rem;margin-bottom:8px;">📖</div>
+          <strong style="color:var(--text);">Buscá la portada por link</strong><br>
+          <small style="color:var(--muted);display:block;margin:8px 0 12px;">
+            Pegá el link de la página de tu novela (NovelArrow, TuNovelaLigera, FanMTL, WebNovel, Kakao Page, etc.)<br>
+            y vamos a intentar extraer la portada automáticamente.
+          </small>
+          <input id="manualUrlInput" type="text" placeholder="https://novelarrow.com/novel/... o https://webnovel.com/book/..."
+            value="${linkInput || ''}"
+            style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--accent2);background:var(--surface);color:var(--text);font-size:0.82rem;box-sizing:border-box;margin-bottom:10px;">
+          <button onclick="extraerDesdeUrlManual()"
+            style="background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:0.9rem;width:100%;">
+            🔗 Extraer portada desde ese link
+          </button>
+          <div id="manualUrlPreview" style="margin-top:12px;display:none;">
+            <img id="manualUrlImg" style="width:100px;border-radius:8px;display:block;margin:0 auto;" src="" onerror="this.parentElement.style.display='none'">
+            <small id="manualUrlStatus" style="color:var(--muted);display:block;margin-top:6px;"></small>
+          </div>
+        </div>`;
+      document.getElementById('csBtnUsar').disabled = true;
+      document.getElementById('coverSelectorOverlay').classList.add('open');
+      return;
     }
 
     portadaSeleccionada = null;
