@@ -2004,7 +2004,7 @@
   // ============================================================
   // COVER SELECTOR - selector visual de portadas
   // ============================================================
-  const NETLIFY_FN = 'https://velvety-squirrel-d023bf.netlify.app/.netlify/functions/buscar-portada';
+  const NETLIFY_FN = 'https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/buscar-portada';
   let portadaSeleccionada = null;
 
   // Cache de portadas en Firebase
@@ -2137,7 +2137,7 @@
     return [...v].filter(x => x && x.length > 1);
   }
 
-  const PORTADA_URL_FN = 'https://velvety-squirrel-d023bf.netlify.app/.netlify/functions/portada-desde-url';
+  const PORTADA_URL_FN = 'https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/portada-desde-url';
 
   // Auto-detectar tipo y setear el select si el usuario no eligió manualmente
   function autoDetectarTipo(tipo) {
@@ -2206,7 +2206,7 @@
 
   async function buscarEnOlympusBrowser(nombre) {
     try {
-      const proxyUrl = 'https://velvety-squirrel-d023bf.netlify.app/.netlify/functions/olympus-proxy?nombre=' + encodeURIComponent(nombre);
+      const proxyUrl = 'https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/olympus-proxy?nombre=' + encodeURIComponent(nombre);
       const r = await fetch(proxyUrl);
       if (!r.ok) return [];
       const data = await r.json();
@@ -2222,7 +2222,7 @@
       for (const s of data.series.slice(0,2)) {
         if (!s.slug) continue;
         try {
-          const res = await fetch('https://velvety-squirrel-d023bf.netlify.app/.netlify/functions/portada-desde-url?url=' + encodeURIComponent('https://olympusxyz.com/series/' + s.slug));
+          const res = await fetch('https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/portada-desde-url?url=' + encodeURIComponent('https://olympusxyz.com/series/' + s.slug));
           const d = await res.json();
           if (d.imagen) fallbackImgs.push(d.imagen);
         } catch(e) {}
@@ -2238,7 +2238,7 @@
     if (btn) btn.textContent = '⏳ Buscando portada...';
     const status = document.getElementById('manualUrlStatus');
     try {
-      const res = await fetch('https://velvety-squirrel-d023bf.netlify.app/.netlify/functions/portada-desde-url?url=' + encodeURIComponent(url));
+      const res = await fetch('https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/portada-desde-url?url=' + encodeURIComponent(url));
       const data = await res.json();
       if (data.imagen) {
         document.getElementById('manualUrlImg').src = data.imagen;
@@ -2298,15 +2298,43 @@
       msg.textContent = '⚠️ No se pudo extraer del link, buscando en APIs...';
     }
 
-    // ── Para NOVELAS: no tiene sentido buscar por nombre en APIs de manga/anime.
-    // Vamos directo al campo de "pegá el link", que es el método confiable acá. ──
+    // ── Para NOVELAS: buscar en AniList/Kitsu/Jikan filtrando SOLO formato Novela ──
     if (esNovela) {
-      msg.textContent = 'Pegá el link de la novela para extraer la portada';
+      msg.textContent = '🔍 Buscando portadas de novelas...';
+      document.getElementById('csSub').textContent = `Buscando portadas de novela para "${nombre}"...`;
+      document.getElementById('coverOptionsGrid').innerHTML = '<div class="cs-loading">🔍 Buscando en fuentes de novelas...</div>';
+      document.getElementById('coverSelectorOverlay').classList.add('open');
+
+      let opcionesNovela = [];
+      try {
+        const variantesN = generarVariantes(nombre);
+        const promesasN = variantesN.flatMap(v => [
+          buscarAniListNovelaMultiple(v).catch(() => []),
+          buscarKitsuNovelaMultiple(v).catch(() => []),
+          buscarJikanNovelaMultiple(v).catch(() => []),
+        ]);
+        const resultadosN = await Promise.all(promesasN);
+        const setN = new Set();
+        for (const imgs of resultadosN) {
+          for (const img of imgs) {
+            if (!setN.has(img) && opcionesNovela.length < 6) { setN.add(img); opcionesNovela.push(img); }
+          }
+        }
+      } catch(e) { console.warn('[Novela] Error buscando portadas:', e.message); }
+
+      if (opcionesNovela.length) {
+        document.getElementById('csSub').textContent = `${opcionesNovela.length} portada${opcionesNovela.length > 1 ? 's' : ''} de novela encontrada${opcionesNovela.length > 1 ? 's' : ''} — elegí una:`;
+        renderCoverOptions(opcionesNovela);
+        msg.textContent = `✅ ${opcionesNovela.length} portada(s) de novela encontradas`;
+        return;
+      }
+      // Si no encontramos nada específico de novela, recién ahí pedimos el link manual
+      msg.textContent = 'No se encontró por nombre — pegá el link de la novela';
       document.getElementById('csSub').textContent = 'Pegá el link de la página de la novela';
       document.getElementById('coverOptionsGrid').innerHTML = `
         <div class="cs-loading" style="grid-column:1/-1;text-align:center;padding:16px 0;">
           <div style="font-size:2rem;margin-bottom:8px;">📖</div>
-          <strong style="color:var(--text);">Buscá la portada por link</strong><br>
+          <strong style="color:var(--text);">No encontramos portada por nombre</strong><br>
           <small style="color:var(--muted);display:block;margin:8px 0 12px;">
             Pegá el link de la página de tu novela (NovelArrow, TuNovelaLigera, FanMTL, WebNovel, Kakao Page, etc.)<br>
             y vamos a intentar extraer la portada automáticamente.
@@ -2324,7 +2352,6 @@
           </div>
         </div>`;
       document.getElementById('csBtnUsar').disabled = true;
-      document.getElementById('coverSelectorOverlay').classList.add('open');
       return;
     }
 
@@ -2345,7 +2372,7 @@
     }
     // Consultar Olympus en paralelo para detectar tipo (sin esperar resultado)
     if (!esAnime && !linkActual) {
-      const proxyUrl = 'https://velvety-squirrel-d023bf.netlify.app/.netlify/functions/olympus-proxy?nombre=' + encodeURIComponent(nombre);
+      const proxyUrl = 'https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/olympus-proxy?nombre=' + encodeURIComponent(nombre);
       fetch(proxyUrl).then(r => r.json()).then(data => {
         if (data.series?.length > 0 && data.series[0].score >= 0.5) {
           console.log('[AutoTipo] Olympus encontró:', data.series[0].name, '→ Manhwa');
@@ -2551,6 +2578,50 @@
   // Detectar si el nombre incluye referencia a temporada
   function tieneTemporada(q) {
     return /\b(season|temporada|parte|part|cour|2nd|3rd|4th|ii|iii|iv|s2|s3|s4|\d+°?\s*temp)\b/i.test(q);
+  }
+
+  async function buscarAniListNovelaMultiple(q) {
+    const gql = { query: `query($s:String){Page(perPage:10){media(search:$s,type:MANGA,format:NOVEL,sort:SEARCH_MATCH){title{romaji english native}coverImage{extraLarge large}}}}`, variables: { s: q } };
+    const r = await fetch('https://graphql.anilist.co', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(gql) });
+    const d = await r.json();
+    const media = d?.data?.Page?.media || [];
+    return media
+      .map(m => {
+        const titulos = [m.title?.romaji, m.title?.english, m.title?.native].filter(Boolean);
+        const maxSim = Math.max(...titulos.map(t => simAnime(q, t)));
+        return { img: m.coverImage?.extraLarge || m.coverImage?.large, sim: maxSim };
+      })
+      .filter(x => x.img && x.sim > 0.2)
+      .sort((a, b) => b.sim - a.sim)
+      .map(x => x.img);
+  }
+
+  async function buscarKitsuNovelaMultiple(q) {
+    const r = await fetch(`https://kitsu.io/api/edge/manga?filter[text]=${encodeURIComponent(q)}&filter[subtype]=novel&page[limit]=8`, { headers: { 'Accept': 'application/vnd.api+json' } });
+    const d = await r.json();
+    return (d?.data || [])
+      .map(i => {
+        const titulo = i.attributes?.canonicalTitle || i.attributes?.titles?.en || '';
+        return { img: i.attributes?.posterImage?.large || i.attributes?.posterImage?.medium, sim: simAnime(q, titulo) };
+      })
+      .filter(x => x.img && x.sim > 0.2)
+      .sort((a, b) => b.sim - a.sim)
+      .map(x => x.img);
+  }
+
+  async function buscarJikanNovelaMultiple(q) {
+    await new Promise(r => setTimeout(r, 400));
+    const r = await fetch(`https://api.jikan.moe/v4/manga?q=${encodeURIComponent(q)}&limit=10`);
+    const d = await r.json();
+    return (d?.data || [])
+      .filter(i => /novel/i.test(i.type || ''))
+      .map(i => {
+        const titulo = i.title || i.title_english || '';
+        return { img: i.images?.jpg?.large_image_url, sim: simAnime(q, titulo) };
+      })
+      .filter(x => x.img && x.sim > 0.2)
+      .sort((a, b) => b.sim - a.sim)
+      .map(x => x.img);
   }
 
   async function buscarAniListMultiple(q, tipo = 'MANGA') {
