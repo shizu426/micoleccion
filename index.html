@@ -762,6 +762,7 @@
       <button class="settings-tab active" id="stab-tags" onclick="switchSettingsTab('tags')">🏷️ Tags</button>
       <button class="settings-tab" id="stab-tipos" onclick="switchSettingsTab('tipos')">🎨 Colores</button>
       <button class="settings-tab" id="stab-orden" onclick="switchSettingsTab('orden')">📑 Orden</button>
+      <button class="settings-tab" id="stab-compartir" onclick="switchSettingsTab('compartir')">🔗 Compartir</button>
     </div>
 
     <!-- TAGS MANAGER -->
@@ -811,6 +812,24 @@
       <div id="statusOrderList"></div>
     </div>
 
+    <!-- COMPARTIR -->
+    <div class="settings-section" id="ssec-compartir">
+      <h3>COMPARTIR TU BIBLIOTECA</h3>
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">
+        Generá un link de solo lectura para que cualquiera pueda ver tu colección, sin necesitar cuenta.
+        Elegí qué categorías incluir:
+      </p>
+      <div id="compartirCategoriasList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;"></div>
+      <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:6px;">Tu link para compartir:</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="compartirLinkInput" readonly onclick="this.select()"
+          style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.75rem;min-width:0;">
+        <button onclick="copiarLinkCompartir()" style="padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap;font-family:Inter,sans-serif;">📋 Copiar</button>
+      </div>
+      <p id="compartirCopiadoMsg" style="font-size:0.75rem;color:#22c55e;margin-top:8px;display:none;">✅ Link copiado al portapapeles</p>
+    </div>
+
+
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
   </div>
 </div>
@@ -850,6 +869,9 @@
   let currentUser = null;
   let currentCategory = 'manga';
   let catFilters = { manga: 'todos', manhwa: 'todos', manhua: 'todos', anime: 'todos', novela: 'todos' };
+  let compartirCategorias = { manga: true, manhwa: true, manhua: true, anime: true, novela: true };
+  let modoCompartido = false;
+  const uidCompartido = new URLSearchParams(location.search).get('ver');
   let tagsConfig = []; // [{id, nombre, color}]
   let tipoColores = { Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e', Novela: '#06b6d4' };
   let selectedTags = [];
@@ -875,6 +897,9 @@
   }
 
   // AUTH - detecta sesión existente automáticamente (incluso al reabrir el navegador)
+  if (uidCompartido) {
+    iniciarModoCompartido(uidCompartido);
+  } else {
   auth.onAuthStateChanged(user => {
     // Ocultar pantalla de carga siempre
     const loading = document.getElementById('sessionLoading');
@@ -905,6 +930,108 @@
       document.getElementById('appScreen').style.display = 'none';
     }
   });
+  }
+
+  async function iniciarModoCompartido(uid) {
+    modoCompartido = true;
+    document.getElementById('sessionLoading')?.remove();
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display = 'block';
+
+    // Ocultar todo lo que sea de edición / cuenta propia
+    document.querySelectorAll('.add-btn').forEach(b => b.style.display = 'none');
+    document.querySelector('.donate-banner')?.style.setProperty('display', 'none');
+    document.getElementById('btnAdminSecret')?.style.setProperty('display', 'none');
+    document.getElementById('btnInstalarApp')?.style.setProperty('display', 'none');
+    document.querySelector('.settings-btn-header')?.style.setProperty('display', 'none');
+    document.querySelector('.logout-btn')?.style.setProperty('display', 'none');
+    const emailDisplay = document.getElementById('userEmailDisplay');
+    if (emailDisplay) emailDisplay.textContent = '👁️ Modo solo lectura';
+
+    // Banner explicando que es una vista compartida
+    const header = document.querySelector('header');
+    if (header) {
+      const banner = document.createElement('div');
+      banner.style.cssText = 'background:rgba(124,58,237,0.15);border-bottom:1px solid rgba(124,58,237,0.3);padding:10px 20px;text-align:center;font-size:0.85rem;color:var(--text);';
+      banner.innerHTML = '📚 Estás viendo una biblioteca compartida · <a href="' + location.origin + location.pathname + '" style="color:#7c3aed;font-weight:600;">Crear la mía →</a>';
+      header.insertAdjacentElement('afterend', banner);
+    }
+
+    try {
+      const [snapItems, snapConfig] = await Promise.all([
+        db.ref('users/' + uid + '/mangas').once('value'),
+        db.ref('users/' + uid + '/config').once('value'),
+      ]);
+      const data = snapItems.val() || {};
+      items = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+      const cfg = snapConfig.val() || {};
+
+      compartirCategorias = Object.assign({ manga: true, manhwa: true, manhua: true, anime: true, novela: true }, cfg.compartirCategorias || {});
+      catLabels = Object.assign({ manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime', novela: '📖 Novela' }, cfg.catLabels || {});
+      tipoColores = Object.assign({ Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e', Novela: '#06b6d4' }, cfg.tipoColores || {});
+      if (Array.isArray(cfg.tabOrder)) tabOrder = cfg.tabOrder.includes('novela') ? cfg.tabOrder : [...cfg.tabOrder, 'novela'];
+      if (cfg.statusLabels) statusLabels = Object.assign({}, statusLabels, cfg.statusLabels);
+      if (cfg.tags) tagsConfig = cfg.tags;
+
+      aplicarCatLabels();
+      aplicarColoresTipos();
+      aplicarTabOrder();
+
+      // Ocultar pestañas de categorías que el dueño decidió no compartir
+      Object.keys(compartirCategorias).forEach(cat => {
+        if (compartirCategorias[cat] === false) {
+          document.getElementById('tab-' + cat)?.remove();
+          document.getElementById('sec-' + cat)?.remove();
+        }
+      });
+
+      renderList();
+    } catch (e) {
+      console.error('[Compartido] Error cargando biblioteca:', e);
+      document.getElementById('appScreen').innerHTML =
+        '<div style="padding:60px 20px;text-align:center;color:var(--muted);max-width:400px;margin:0 auto;">' +
+        '<div style="font-size:3rem;margin-bottom:12px;">😕</div>' +
+        '<h2 style="color:var(--text);margin-bottom:8px;">No se pudo cargar esta biblioteca</h2>' +
+        '<p>El link puede ser incorrecto, o esta persona todavía no habilitó su colección para compartir.</p>' +
+        '<a href="' + location.origin + location.pathname + '" style="display:inline-block;margin-top:16px;color:#7c3aed;font-weight:600;">← Volver a MiColección</a>' +
+        '</div>';
+    }
+  }
+
+  function renderCompartirSettings() {
+    const cont = document.getElementById('compartirCategoriasList');
+    if (!cont || !currentUser) return;
+    const nombres = { manga: catLabels.manga || '📚 Manga', manhwa: catLabels.manhwa || 'Manhwa', manhua: catLabels.manhua || 'Manhua', anime: catLabels.anime || '🎌 Anime', novela: catLabels.novela || '📖 Novela' };
+    cont.innerHTML = Object.keys(nombres).map(cat => `
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.88rem;color:var(--text);">
+        <input type="checkbox" ${compartirCategorias[cat] !== false ? 'checked' : ''} onchange="toggleCompartirCategoria('${cat}', this.checked)" style="width:16px;height:16px;cursor:pointer;">
+        ${nombres[cat]}
+      </label>`).join('');
+    const link = location.origin + location.pathname + '?ver=' + currentUser.uid;
+    const input = document.getElementById('compartirLinkInput');
+    if (input) input.value = link;
+  }
+
+  async function toggleCompartirCategoria(cat, val) {
+    compartirCategorias[cat] = val;
+    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/compartirCategorias/' + cat).set(val);
+  }
+
+  function copiarLinkCompartir() {
+    const input = document.getElementById('compartirLinkInput');
+    if (!input) return;
+    input.select();
+    const mostrarOk = () => {
+      const msg = document.getElementById('compartirCopiadoMsg');
+      if (msg) { msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2500); }
+    };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(input.value).then(mostrarOk).catch(() => document.execCommand('copy') && mostrarOk());
+    } else {
+      document.execCommand('copy');
+      mostrarOk();
+    }
+  }
 
   function switchTab(tab) {
     document.querySelectorAll('.auth-tab').forEach((t, i) => {
@@ -1014,6 +1141,7 @@
         tabOrder = cfg.tabOrder.includes('novela') ? cfg.tabOrder : [...cfg.tabOrder, 'novela'];
       }
       catLabels = Object.assign({ manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime', novela: '📖 Novela' }, cfg.catLabels || {});
+      compartirCategorias = Object.assign({ manga: true, manhwa: true, manhua: true, anime: true, novela: true }, cfg.compartirCategorias || {});
       if (Array.isArray(cfg.statusOrder) && cfg.statusOrder.length === 6) statusOrder = cfg.statusOrder;
       statusLabels = Object.assign({
         emision: '🟢 En emisión', terminado: '🔵 Terminado', porempezar: '🟡 Por empezar',
@@ -1344,6 +1472,7 @@
     aplicarColoresTipos();
     renderTabOrderManager();
     renderStatusOrderManager();
+    renderCompartirSettings();
     const cont = document.getElementById('newTagSwatches');
     if (cont) cont.innerHTML = swatchRow(nuevoTagColor, 'elegirNuevoTagColor');
     document.getElementById('settingsPanel').classList.add('open');
@@ -1905,6 +2034,7 @@
   }
 
   function openEdit(id) {
+    if (modoCompartido) return;
     const item = items.find(i => i.id === id);
     if (!item) return;
     editingId = id;
