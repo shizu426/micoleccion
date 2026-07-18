@@ -287,17 +287,48 @@
     font-size: 0.75rem; font-family: 'Inter', sans-serif; width: 100%;
     min-width: 60px; padding: 0; text-align: center; }
 
-  /* TAG CHIPS (on cards) */
-  .tag-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-  .tag-chip { font-size: 0.62rem; padding: 2px 7px; border-radius: 20px; font-weight: 600;
-    white-space: nowrap; }
+  /* TAG CHIPS (on cards) — píldoras modernas */
+  .tag-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+  .tag-chip {
+    font-size: 0.63rem; padding: 3px 10px; border-radius: 999px; font-weight: 700;
+    white-space: nowrap; letter-spacing: 0.2px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
 
-  /* TAG PICKER (in add/edit modal) */
-  .tag-picker { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag-pick-btn { padding: 6px 12px; border-radius: 20px; border: 1.5px solid var(--border);
+  /* TAG PICKER (in add/edit modal) — píldoras con X para quitar */
+  .tag-picker { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag-pick-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 999px; border: 1.5px solid var(--border);
     background: var(--surface); color: var(--muted); font-size: 0.78rem; cursor: pointer;
-    font-family: 'Inter', sans-serif; transition: all 0.15s; }
-  .tag-pick-btn.selected { color: #fff; border-color: transparent; }
+    font-family: 'Inter', sans-serif; font-weight: 600;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease; }
+  .tag-pick-btn:hover { transform: translateY(-1px); border-color: var(--accent); }
+  .tag-pick-btn.selected {
+    color: #fff; border-color: transparent;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2); }
+  .tag-pick-btn.selected:hover { filter: brightness(1.1); }
+  .tag-pick-x { font-size: 0.85rem; font-weight: 700; line-height: 1; opacity: 0.85; }
+  .tag-pick-btn.selected:hover .tag-pick-x { opacity: 1; }
+
+  /* BOTÓN "AGREGAR TAGS" — llamativo, dorado, con animación */
+  .btn-agregar-tags {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    border: none; border-radius: 999px;
+    color: #1a1a1a; font-weight: 700; font-size: 0.8rem;
+    font-family: 'Inter', sans-serif; cursor: pointer;
+    box-shadow: 0 3px 12px rgba(255, 152, 0, 0.35), 0 1px 3px rgba(0,0,0,0.2);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  }
+  .btn-agregar-tags:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 18px rgba(255, 152, 0, 0.5), 0 2px 6px rgba(0,0,0,0.25);
+    filter: brightness(1.08);
+  }
+  .btn-agregar-tags:active { transform: translateY(0) scale(0.98); }
   .tag-picker-empty { color: var(--muted); font-size: 0.78rem; }
 
   /* SETTINGS PANEL */
@@ -542,7 +573,7 @@
     <!-- ANIME SECTION -->
     <div class="category-section" id="sec-anime">
       <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
-        <button onclick="deleteAllAnimes()" style="font-size:0.7rem;padding:4px 10px;background:rgba(233,69,96,0.15);border:1px solid #e94560;border-radius:8px;color:#e94560;cursor:pointer;font-family:Inter,sans-serif;">🗑️ Limpiar animes</button>
+        <button class="btn-agregar-tags" onclick="openSettings(); switchSettingsTab('tags')">🏷️ Agregar Tags</button>
       </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('anime','todos',this)">Todos</button>
@@ -1507,7 +1538,7 @@
     cont.innerHTML = tagsConfig.map(t => {
       const sel = selectedTags.includes(t.id);
       const style = sel ? `background:${t.color};border-color:${t.color};` : '';
-      return `<button type="button" class="tag-pick-btn ${sel ? 'selected' : ''}" style="${style}" onclick="toggleTagPick('${t.id}')">${t.nombre}</button>`;
+      return `<button type="button" class="tag-pick-btn ${sel ? 'selected' : ''}" style="${style}" onclick="toggleTagPick('${t.id}')">${t.nombre}${sel ? '<span class="tag-pick-x">×</span>' : ''}</button>`;
     }).join('');
   }
 
