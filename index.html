@@ -977,11 +977,14 @@
       aplicarColoresTipos();
       aplicarTabOrder();
 
-      // Ocultar pestañas de categorías que el dueño decidió no compartir
+      // Ocultar (no borrar) pestañas de categorías que el dueño decidió no compartir,
+      // así los contadores internos de renderList() no se rompen al no encontrarlas.
       Object.keys(compartirCategorias).forEach(cat => {
         if (compartirCategorias[cat] === false) {
-          document.getElementById('tab-' + cat)?.remove();
-          document.getElementById('sec-' + cat)?.remove();
+          const tab = document.getElementById('tab-' + cat);
+          const sec = document.getElementById('sec-' + cat);
+          if (tab) tab.style.display = 'none';
+          if (sec) sec.style.display = 'none';
         }
       });
 
