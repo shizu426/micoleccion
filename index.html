@@ -556,6 +556,7 @@
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manga','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manga','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">Abandonado</button>
         <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manga','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">En espera de nueva temporada</button>
+        <span id="tagFilters-manga" style="display:contents"></span>
       </div>
       <div class="grid" id="grid"></div>
     </div>
@@ -573,6 +574,7 @@
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhwa','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhwa','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">Abandonado</button>
         <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhwa','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">En espera de nueva temporada</button>
+        <span id="tagFilters-manhwa" style="display:contents"></span>
       </div>
       <div class="grid" id="gridManhwa"></div>
     </div>
@@ -590,6 +592,7 @@
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhua','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhua','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">Abandonado</button>
         <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhua','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">En espera de nueva temporada</button>
+        <span id="tagFilters-manhua" style="display:contents"></span>
       </div>
       <div class="grid" id="gridManhua"></div>
     </div>
@@ -607,6 +610,7 @@
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('anime','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('anime','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">Abandonado</button>
         <button class="cat-filter-btn fs-espera" onclick="setCatFilter('anime','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">En espera de nueva temporada</button>
+        <span id="tagFilters-anime" style="display:contents"></span>
       </div>
       <div class="grid" id="gridAnime"></div>
     </div>
@@ -624,6 +628,7 @@
         <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('novela','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">Pendiente</button>
         <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('novela','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">Abandonado</button>
         <button class="cat-filter-btn fs-espera" onclick="setCatFilter('novela','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">En espera de nueva temporada</button>
+        <span id="tagFilters-novela" style="display:contents"></span>
       </div>
       <div class="grid" id="gridNovela"></div>
     </div>
@@ -901,6 +906,7 @@
   let currentUser = null;
   let currentCategory = 'manga';
   let catFilters = { manga: 'todos', manhwa: 'todos', manhua: 'todos', anime: 'todos', novela: 'todos' };
+  let catTagFilter = { manga: null, manhwa: null, manhua: null, anime: null, novela: null };
   let compartirCategorias = { manga: true, manhwa: true, manhua: true, anime: true, novela: true };
   let modoCompartido = false;
   const uidCompartido = new URLSearchParams(location.search).get('ver');
@@ -1220,6 +1226,7 @@
     aplicarStatusOrder();
     aplicarStatusLabels();
     aplicarStatusColores();
+    renderTagFilterButtons();
   }
 
   async function guardarTabOrder() {
@@ -1460,6 +1467,7 @@
     nombreInput.value = '';
     guardarTagsConfig();
     renderTagsManager();
+    renderTagFilterButtons();
   }
 
   function elegirNuevoTagColor(color) {
@@ -1473,6 +1481,9 @@
     tagsConfig = tagsConfig.filter(t => t.id !== id);
     guardarTagsConfig();
     renderTagsManager();
+    Object.keys(catTagFilter).forEach(cat => { if (catTagFilter[cat] === id) catTagFilter[cat] = null; });
+    renderTagFilterButtons();
+    renderList();
   }
 
   function moverTag(id, dir) {
@@ -1482,6 +1493,7 @@
     [tagsConfig[i], tagsConfig[j]] = [tagsConfig[j], tagsConfig[i]];
     guardarTagsConfig();
     renderTagsManager();
+    renderTagFilterButtons();
   }
 
   function cambiarColorTag(id, color) {
@@ -1489,6 +1501,7 @@
     if (t) { t.color = color; guardarTagsConfig(); }
     swatchOpenTagId = null;
     renderTagsManager();
+    renderTagFilterButtons();
   }
 
   function toggleTagColorEditor(id) {
@@ -1544,6 +1557,7 @@
     }
     editingTagId = null;
     renderTagsManager();
+    renderTagFilterButtons();
   }
 
 
@@ -1963,6 +1977,27 @@
     renderList();
   }
 
+  function setCatTagFilter(cat, tagId, btn) {
+    // Toggle: si ya estaba activo ese tag, lo desactiva (vuelve a mostrar todos los tags)
+    catTagFilter[cat] = catTagFilter[cat] === tagId ? null : tagId;
+    const cont = document.getElementById('tagFilters-' + cat);
+    if (cont) cont.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.remove('active'));
+    if (catTagFilter[cat] && btn) btn.classList.add('active');
+    renderList();
+  }
+
+  function renderTagFilterButtons() {
+    ['manga', 'manhwa', 'manhua', 'anime', 'novela'].forEach(cat => {
+      const cont = document.getElementById('tagFilters-' + cat);
+      if (!cont) return;
+      cont.innerHTML = tagsConfig.map(t => {
+        const activo = catTagFilter[cat] === t.id;
+        const textColor = contrastTextColor(t.color);
+        return `<button type="button" class="cat-filter-btn ${activo ? 'active' : ''}" style="background:${t.color};border-color:${t.color};color:${textColor};" onclick="setCatTagFilter('${cat}','${t.id}',this)">${t.nombre}</button>`;
+      }).join('');
+    });
+  }
+
   function setFilter(f, btn) {
     currentFilter = f;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -1991,12 +2026,15 @@
     document.getElementById('cnt-novela').textContent = totalNovela;
 
     function filterItems(tipo) {
-      const f = catFilters[tipo.toLowerCase()];
+      const catKey = tipo.toLowerCase();
+      const f = catFilters[catKey];
+      const tagFiltro = catTagFilter[catKey];
       return items.filter(i => {
         const matchTipo = i.tipo === tipo;
         const matchFilter = f === 'todos' || i.status === f;
+        const matchTag = !tagFiltro || (Array.isArray(i.tags) && i.tags.includes(tagFiltro));
         const matchSearch = i.nombre.toLowerCase().includes(q);
-        return matchTipo && matchFilter && matchSearch;
+        return matchTipo && matchFilter && matchTag && matchSearch;
       });
     }
 
