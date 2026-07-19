@@ -1414,26 +1414,72 @@
     renderStatusOrderManager();
   }
 
+  function buildOrdenCombinado() {
+    return [
+      ...statusOrder.map(key => ({ type: 'status', key })),
+      ...tagsConfig.map(t => ({ type: 'tag', id: t.id }))
+    ];
+  }
+
+  function moverCombinado(index, dir) {
+    const combinado = buildOrdenCombinado();
+    const j = index + dir;
+    if (j < 0 || j >= combinado.length) return;
+    [combinado[index], combinado[j]] = [combinado[j], combinado[index]];
+    // Separar de nuevo en los dos arreglos que se persisten
+    statusOrder = combinado.filter(e => e.type === 'status').map(e => e.key);
+    const nuevoOrdenTagIds = combinado.filter(e => e.type === 'tag').map(e => e.id);
+    tagsConfig = nuevoOrdenTagIds.map(id => tagsConfig.find(t => t.id === id));
+    guardarStatusOrder();
+    guardarTagsConfig();
+    aplicarStatusOrder();
+    renderStatusOrderManager();
+    renderTagFilterButtons();
+  }
+
   function renderStatusOrderManager() {
     const cont = document.getElementById('statusOrderList');
     if (!cont) return;
-    const statusRowsHtml = statusOrder.map((key, idx) => {
-      const color = statusColores[key] || '#888';
-      return `
-      <div class="tag-row">
-        ${editingStatusId === key
-          ? `<input type="text" id="renameEstadoInput_${key}" value="${statusLabels[key]}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarEstado('${key}')">`
-          : `<span class="tag-row-name">${statusLabels[key]}</span>`}
-        <button type="button" class="swatch" style="background:${color};width:22px;height:22px;" title="Cambiar color" onclick="toggleStatusColorEditor('${key}')"></button>
-        ${editingStatusId === key
-          ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarEstado('${key}')">✔️</button>`
-          : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarEstado('${key}')">✏️</button>`}
-        <button class="tag-row-btn" title="Subir" onclick="moverEstado('${key}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
-        <button class="tag-row-btn" title="Bajar" onclick="moverEstado('${key}', 1)" ${idx === statusOrder.length - 1 ? 'disabled' : ''}>↓</button>
-      </div>
-      ${swatchOpenStatusId === key ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(color, `guardarColorEstado_${key}`)}</div>` : ''}`;
+    const combinado = buildOrdenCombinado();
+    if (combinado.length === 0) {
+      cont.innerHTML = '<p class="tag-picker-empty">No hay estados ni tags todavía.</p>';
+      return;
+    }
+    cont.innerHTML = combinado.map((entry, idx) => {
+      if (entry.type === 'status') {
+        const key = entry.key;
+        const color = statusColores[key] || '#888';
+        return `
+        <div class="tag-row">
+          ${editingStatusId === key
+            ? `<input type="text" id="renameEstadoInput_${key}" value="${statusLabels[key]}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarEstado('${key}')">`
+            : `<span class="tag-row-name">${statusLabels[key]}</span>`}
+          <button type="button" class="swatch" style="background:${color};width:22px;height:22px;" title="Cambiar color" onclick="toggleStatusColorEditor('${key}')"></button>
+          ${editingStatusId === key
+            ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarEstado('${key}')">✔️</button>`
+            : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarEstado('${key}')">✏️</button>`}
+          <button class="tag-row-btn" title="Subir" onclick="moverCombinado(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+          <button class="tag-row-btn" title="Bajar" onclick="moverCombinado(${idx}, 1)" ${idx === combinado.length - 1 ? 'disabled' : ''}>↓</button>
+        </div>
+        ${swatchOpenStatusId === key ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(color, `guardarColorEstado_${key}`)}</div>` : ''}`;
+      } else {
+        const t = tagsConfig.find(tg => tg.id === entry.id);
+        if (!t) return '';
+        return `
+        <div class="tag-row">
+          ${editingTagId === t.id
+            ? `<input type="text" id="renameInput_${t.id}" value="${t.nombre}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarTag('${t.id}')">`
+            : `<span class="tag-row-name">${t.nombre}</span>`}
+          <button type="button" class="swatch" style="background:${t.color};width:22px;height:22px;" title="Cambiar color" onclick="toggleTagColorEditor('${t.id}')"></button>
+          ${editingTagId === t.id
+            ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarTag('${t.id}')">✔️</button>`
+            : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarTag('${t.id}')">✏️</button>`}
+          <button class="tag-row-btn" title="Subir" onclick="moverCombinado(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+          <button class="tag-row-btn" title="Bajar" onclick="moverCombinado(${idx}, 1)" ${idx === combinado.length - 1 ? 'disabled' : ''}>↓</button>
+        </div>
+        ${swatchOpenTagId === t.id ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(t.color, `cambiarColorTag_${t.id.replace(/[^a-zA-Z0-9]/g,'')}`)}</div>` : ''}`;
+      }
     }).join('');
-    cont.innerHTML = statusRowsHtml + buildTagRowsHtml();
     if (editingStatusId) {
       const inp = document.getElementById('renameEstadoInput_' + editingStatusId);
       if (inp) { inp.focus(); inp.select(); }
@@ -1450,25 +1496,7 @@
     });
   }
 
-  function buildTagRowsHtml() {
-    if (tagsConfig.length === 0) {
-      return '<p class="tag-picker-empty" style="margin-top:8px;">Todavía no creaste ningún tag. Agregá uno desde "🏷️ Agregar Tags".</p>';
-    }
-    return tagsConfig.map((t, idx) => `
-      <div class="tag-row">
-        ${editingTagId === t.id
-          ? `<input type="text" id="renameInput_${t.id}" value="${t.nombre}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarTag('${t.id}')">`
-          : `<span class="tag-row-name">${t.nombre}</span>`}
-        <button type="button" class="swatch" style="background:${t.color};width:22px;height:22px;" title="Cambiar color" onclick="toggleTagColorEditor('${t.id}')"></button>
-        ${editingTagId === t.id
-          ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarTag('${t.id}')">✔️</button>`
-          : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarTag('${t.id}')">✏️</button>`}
-        <button class="tag-row-btn" title="Subir" onclick="moverTag('${t.id}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
-        <button class="tag-row-btn" title="Bajar" onclick="moverTag('${t.id}', 1)" ${idx === tagsConfig.length - 1 ? 'disabled' : ''}>↓</button>
-        <button class="tag-row-btn danger" title="Eliminar" onclick="eliminarTag('${t.id}')">🗑️</button>
-      </div>
-      ${swatchOpenTagId === t.id ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(t.color, `cambiarColorTag_${t.id.replace(/[^a-zA-Z0-9]/g,'')}`)}</div>` : ''}`).join('');
-  }
+
 
   function toggleStatusColorEditor(key) {
     swatchOpenStatusId = swatchOpenStatusId === key ? null : key;
