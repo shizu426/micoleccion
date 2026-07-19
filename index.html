@@ -1199,6 +1199,16 @@
         emision: 'En emisión', terminado: 'Terminado', porempezar: 'Por empezar',
         pendiente: 'Pendiente', abandonado: 'Abandonado', espera: 'En espera de nueva temporada'
       }, cfg.statusLabels || {});
+      // Limpieza: si quedó guardado un nombre viejo con el emoji de color pegado, se lo sacamos.
+      const EMOJIS_VIEJOS = ['🟢', '🔵', '🟡', '🟣', '🔴', '📺'];
+      let huboLimpieza = false;
+      Object.keys(statusLabels).forEach(k => {
+        const limpio = EMOJIS_VIEJOS.reduce((txt, e) => txt.split(e + ' ').join('').split(e).join(''), statusLabels[k]).trim();
+        if (limpio !== statusLabels[k]) { statusLabels[k] = limpio; huboLimpieza = true; }
+      });
+      if (huboLimpieza && currentUser) {
+        db.ref('users/' + currentUser.uid + '/config/statusLabels').set(statusLabels).catch(() => {});
+      }
       statusColores = Object.assign({
         emision: '#22c55e', terminado: '#3b82f6', porempezar: '#f59e0b',
         pendiente: '#a855f7', abandonado: '#ef4444', espera: '#06b6d4'
