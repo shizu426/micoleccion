@@ -22,8 +22,10 @@
     --accent: #e94560; --accent2: #7c3aed; --text: #f0f0f5; --muted: #7a7a99;
     --emision: #22c55e; --terminado: #3b82f6; --porempezar: #f59e0b;
     --pendiente: #a855f7; --abandonado: #ef4444; --espera: #06b6d4;
-    --emision-dot: #22c55e; --terminado-dot: #3b82f6; --porempezar-dot: #f59e0b;
-    --pendiente-dot: #a855f7; --abandonado-dot: #ef4444; --espera-dot: #06b6d4;
+    --tagcol-emision: #22c55e; --tagcol-terminado: #3b82f6; --tagcol-porempezar: #f59e0b;
+    --tagcol-pendiente: #a855f7; --tagcol-abandonado: #ef4444; --tagcol-espera: #06b6d4;
+    --tagcol-emision-text: #ffffff; --tagcol-terminado-text: #ffffff; --tagcol-porempezar-text: #1a1a1a;
+    --tagcol-pendiente-text: #ffffff; --tagcol-abandonado-text: #ffffff; --tagcol-espera-text: #1a1a1a;
     --tipo-manga: #e94560; --tipo-manhwa: #7c3aed; --tipo-manhua: #f59e0b; --tipo-anime: #22c55e;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -128,12 +130,12 @@
   .card-meta { display: flex; justify-content: space-between; align-items: center; }
   .cap-badge { font-size: 0.7rem; color: var(--muted); background: var(--surface); padding: 2px 7px; border-radius: 6px; }
   .status-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .status-dot.emision { background: var(--emision-dot); box-shadow: 0 0 6px var(--emision-dot); }
-  .status-dot.terminado { background: var(--terminado-dot); }
-  .status-dot.porempezar { background: var(--porempezar-dot); }
-  .status-dot.pendiente { background: var(--pendiente-dot); box-shadow: 0 0 6px var(--pendiente-dot); }
-  .status-dot.abandonado { background: var(--abandonado-dot); }
-  .status-dot.espera { background: var(--espera-dot); box-shadow: 0 0 6px var(--espera-dot); }
+  .status-dot.emision { background: var(--tagcol-emision); box-shadow: 0 0 6px var(--tagcol-emision); }
+  .status-dot.terminado { background: var(--tagcol-terminado); }
+  .status-dot.porempezar { background: var(--tagcol-porempezar); }
+  .status-dot.pendiente { background: var(--tagcol-pendiente); box-shadow: 0 0 6px var(--tagcol-pendiente); }
+  .status-dot.abandonado { background: var(--tagcol-abandonado); }
+  .status-dot.espera { background: var(--tagcol-espera); box-shadow: 0 0 6px var(--tagcol-espera); }
   .card-type { position: absolute; top: 8px; left: 8px; font-size: 0.6rem; font-weight: 700;
     padding: 2px 7px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
     background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); color: var(--text); }
@@ -169,12 +171,15 @@
   .status-pill { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border);
     background: var(--surface); color: var(--muted); font-size: 0.8rem; cursor: pointer;
     transition: all 0.2s; font-family: 'Inter', sans-serif; }
-  .status-pill[data-val="emision"].selected { border-color: var(--emision); background: rgba(34,197,94,0.15); color: var(--emision); }
-  .status-pill[data-val="terminado"].selected { border-color: var(--terminado); background: rgba(59,130,246,0.15); color: var(--terminado); }
-  .status-pill[data-val="porempezar"].selected { border-color: var(--porempezar); background: rgba(245,158,11,0.15); color: var(--porempezar); }
-  .status-pill[data-val="pendiente"].selected { border-color: var(--pendiente); background: rgba(168,85,247,0.15); color: var(--pendiente); }
-  .status-pill[data-val="abandonado"].selected { border-color: var(--abandonado); background: rgba(239,68,68,0.15); color: var(--abandonado); }
-  .status-pill[data-val="espera"].selected { border-color: var(--espera); background: rgba(6,182,212,0.15); color: var(--espera); }
+  /* Color permanente por estado (siempre visible, esté o no seleccionado) */
+  .status-pill[data-val="emision"] { background: var(--tagcol-emision); border-color: var(--tagcol-emision); color: var(--tagcol-emision-text); }
+  .status-pill[data-val="terminado"] { background: var(--tagcol-terminado); border-color: var(--tagcol-terminado); color: var(--tagcol-terminado-text); }
+  .status-pill[data-val="porempezar"] { background: var(--tagcol-porempezar); border-color: var(--tagcol-porempezar); color: var(--tagcol-porempezar-text); }
+  .status-pill[data-val="pendiente"] { background: var(--tagcol-pendiente); border-color: var(--tagcol-pendiente); color: var(--tagcol-pendiente-text); }
+  .status-pill[data-val="abandonado"] { background: var(--tagcol-abandonado); border-color: var(--tagcol-abandonado); color: var(--tagcol-abandonado-text); }
+  .status-pill[data-val="espera"] { background: var(--tagcol-espera); border-color: var(--tagcol-espera); color: var(--tagcol-espera-text); }
+  /* Al seleccionar: solo un efecto de anillo/sombra, sin tocar el color */
+  .status-pill.selected { box-shadow: 0 0 0 2px rgba(255,255,255,0.85), 0 0 10px rgba(0,0,0,0.35); border-color: rgba(255,255,255,0.9); }
 
   .donate-section {
     margin: 0 16px 16px;
@@ -278,12 +283,19 @@
     background: var(--surface); color: var(--muted); font-size: 0.75rem; cursor: pointer;
     transition: all 0.2s; font-family: 'Inter', sans-serif; }
   .cat-filter-btn.active { border-color: var(--accent); color: var(--text); background: rgba(233,69,96,0.1); }
-  .cat-filter-btn.fs-emision.active { border-color: var(--emision); background: rgba(34,197,94,0.1); color: var(--emision); }
-  .cat-filter-btn.fs-terminado.active { border-color: var(--terminado); background: rgba(59,130,246,0.1); color: var(--terminado); }
-  .cat-filter-btn.fs-porempezar.active { border-color: var(--porempezar); background: rgba(245,158,11,0.1); color: var(--porempezar); }
-  .cat-filter-btn.fs-pendiente.active { border-color: var(--pendiente); background: rgba(168,85,247,0.1); color: var(--pendiente); }
-  .cat-filter-btn.fs-abandonado.active { border-color: var(--abandonado); background: rgba(239,68,68,0.1); color: var(--abandonado); }
-  .cat-filter-btn.fs-espera.active { border-color: var(--espera); background: rgba(6,182,212,0.1); color: var(--espera); }
+  /* Color permanente por estado (siempre visible, esté o no seleccionado) */
+  .cat-filter-btn.fs-emision { background: var(--tagcol-emision); border-color: var(--tagcol-emision); color: var(--tagcol-emision-text); }
+  .cat-filter-btn.fs-terminado { background: var(--tagcol-terminado); border-color: var(--tagcol-terminado); color: var(--tagcol-terminado-text); }
+  .cat-filter-btn.fs-porempezar { background: var(--tagcol-porempezar); border-color: var(--tagcol-porempezar); color: var(--tagcol-porempezar-text); }
+  .cat-filter-btn.fs-pendiente { background: var(--tagcol-pendiente); border-color: var(--tagcol-pendiente); color: var(--tagcol-pendiente-text); }
+  .cat-filter-btn.fs-abandonado { background: var(--tagcol-abandonado); border-color: var(--tagcol-abandonado); color: var(--tagcol-abandonado-text); }
+  .cat-filter-btn.fs-espera { background: var(--tagcol-espera); border-color: var(--tagcol-espera); color: var(--tagcol-espera-text); }
+  /* Al seleccionar: solo un efecto de anillo/sombra, sin tocar el color de fondo */
+  .cat-filter-btn.fs-emision.active, .cat-filter-btn.fs-terminado.active, .cat-filter-btn.fs-porempezar.active,
+  .cat-filter-btn.fs-pendiente.active, .cat-filter-btn.fs-abandonado.active, .cat-filter-btn.fs-espera.active {
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.85), 0 0 10px rgba(0,0,0,0.35);
+    border-color: rgba(255,255,255,0.9);
+  }
   .cat-filter-btn input.inline-rename-input {
     background: transparent; border: none; outline: none; color: inherit;
     font-size: 0.75rem; font-family: 'Inter', sans-serif; width: 100%;
@@ -1553,11 +1565,25 @@
     }
   }
 
+  function contrastTextColor(hex) {
+    if (!hex) return '#ffffff';
+    const h = hex.replace('#', '');
+    const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+    const r = parseInt(full.substr(0, 2), 16) / 255;
+    const g = parseInt(full.substr(2, 2), 16) / 255;
+    const b = parseInt(full.substr(4, 2), 16) / 255;
+    const lin = v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+    const luminancia = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    return luminancia > 0.55 ? '#1a1a1a' : '#ffffff';
+  }
+
   function aplicarStatusColores() {
-    const VAR_MAP = { emision: '--emision-dot', terminado: '--terminado-dot', porempezar: '--porempezar-dot',
-      pendiente: '--pendiente-dot', abandonado: '--abandonado-dot', espera: '--espera-dot' };
-    Object.keys(VAR_MAP).forEach(key => {
-      if (statusColores[key]) document.documentElement.style.setProperty(VAR_MAP[key], statusColores[key]);
+    const KEYS = ['emision', 'terminado', 'porempezar', 'pendiente', 'abandonado', 'espera'];
+    KEYS.forEach(key => {
+      const color = statusColores[key];
+      if (!color) return;
+      document.documentElement.style.setProperty('--tagcol-' + key, color);
+      document.documentElement.style.setProperty('--tagcol-' + key + '-text', contrastTextColor(color));
     });
   }
 
