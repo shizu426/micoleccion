@@ -829,8 +829,6 @@
       <div id="tabOrderList"></div>
       <h3 style="margin-top:18px;">ORDEN, NOMBRE Y COLOR DE LOS ESTADOS</h3>
       <div id="statusOrderList"></div>
-      <h3 style="margin-top:18px;">ORDEN, NOMBRE Y COLOR DE LOS TAGS</h3>
-      <div id="tagsOrderList"></div>
     </div>
 
     <!-- COMPARTIR -->
@@ -1419,7 +1417,7 @@
   function renderStatusOrderManager() {
     const cont = document.getElementById('statusOrderList');
     if (!cont) return;
-    cont.innerHTML = statusOrder.map((key, idx) => {
+    const statusRowsHtml = statusOrder.map((key, idx) => {
       const color = statusColores[key] || '#888';
       return `
       <div class="tag-row">
@@ -1435,13 +1433,41 @@
       </div>
       ${swatchOpenStatusId === key ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(color, `guardarColorEstado_${key}`)}</div>` : ''}`;
     }).join('');
+    cont.innerHTML = statusRowsHtml + buildTagRowsHtml();
     if (editingStatusId) {
       const inp = document.getElementById('renameEstadoInput_' + editingStatusId);
+      if (inp) { inp.focus(); inp.select(); }
+    }
+    if (editingTagId) {
+      const inp = document.getElementById('renameInput_' + editingTagId);
       if (inp) { inp.focus(); inp.select(); }
     }
     statusOrder.forEach(key => {
       window['guardarColorEstado_' + key] = (color) => { guardarColorEstado(key, color); swatchOpenStatusId = null; renderStatusOrderManager(); };
     });
+    tagsConfig.forEach(t => {
+      window['cambiarColorTag_' + t.id.replace(/[^a-zA-Z0-9]/g,'')] = (color) => cambiarColorTag(t.id, color);
+    });
+  }
+
+  function buildTagRowsHtml() {
+    if (tagsConfig.length === 0) {
+      return '<p class="tag-picker-empty" style="margin-top:8px;">Todavía no creaste ningún tag. Agregá uno desde "🏷️ Agregar Tags".</p>';
+    }
+    return tagsConfig.map((t, idx) => `
+      <div class="tag-row">
+        ${editingTagId === t.id
+          ? `<input type="text" id="renameInput_${t.id}" value="${t.nombre}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarTag('${t.id}')">`
+          : `<span class="tag-row-name">${t.nombre}</span>`}
+        <button type="button" class="swatch" style="background:${t.color};width:22px;height:22px;" title="Cambiar color" onclick="toggleTagColorEditor('${t.id}')"></button>
+        ${editingTagId === t.id
+          ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarTag('${t.id}')">✔️</button>`
+          : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarTag('${t.id}')">✏️</button>`}
+        <button class="tag-row-btn" title="Subir" onclick="moverTag('${t.id}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+        <button class="tag-row-btn" title="Bajar" onclick="moverTag('${t.id}', 1)" ${idx === tagsConfig.length - 1 ? 'disabled' : ''}>↓</button>
+        <button class="tag-row-btn danger" title="Eliminar" onclick="eliminarTag('${t.id}')">🗑️</button>
+      </div>
+      ${swatchOpenTagId === t.id ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(t.color, `cambiarColorTag_${t.id.replace(/[^a-zA-Z0-9]/g,'')}`)}</div>` : ''}`).join('');
   }
 
   function toggleStatusColorEditor(key) {
@@ -1469,6 +1495,7 @@
     nombreInput.value = '';
     guardarTagsConfig();
     renderTagsManager();
+    renderStatusOrderManager();
     renderTagFilterButtons();
   }
 
@@ -1483,6 +1510,7 @@
     tagsConfig = tagsConfig.filter(t => t.id !== id);
     guardarTagsConfig();
     renderTagsManager();
+    renderStatusOrderManager();
     Object.keys(catTagFilter).forEach(cat => { if (catTagFilter[cat] === id) catTagFilter[cat] = null; });
     renderTagFilterButtons();
     renderList();
@@ -1495,6 +1523,7 @@
     [tagsConfig[i], tagsConfig[j]] = [tagsConfig[j], tagsConfig[i]];
     guardarTagsConfig();
     renderTagsManager();
+    renderStatusOrderManager();
     renderTagFilterButtons();
   }
 
@@ -1503,6 +1532,7 @@
     if (t) { t.color = color; guardarTagsConfig(); }
     swatchOpenTagId = null;
     renderTagsManager();
+    renderStatusOrderManager();
     renderTagFilterButtons();
   }
 
@@ -1510,10 +1540,11 @@
     swatchOpenTagId = swatchOpenTagId === id ? null : id;
     editingTagId = null;
     renderTagsManager();
+    renderStatusOrderManager();
   }
 
   function renderTagsManager() {
-    const targets = ['tagsManagerList', 'tagsOrderList'].map(id => document.getElementById(id)).filter(Boolean);
+    const targets = ['tagsManagerList'].map(id => document.getElementById(id)).filter(Boolean);
     if (targets.length === 0) return;
     let html;
     if (tagsConfig.length === 0) {
@@ -1549,6 +1580,7 @@
     editingTagId = editingTagId === id ? null : id;
     swatchOpenTagId = null;
     renderTagsManager();
+    renderStatusOrderManager();
   }
 
   function confirmarRenombrarTag(id) {
@@ -1561,6 +1593,7 @@
     }
     editingTagId = null;
     renderTagsManager();
+    renderStatusOrderManager();
     renderTagFilterButtons();
   }
 
