@@ -1675,6 +1675,7 @@
   }
 
   function openSettings() {
+    document.getElementById('tagsManagerPanel').style.display = 'none';
     aplicarColoresTipos();
     renderTabOrderManager();
     renderStatusOrderManager();
@@ -1692,6 +1693,7 @@
 
   // ─── PANEL INDEPENDIENTE DE TAGS (botón "Agregar Tags") ───────────────
   function openTagsManager() {
+    document.getElementById('settingsPanel').classList.remove('open');
     renderTagsManager();
     const cont = document.getElementById('newTagSwatches');
     if (cont) cont.innerHTML = swatchRow(nuevoTagColor, 'elegirNuevoTagColor');
