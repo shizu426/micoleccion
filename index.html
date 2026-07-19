@@ -829,6 +829,8 @@
       <div id="tabOrderList"></div>
       <h3 style="margin-top:18px;">ORDEN, NOMBRE Y COLOR DE LOS ESTADOS</h3>
       <div id="statusOrderList"></div>
+      <h3 style="margin-top:18px;">ORDEN, NOMBRE Y COLOR DE LOS TAGS</h3>
+      <div id="tagsOrderList"></div>
     </div>
 
     <!-- COMPARTIR -->
@@ -1511,26 +1513,28 @@
   }
 
   function renderTagsManager() {
-    const cont = document.getElementById('tagsManagerList');
-    if (!cont) return;
+    const targets = ['tagsManagerList', 'tagsOrderList'].map(id => document.getElementById(id)).filter(Boolean);
+    if (targets.length === 0) return;
+    let html;
     if (tagsConfig.length === 0) {
-      cont.innerHTML = '<p class="tag-picker-empty">Todavía no creaste ningún tag. Agregá uno abajo 👇</p>';
-      return;
+      html = '<p class="tag-picker-empty">Todavía no creaste ningún tag. Agregá uno desde "🏷️ Agregar Tags".</p>';
+    } else {
+      html = tagsConfig.map((t, idx) => `
+        <div class="tag-row">
+          <button type="button" class="swatch" style="background:${t.color};width:22px;height:22px;" title="Cambiar color" onclick="toggleTagColorEditor('${t.id}')"></button>
+          ${editingTagId === t.id
+            ? `<input type="text" id="renameInput_${t.id}" value="${t.nombre}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarTag('${t.id}')">`
+            : `<span class="tag-row-name">${t.nombre}</span>`}
+          ${editingTagId === t.id
+            ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarTag('${t.id}')">✔️</button>`
+            : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarTag('${t.id}')">✏️</button>`}
+          <button class="tag-row-btn" title="Subir" onclick="moverTag('${t.id}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+          <button class="tag-row-btn" title="Bajar" onclick="moverTag('${t.id}', 1)" ${idx === tagsConfig.length - 1 ? 'disabled' : ''}>↓</button>
+          <button class="tag-row-btn danger" title="Eliminar" onclick="eliminarTag('${t.id}')">🗑️</button>
+        </div>
+        ${swatchOpenTagId === t.id ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(t.color, `cambiarColorTag_${t.id.replace(/[^a-zA-Z0-9]/g,'')}`)}</div>` : ''}`).join('');
     }
-    cont.innerHTML = tagsConfig.map((t, idx) => `
-      <div class="tag-row">
-        <button type="button" class="swatch" style="background:${t.color};width:22px;height:22px;" title="Cambiar color" onclick="toggleTagColorEditor('${t.id}')"></button>
-        ${editingTagId === t.id
-          ? `<input type="text" id="renameInput_${t.id}" value="${t.nombre}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarTag('${t.id}')">`
-          : `<span class="tag-row-name">${t.nombre}</span>`}
-        ${editingTagId === t.id
-          ? `<button class="tag-row-btn" title="Guardar" onclick="confirmarRenombrarTag('${t.id}')">✔️</button>`
-          : `<button class="tag-row-btn" title="Renombrar" onclick="toggleRenombrarTag('${t.id}')">✏️</button>`}
-        <button class="tag-row-btn" title="Subir" onclick="moverTag('${t.id}', -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
-        <button class="tag-row-btn" title="Bajar" onclick="moverTag('${t.id}', 1)" ${idx === tagsConfig.length - 1 ? 'disabled' : ''}>↓</button>
-        <button class="tag-row-btn danger" title="Eliminar" onclick="eliminarTag('${t.id}')">🗑️</button>
-      </div>
-      ${swatchOpenTagId === t.id ? `<div style="margin:-2px 0 10px 4px;">${swatchRow(t.color, `cambiarColorTag_${t.id.replace(/[^a-zA-Z0-9]/g,'')}`)}</div>` : ''}`).join('');
+    targets.forEach(cont => { cont.innerHTML = html; });
     // wire up dynamic per-tag color handlers (avoids quote-escaping issues in inline onclick)
     tagsConfig.forEach(t => {
       window['cambiarColorTag_' + t.id.replace(/[^a-zA-Z0-9]/g,'')] = (color) => cambiarColorTag(t.id, color);
@@ -1613,6 +1617,7 @@
     aplicarColoresTipos();
     renderTabOrderManager();
     renderStatusOrderManager();
+    renderTagsManager();
     renderCompartirSettings();
     document.getElementById('settingsPanel').classList.add('open');
   }
