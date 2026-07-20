@@ -550,13 +550,7 @@
       </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manga','todos',this)">Todos</button>
-        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manga','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">En emisión</button>
-        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manga','terminado',this)" ondblclick="renombrarEstadoInline(event, 'terminado')">Terminado</button>
-        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manga','porempezar',this)" ondblclick="renombrarEstadoInline(event, 'porempezar')">Por empezar</button>
-        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manga','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">Pendiente</button>
-        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manga','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manga','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">En espera de nueva temporada</button>
-        <span id="tagFilters-manga" style="display:contents"></span>
+        <span id="filtrosCombinados-manga" style="display:contents"></span>
       </div>
       <div class="grid" id="grid"></div>
     </div>
@@ -568,13 +562,7 @@
       </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manhwa','todos',this)">Todos</button>
-        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manhwa','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">En emisión</button>
-        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manhwa','terminado',this)" ondblclick="renombrarEstadoInline(event, 'terminado')">Terminado</button>
-        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhwa','porempezar',this)" ondblclick="renombrarEstadoInline(event, 'porempezar')">Por empezar</button>
-        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhwa','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">Pendiente</button>
-        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhwa','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhwa','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">En espera de nueva temporada</button>
-        <span id="tagFilters-manhwa" style="display:contents"></span>
+        <span id="filtrosCombinados-manhwa" style="display:contents"></span>
       </div>
       <div class="grid" id="gridManhwa"></div>
     </div>
@@ -586,13 +574,7 @@
       </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manhua','todos',this)">Todos</button>
-        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('manhua','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">En emisión</button>
-        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('manhua','terminado',this)" ondblclick="renombrarEstadoInline(event, 'terminado')">Terminado</button>
-        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('manhua','porempezar',this)" ondblclick="renombrarEstadoInline(event, 'porempezar')">Por empezar</button>
-        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('manhua','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">Pendiente</button>
-        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('manhua','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('manhua','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">En espera de nueva temporada</button>
-        <span id="tagFilters-manhua" style="display:contents"></span>
+        <span id="filtrosCombinados-manhua" style="display:contents"></span>
       </div>
       <div class="grid" id="gridManhua"></div>
     </div>
@@ -604,13 +586,7 @@
       </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('anime','todos',this)">Todos</button>
-        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('anime','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">Viendo</button>
-        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('anime','terminado',this)" ondblclick="renombrarEstadoInline(event, 'terminado')">Completado</button>
-        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('anime','porempezar',this)" ondblclick="renombrarEstadoInline(event, 'porempezar')">Por ver</button>
-        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('anime','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">Pendiente</button>
-        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('anime','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('anime','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">En espera de nueva temporada</button>
-        <span id="tagFilters-anime" style="display:contents"></span>
+        <span id="filtrosCombinados-anime" style="display:contents"></span>
       </div>
       <div class="grid" id="gridAnime"></div>
     </div>
@@ -622,13 +598,7 @@
       </div>
       <div class="cat-filters">
         <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('novela','todos',this)">Todos</button>
-        <button class="cat-filter-btn fs-emision" onclick="setCatFilter('novela','emision',this)" ondblclick="renombrarEstadoInline(event, 'emision')">En emisión</button>
-        <button class="cat-filter-btn fs-terminado" onclick="setCatFilter('novela','terminado',this)" ondblclick="renombrarEstadoInline(event, 'terminado')">Terminado</button>
-        <button class="cat-filter-btn fs-porempezar" onclick="setCatFilter('novela','porempezar',this)" ondblclick="renombrarEstadoInline(event, 'porempezar')">Por empezar</button>
-        <button class="cat-filter-btn fs-pendiente" onclick="setCatFilter('novela','pendiente',this)" ondblclick="renombrarEstadoInline(event, 'pendiente')">Pendiente</button>
-        <button class="cat-filter-btn fs-abandonado" onclick="setCatFilter('novela','abandonado',this)" ondblclick="renombrarEstadoInline(event, 'abandonado')">Abandonado</button>
-        <button class="cat-filter-btn fs-espera" onclick="setCatFilter('novela','espera',this)" ondblclick="renombrarEstadoInline(event, 'espera')">En espera de nueva temporada</button>
-        <span id="tagFilters-novela" style="display:contents"></span>
+        <span id="filtrosCombinados-novela" style="display:contents"></span>
       </div>
       <div class="grid" id="gridNovela"></div>
     </div>
@@ -1353,19 +1323,32 @@
     renderStatusOrderManager();
   }
 
+  // ─── RENDERIZADO UNIFICADO: estados + tags mezclados, en el mismo orden que Config ───
+  function renderFiltrosCombinados(cat) {
+    const cont = document.getElementById('filtrosCombinados-' + cat);
+    if (!cont) return;
+    cont.innerHTML = ordenCombinado.map(entry => {
+      if (entry.type === 'status') {
+        const key = entry.key;
+        const label = statusLabels[key] || key;
+        const activo = catFilters[cat] === key ? ' active' : '';
+        return `<button class="cat-filter-btn fs-${key}${activo}" data-statuskey="${key}" onclick="setCatFilter('${cat}','${key}',this)" ondblclick="renombrarEstadoInline(event, '${key}')">${label}</button>`;
+      } else {
+        const t = tagsConfig.find(tg => tg.id === entry.id);
+        if (!t) return '';
+        const activo = catTagFilter[cat] === t.id;
+        const textColor = contrastTextColor(t.color);
+        return `<button type="button" class="cat-filter-btn ${activo ? 'active' : ''}" data-tagid="${t.id}" style="background:${t.color};border-color:${t.color};color:${textColor};" onclick="setCatTagFilter('${cat}','${t.id}',this)">${t.nombre}</button>`;
+      }
+    }).join('');
+  }
+
+  function renderTodosLosFiltrosCombinados() {
+    ['manga', 'manhwa', 'manhua', 'anime', 'novela'].forEach(renderFiltrosCombinados);
+  }
+
   function aplicarStatusOrder() {
-    ['manga', 'manhwa', 'manhua', 'anime', 'novela'].forEach(cat => {
-      const cont = document.querySelector('#sec-' + cat + ' .cat-filters');
-      if (!cont) return;
-      const todosBtn = cont.querySelector('.cat-filter-todos');
-      const tagFiltersSpan = cont.querySelector('#tagFilters-' + cat);
-      statusOrder.forEach(st => {
-        const btn = cont.querySelector('.cat-filter-btn.fs-' + st);
-        if (btn) cont.appendChild(btn);
-      });
-      if (todosBtn) cont.insertBefore(todosBtn, cont.firstChild);
-      if (tagFiltersSpan) cont.appendChild(tagFiltersSpan);
-    });
+    renderTodosLosFiltrosCombinados();
   }
 
   async function guardarStatusLabel(key, nombre) {
@@ -2083,22 +2066,14 @@
   function setCatTagFilter(cat, tagId, btn) {
     // Toggle: si ya estaba activo ese tag, lo desactiva (vuelve a mostrar todos los tags)
     catTagFilter[cat] = catTagFilter[cat] === tagId ? null : tagId;
-    const cont = document.getElementById('tagFilters-' + cat);
-    if (cont) cont.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.remove('active'));
+    const cont = document.getElementById('filtrosCombinados-' + cat);
+    if (cont) cont.querySelectorAll('.cat-filter-btn[data-tagid]').forEach(b => b.classList.remove('active'));
     if (catTagFilter[cat] && btn) btn.classList.add('active');
     renderList();
   }
 
   function renderTagFilterButtons() {
-    ['manga', 'manhwa', 'manhua', 'anime', 'novela'].forEach(cat => {
-      const cont = document.getElementById('tagFilters-' + cat);
-      if (!cont) return;
-      cont.innerHTML = tagsConfig.map(t => {
-        const activo = catTagFilter[cat] === t.id;
-        const textColor = contrastTextColor(t.color);
-        return `<button type="button" class="cat-filter-btn ${activo ? 'active' : ''}" style="background:${t.color};border-color:${t.color};color:${textColor};" onclick="setCatTagFilter('${cat}','${t.id}',this)">${t.nombre}</button>`;
-      }).join('');
-    });
+    renderTodosLosFiltrosCombinados();
   }
 
   function setFilter(f, btn) {
