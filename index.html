@@ -1354,15 +1354,17 @@
   }
 
   function aplicarStatusOrder() {
-    ['manga', 'manhwa', 'manhua', 'anime'].forEach(cat => {
+    ['manga', 'manhwa', 'manhua', 'anime', 'novela'].forEach(cat => {
       const cont = document.querySelector('#sec-' + cat + ' .cat-filters');
       if (!cont) return;
       const todosBtn = cont.querySelector('.cat-filter-todos');
+      const tagFiltersSpan = cont.querySelector('#tagFilters-' + cat);
       statusOrder.forEach(st => {
         const btn = cont.querySelector('.cat-filter-btn.fs-' + st);
         if (btn) cont.appendChild(btn);
       });
       if (todosBtn) cont.insertBefore(todosBtn, cont.firstChild);
+      if (tagFiltersSpan) cont.appendChild(tagFiltersSpan);
     });
   }
 
