@@ -922,6 +922,7 @@
   let catLabels = { manga: '📚 Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: '🎌 Anime', novela: '📖 Novela' };
   let editingCatId = null;
   let statusOrder = ['emision', 'terminado', 'porempezar', 'pendiente', 'abandonado', 'espera'];
+  let ordenCombinado = []; // [{type:'status',key} | {type:'tag',id}] -- fuente única de verdad del orden mezclado
   let statusLabels = {
     emision: 'En emisión', terminado: 'Terminado', porempezar: 'Por empezar',
     pendiente: 'Pendiente', abandonado: 'Abandonado', espera: 'En espera de nueva temporada'
@@ -1217,6 +1218,25 @@
         emision: '#22c55e', terminado: '#3b82f6', porempezar: '#f59e0b',
         pendiente: '#a855f7', abandonado: '#ef4444', espera: '#06b6d4'
       }, cfg.statusColores || {});
+      // Orden combinado (estados + tags mezclados) — fuente única de verdad
+      if (Array.isArray(cfg.ordenCombinado) && cfg.ordenCombinado.length > 0) {
+        ordenCombinado = cfg.ordenCombinado;
+        // Agregar cualquier tag o estado que falte (por si se creó uno nuevo y ordenCombinado quedó viejo)
+        statusOrder.forEach(key => {
+          if (!ordenCombinado.some(e => e.type === 'status' && e.key === key)) ordenCombinado.push({ type: 'status', key });
+        });
+        tagsConfig.forEach(t => {
+          if (!ordenCombinado.some(e => e.type === 'tag' && e.id === t.id)) ordenCombinado.push({ type: 'tag', id: t.id });
+        });
+        // Sacar del orden cualquier referencia a un tag que ya no existe
+        ordenCombinado = ordenCombinado.filter(e => e.type !== 'tag' || tagsConfig.some(t => t.id === e.id));
+      } else {
+        ordenCombinado = [
+          ...statusOrder.map(key => ({ type: 'status', key })),
+          ...tagsConfig.map(t => ({ type: 'tag', id: t.id }))
+        ];
+      }
+      sincronizarDesdeOrdenCombinado();
     } catch(e) {
       tagsConfig = [];
     }
@@ -1414,24 +1434,22 @@
     renderStatusOrderManager();
   }
 
-  function buildOrdenCombinado() {
-    return [
-      ...statusOrder.map(key => ({ type: 'status', key })),
-      ...tagsConfig.map(t => ({ type: 'tag', id: t.id }))
-    ];
+  function sincronizarDesdeOrdenCombinado() {
+    statusOrder = ordenCombinado.filter(e => e.type === 'status').map(e => e.key);
+    const tagIds = ordenCombinado.filter(e => e.type === 'tag').map(e => e.id);
+    tagsConfig = tagIds.map(id => tagsConfig.find(t => t.id === id)).filter(Boolean);
+  }
+
+  async function guardarOrdenCombinado() {
+    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/ordenCombinado').set(ordenCombinado);
   }
 
   function moverCombinado(index, dir) {
-    const combinado = buildOrdenCombinado();
     const j = index + dir;
-    if (j < 0 || j >= combinado.length) return;
-    [combinado[index], combinado[j]] = [combinado[j], combinado[index]];
-    // Separar de nuevo en los dos arreglos que se persisten
-    statusOrder = combinado.filter(e => e.type === 'status').map(e => e.key);
-    const nuevoOrdenTagIds = combinado.filter(e => e.type === 'tag').map(e => e.id);
-    tagsConfig = nuevoOrdenTagIds.map(id => tagsConfig.find(t => t.id === id));
-    guardarStatusOrder();
-    guardarTagsConfig();
+    if (j < 0 || j >= ordenCombinado.length) return;
+    [ordenCombinado[index], ordenCombinado[j]] = [ordenCombinado[j], ordenCombinado[index]];
+    sincronizarDesdeOrdenCombinado();
+    guardarOrdenCombinado();
     aplicarStatusOrder();
     renderStatusOrderManager();
     renderTagFilterButtons();
@@ -1440,7 +1458,7 @@
   function renderStatusOrderManager() {
     const cont = document.getElementById('statusOrderList');
     if (!cont) return;
-    const combinado = buildOrdenCombinado();
+    const combinado = ordenCombinado;
     if (combinado.length === 0) {
       cont.innerHTML = '<p class="tag-picker-empty">No hay estados ni tags todavía.</p>';
       return;
@@ -1519,9 +1537,12 @@
     const nombreInput = document.getElementById('newTagName');
     const nombre = nombreInput.value.trim();
     if (!nombre) return;
-    tagsConfig.push({ id: uid4(), nombre, color: nuevoTagColor });
+    const nuevoId = uid4();
+    tagsConfig.push({ id: nuevoId, nombre, color: nuevoTagColor });
+    ordenCombinado.push({ type: 'tag', id: nuevoId });
     nombreInput.value = '';
     guardarTagsConfig();
+    guardarOrdenCombinado();
     renderTagsManager();
     renderStatusOrderManager();
     renderTagFilterButtons();
@@ -1536,7 +1557,9 @@
   function eliminarTag(id) {
     if (!confirm('¿Eliminar este tag? Se quitará de todos los ítems que lo tengan.')) return;
     tagsConfig = tagsConfig.filter(t => t.id !== id);
+    ordenCombinado = ordenCombinado.filter(e => !(e.type === 'tag' && e.id === id));
     guardarTagsConfig();
+    guardarOrdenCombinado();
     renderTagsManager();
     renderStatusOrderManager();
     Object.keys(catTagFilter).forEach(cat => { if (catTagFilter[cat] === id) catTagFilter[cat] = null; });
@@ -1545,11 +1568,21 @@
   }
 
   function moverTag(id, dir) {
-    const i = tagsConfig.findIndex(t => t.id === id);
-    const j = i + dir;
-    if (i < 0 || j < 0 || j >= tagsConfig.length) return;
-    [tagsConfig[i], tagsConfig[j]] = [tagsConfig[j], tagsConfig[i]];
+    // Mueve el tag respecto a los otros tags (salteando los estados que haya en el medio),
+    // pero opera sobre ordenCombinado para que quede sincronizado con la vista de Config → Orden.
+    const posicionesTags = ordenCombinado
+      .map((e, i) => ({ e, i }))
+      .filter(x => x.e.type === 'tag');
+    const curPos = posicionesTags.findIndex(x => x.e.id === id);
+    const targetPos = curPos + dir;
+    if (curPos < 0 || targetPos < 0 || targetPos >= posicionesTags.length) return;
+    const i1 = posicionesTags[curPos].i;
+    const i2 = posicionesTags[targetPos].i;
+    [ordenCombinado[i1], ordenCombinado[i2]] = [ordenCombinado[i2], ordenCombinado[i1]];
+    sincronizarDesdeOrdenCombinado();
+    guardarOrdenCombinado();
     guardarTagsConfig();
+    aplicarStatusOrder();
     renderTagsManager();
     renderStatusOrderManager();
     renderTagFilterButtons();
