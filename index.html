@@ -264,18 +264,24 @@
 
   /* NETFLIX-STYLE CATEGORY TABS */
   .category-tabs { display: flex; gap: 4px; margin-bottom: 16px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: 14px; padding: 5px; overflow-x: auto; }
+    border: 1px solid var(--border); border-radius: 14px; padding: 5px; overflow-x: auto;
+    -webkit-overflow-scrolling: touch; }
   .category-tabs::-webkit-scrollbar { display: none; }
-  .cat-tab { flex: 1; min-width: 70px; padding: 9px 8px; text-align: center; border-radius: 10px;
+  .cat-tab { flex: 0 0 auto; padding: 9px 14px; text-align: center; border-radius: 10px;
     cursor: pointer; font-size: 0.8rem; color: var(--muted); transition: all 0.2s;
-    border: none; background: none; font-family: 'Inter', sans-serif; white-space: nowrap; }
+    border: none; background: none; font-family: 'Inter', sans-serif; white-space: nowrap; overflow: hidden; }
   .cat-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent2));
     color: white; font-weight: 600; }
   .cat-tab .cat-count { display: inline-block; margin-left: 4px; font-size: 0.7rem;
-    background: rgba(255,255,255,0.2); padding: 1px 6px; border-radius: 10px; }
+    background: rgba(255,255,255,0.2); padding: 1px 6px; border-radius: 10px; white-space: nowrap; }
   .cat-tab:not(.active) .cat-count { background: var(--border); color: var(--muted); }
   .category-section { display: none; }
   .category-section.active { display: block; }
+
+  @media (max-width: 480px) {
+    .cat-tab { padding: 8px 10px; font-size: 0.76rem; }
+    .cat-tab .cat-count { font-size: 0.65rem; padding: 1px 5px; margin-left: 3px; }
+  }
 
   /* CATEGORY FILTERS (per-section) */
   .cat-filters { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
@@ -550,9 +556,7 @@
       <div style="display:flex;justify-content:center;margin-bottom:10px;">
         <button class="btn-agregar-tags" onclick="openTagsManager()">🏷️ Agregar Tags</button>
       </div>
-      <div class="cat-filters">
-        <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manga','todos',this)">Todos</button>
-        <span id="filtrosCombinados-manga" style="display:contents"></span>
+      <div class="cat-filters">        <span id="filtrosCombinados-manga" style="display:contents"></span>
       </div>
       <div class="grid" id="grid"></div>
     </div>
@@ -562,9 +566,7 @@
       <div style="display:flex;justify-content:center;margin-bottom:10px;">
         <button class="btn-agregar-tags" onclick="openTagsManager()">🏷️ Agregar Tags</button>
       </div>
-      <div class="cat-filters">
-        <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manhwa','todos',this)">Todos</button>
-        <span id="filtrosCombinados-manhwa" style="display:contents"></span>
+      <div class="cat-filters">        <span id="filtrosCombinados-manhwa" style="display:contents"></span>
       </div>
       <div class="grid" id="gridManhwa"></div>
     </div>
@@ -574,9 +576,7 @@
       <div style="display:flex;justify-content:center;margin-bottom:10px;">
         <button class="btn-agregar-tags" onclick="openTagsManager()">🏷️ Agregar Tags</button>
       </div>
-      <div class="cat-filters">
-        <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('manhua','todos',this)">Todos</button>
-        <span id="filtrosCombinados-manhua" style="display:contents"></span>
+      <div class="cat-filters">        <span id="filtrosCombinados-manhua" style="display:contents"></span>
       </div>
       <div class="grid" id="gridManhua"></div>
     </div>
@@ -586,9 +586,7 @@
       <div style="display:flex;justify-content:center;margin-bottom:10px;">
         <button class="btn-agregar-tags" onclick="openTagsManager()">🏷️ Agregar Tags</button>
       </div>
-      <div class="cat-filters">
-        <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('anime','todos',this)">Todos</button>
-        <span id="filtrosCombinados-anime" style="display:contents"></span>
+      <div class="cat-filters">        <span id="filtrosCombinados-anime" style="display:contents"></span>
       </div>
       <div class="grid" id="gridAnime"></div>
     </div>
@@ -598,9 +596,7 @@
       <div style="display:flex;justify-content:center;margin-bottom:10px;">
         <button class="btn-agregar-tags" onclick="openTagsManager()">🏷️ Agregar Tags</button>
       </div>
-      <div class="cat-filters">
-        <button class="cat-filter-btn cat-filter-todos active" onclick="setCatFilter('novela','todos',this)">Todos</button>
-        <span id="filtrosCombinados-novela" style="display:contents"></span>
+      <div class="cat-filters">        <span id="filtrosCombinados-novela" style="display:contents"></span>
       </div>
       <div class="grid" id="gridNovela"></div>
     </div>
@@ -1194,6 +1190,7 @@
       if (Array.isArray(cfg.ordenCombinado) && cfg.ordenCombinado.length > 0) {
         ordenCombinado = cfg.ordenCombinado;
         // Agregar cualquier tag o estado que falte (por si se creó uno nuevo y ordenCombinado quedó viejo)
+        if (!ordenCombinado.some(e => e.type === 'todos')) ordenCombinado.unshift({ type: 'todos' });
         statusOrder.forEach(key => {
           if (!ordenCombinado.some(e => e.type === 'status' && e.key === key)) ordenCombinado.push({ type: 'status', key });
         });
@@ -1204,6 +1201,7 @@
         ordenCombinado = ordenCombinado.filter(e => e.type !== 'tag' || tagsConfig.some(t => t.id === e.id));
       } else {
         ordenCombinado = [
+          { type: 'todos' },
           ...statusOrder.map(key => ({ type: 'status', key })),
           ...tagsConfig.map(t => ({ type: 'tag', id: t.id }))
         ];
@@ -1334,6 +1332,10 @@
     const tipo = TIPO_POR_CAT[cat];
     const itemsCat = items.filter(i => i.tipo === tipo);
     cont.innerHTML = ordenCombinado.map(entry => {
+      if (entry.type === 'todos') {
+        const activo = catFilters[cat] === 'todos' ? ' active' : '';
+        return `<button class="cat-filter-btn cat-filter-todos${activo}" onclick="setCatFilter('${cat}','todos',this)">Todos <span class="filtro-contador">${itemsCat.length}</span></button>`;
+      }
       if (entry.type === 'status') {
         const key = entry.key;
         const label = statusLabels[key] || key;
@@ -1457,12 +1459,19 @@
       return;
     }
     cont.innerHTML = combinado.map((entry, idx) => {
+      if (entry.type === 'todos') {
+        return `
+        <div class="tag-row">
+          <span class="tag-row-name">Todos</span>
+          <button class="tag-row-btn" title="Subir" onclick="moverCombinado(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+          <button class="tag-row-btn" title="Bajar" onclick="moverCombinado(${idx}, 1)" ${idx === combinado.length - 1 ? 'disabled' : ''}>↓</button>
+        </div>`;
+      }
       if (entry.type === 'status') {
         const key = entry.key;
         const color = statusColores[key] || '#888';
         return `
-        <div class="tag-row">
-          ${editingStatusId === key
+        <div class="tag-row">          ${editingStatusId === key
             ? `<input type="text" id="renameEstadoInput_${key}" value="${statusLabels[key]}" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--accent);border-radius:6px;color:var(--text);font-size:0.82rem;font-family:'Inter',sans-serif;" onkeydown="if(event.key==='Enter') confirmarRenombrarEstado('${key}')">`
             : `<span class="tag-row-name">${statusLabels[key]}</span>`}
           <button type="button" class="swatch" style="background:${color};width:22px;height:22px;" title="Cambiar color" onclick="toggleStatusColorEditor('${key}')"></button>
