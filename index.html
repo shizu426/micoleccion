@@ -936,6 +936,7 @@
       registrarPresencia();
       cargarConfig();
       loadItems();
+      restaurarUltimaCategoria();
     } else {
       currentUser = null;
       localStorage.removeItem('mc_uid');
@@ -2038,15 +2039,24 @@
     await loadItems();
   }
 
-  function switchCategory(cat) {
+  function switchCategory(cat, skipScroll) {
     currentCategory = cat;
+    localStorage.setItem('mc_lastCategory', cat);
     document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
     const tabEl = document.getElementById('tab-' + cat);
     const secEl = document.getElementById('sec-' + cat);
     if (tabEl) tabEl.classList.add('active');
     if (secEl) secEl.classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!skipScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function restaurarUltimaCategoria() {
+    const guardada = localStorage.getItem('mc_lastCategory');
+    const validas = ['manga', 'manhwa', 'manhua', 'anime', 'novela'];
+    if (guardada && validas.includes(guardada) && guardada !== 'manga') {
+      switchCategory(guardada, true);
+    }
   }
 
   function setDonateTab(tab, btn) {
