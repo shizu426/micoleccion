@@ -874,13 +874,13 @@
   let currentUser = null;
   let currentCategory = 'manga';
   let catFilters = { manga: 'todos', manhwa: 'todos', manhua: 'todos', anime: 'todos', novela: 'todos' };
-  let catTagFilter = { manga: null, manhwa: null, manhua: null, anime: null, novela: null };
+  // (catTagFilter eliminado — ahora todo se filtra a través de catFilters)
   let compartirCategorias = { manga: true, manhwa: true, manhua: true, anime: true, novela: true };
   let modoCompartido = false;
   const uidCompartido = new URLSearchParams(location.search).get('ver');
   let tagsConfig = []; // [{id, nombre, color}]
   let tipoColores = { Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e', Novela: '#06b6d4' };
-  let selectedTags = [];
+  // (selectedTags eliminado — los tags ahora son parte del mismo selector único de estado)
   const PRESET_COLORS = ['#e94560','#ec4899','#7c3aed','#a855f7','#3b82f6','#06b6d4','#22c55e','#84cc16','#f59e0b','#f97316','#ef4444','#64748b'];
   let nuevoTagColor = PRESET_COLORS[0];
   let swatchOpenTagId = null;
@@ -1346,10 +1346,10 @@
       } else {
         const t = tagsConfig.find(tg => tg.id === entry.id);
         if (!t) return '';
-        const activo = catTagFilter[cat] === t.id;
+        const activo = catFilters[cat] === t.id;
         const textColor = contrastTextColor(t.color);
-        const cantidadTag = itemsCat.filter(i => Array.isArray(i.tags) && i.tags.includes(t.id)).length;
-        return `<button type="button" class="cat-filter-btn ${activo ? 'active' : ''}" data-tagid="${t.id}" style="background:${t.color};border-color:${t.color};color:${textColor};" onclick="setCatTagFilter('${cat}','${t.id}',this)">${t.nombre} <span class="filtro-contador">${cantidadTag}</span></button>`;
+        const cantidadTag = itemsCat.filter(i => i.status === t.id).length;
+        return `<button type="button" class="cat-filter-btn ${activo ? 'active' : ''}" data-tagid="${t.id}" style="background:${t.color};border-color:${t.color};color:${textColor};" onclick="setCatFilter('${cat}','${t.id}',this)">${t.nombre} <span class="filtro-contador">${cantidadTag}</span></button>`;
       }
     }).join('');
   }
@@ -1559,16 +1559,22 @@
     if (cont) cont.innerHTML = swatchRow(nuevoTagColor, 'elegirNuevoTagColor');
   }
 
-  function eliminarTag(id) {
-    if (!confirm('¿Eliminar este tag? Se quitará de todos los ítems que lo tengan.')) return;
+  async function eliminarTag(id) {
+    if (!confirm('¿Eliminar este tag? Los ítems que lo tengan como estado pasarán a "Pendiente".')) return;
     tagsConfig = tagsConfig.filter(t => t.id !== id);
     ordenCombinado = ordenCombinado.filter(e => !(e.type === 'tag' && e.id === id));
     guardarTagsConfig();
     guardarOrdenCombinado();
     renderTagsManager();
     renderStatusOrderManager();
-    Object.keys(catTagFilter).forEach(cat => { if (catTagFilter[cat] === id) catTagFilter[cat] = null; });
-    renderTagFilterButtons();
+    // Si algún ítem tenía este tag asignado como su estado, evitar dejarlo huérfano
+    const afectados = items.filter(i => i.status === id);
+    for (const it of afectados) {
+      it.status = 'pendiente';
+      if (currentUser) await db.ref('users/' + currentUser.uid + '/mangas/' + it.id + '/status').set('pendiente');
+    }
+    Object.keys(catFilters).forEach(cat => { if (catFilters[cat] === id) catFilters[cat] = 'todos'; });
+    renderTodosLosFiltrosCombinados();
     renderList();
   }
 
@@ -1732,6 +1738,18 @@
     return luminancia > 0.55 ? '#1a1a1a' : '#ffffff';
   }
 
+  // Devuelve el HTML del puntito de color para el estado de un ítem.
+  // Si el estado es uno de los 6 fijos, usa la clase CSS de siempre.
+  // Si el estado en realidad es un tag (creado por el usuario), usa su color propio.
+  function statusDotHtml(status) {
+    const esTagCustom = tagsConfig.some(t => t.id === status);
+    if (esTagCustom) {
+      const t = tagsConfig.find(tg => tg.id === status);
+      return `<span class="status-dot" style="background:${t.color};" title="${t.nombre}"></span>`;
+    }
+    return `<span class="status-dot ${status}" title="${statusLabels[status] || status}"></span>`;
+  }
+
   function aplicarStatusColores() {
     const KEYS = ['emision', 'terminado', 'porempezar', 'pendiente', 'abandonado', 'espera'];
     KEYS.forEach(key => {
@@ -1776,21 +1794,11 @@
   function renderTagPicker() {
     const cont = document.getElementById('tagPickerContainer');
     if (!cont) return;
-    if (tagsConfig.length === 0) {
-      cont.innerHTML = '<span class="tag-picker-empty">No hay tags todavía. Creá algunos en ⚙️ Config.</span>';
-      return;
-    }
     cont.innerHTML = tagsConfig.map(t => {
-      const sel = selectedTags.includes(t.id);
       const textColor = contrastTextColor(t.color);
-      return `<button type="button" class="tag-pick-btn ${sel ? 'selected' : ''}" style="background:${t.color};color:${textColor};" onclick="toggleTagPick('${t.id}')">${t.nombre}${sel ? '<span class="tag-pick-x">×</span>' : ''}</button>`;
+      const sel = selectedStatus === t.id ? ' selected' : '';
+      return `<button type="button" class="status-pill${sel}" data-val="${t.id}" style="background:${t.color};border-color:${t.color};color:${textColor};" onclick="selectStatus(this)">${t.nombre}</button>`;
     }).join('');
-  }
-
-  function toggleTagPick(id) {
-    // Selección única, igual que Estado: elegir un tag reemplaza al anterior.
-    selectedTags = selectedTags.includes(id) ? [] : [id];
-    renderTagPicker();
   }
 
 
@@ -2122,15 +2130,6 @@
     renderList();
   }
 
-  function setCatTagFilter(cat, tagId, btn) {
-    // Toggle: si ya estaba activo ese tag, lo desactiva (vuelve a mostrar todos los tags)
-    catTagFilter[cat] = catTagFilter[cat] === tagId ? null : tagId;
-    const cont = document.getElementById('filtrosCombinados-' + cat);
-    if (cont) cont.querySelectorAll('.cat-filter-btn[data-tagid]').forEach(b => b.classList.remove('active'));
-    if (catTagFilter[cat] && btn) btn.classList.add('active');
-    renderList();
-  }
-
   function renderTagFilterButtons() {
     renderTodosLosFiltrosCombinados();
   }
@@ -2166,13 +2165,11 @@
     function filterItems(tipo) {
       const catKey = tipo.toLowerCase();
       const f = catFilters[catKey];
-      const tagFiltro = catTagFilter[catKey];
       return items.filter(i => {
         const matchTipo = i.tipo === tipo;
         const matchFilter = f === 'todos' || i.status === f;
-        const matchTag = !tagFiltro || (Array.isArray(i.tags) && i.tags.includes(tagFiltro));
         const matchSearch = i.nombre.toLowerCase().includes(q);
-        return matchTipo && matchFilter && matchTag && matchSearch;
+        return matchTipo && matchFilter && matchSearch;
       });
     }
 
@@ -2208,7 +2205,7 @@
             <div class="card-title">${item.nombre}</div>
             <div class="card-meta">
               <span class="cap-badge">${capLabel} ${item.cap}</span>
-              <span class="status-dot ${item.status}"></span>
+              ${statusDotHtml(item.status)}
             </div>
             
             ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="display:block;margin-top:6px;font-size:0.7rem;color:#7c3aed;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 Leer aquí</a>` : ''}
@@ -2255,7 +2252,7 @@
             <div class="card-title">${item.nombre}</div>
             <div class="card-meta">
               <span class="cap-badge">Ep. ${item.cap}</span>
-              <span class="status-dot ${item.status}"></span>
+              ${statusDotHtml(item.status)}
             </div>
             
             ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="display:block;margin-top:6px;font-size:0.7rem;color:#7c3aed;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 Ver aquí</a>` : ''}
@@ -2289,7 +2286,6 @@
     document.getElementById('btnDelete').style.display = 'none';
     document.getElementById('inputTipo').closest('.form-group').style.display = 'none';
     selectStatusByVal('emision');
-    selectedTags = [];
     renderTagPicker();
     document.getElementById('modalOverlay').classList.add('open');
   }
@@ -2315,7 +2311,6 @@
     document.getElementById('btnDelete').style.display = 'none';
     document.getElementById('inputTipo').closest('.form-group').style.display = 'none';
     selectStatusByVal('emision');
-    selectedTags = [];
     renderTagPicker();
     document.getElementById('modalOverlay').classList.add('open');
   }
@@ -2341,7 +2336,6 @@
     document.getElementById('imgLabel').textContent = 'Tocá para agregar portada desde tu galería';
     document.getElementById('btnDelete').style.display = 'none';
     selectStatusByVal('emision');
-    selectedTags = [];
     renderTagPicker();
     document.getElementById('modalOverlay').classList.add('open');
   }
@@ -2371,7 +2365,6 @@
     }
     document.getElementById('btnDelete').style.display = 'block';
     selectStatusByVal(item.status);
-    selectedTags = Array.isArray(item.tags) ? [...item.tags] : [];
     renderTagPicker();
     document.getElementById('modalOverlay').classList.add('open');
   }
@@ -2423,8 +2416,7 @@
       cap: parseInt(document.getElementById('inputCap').value) || 0,
       img: document.getElementById('inputImg').value,
       link: document.getElementById('inputLink').value.trim(),
-      status: selectedStatus,
-      tags: selectedTags
+      status: selectedStatus
     };
     try {
       await saveToFirestore(item);
