@@ -24,8 +24,8 @@
     --pendiente: #a855f7; --abandonado: #ef4444; --espera: #06b6d4;
     --tagcol-emision: #22c55e; --tagcol-terminado: #3b82f6; --tagcol-porempezar: #f59e0b;
     --tagcol-pendiente: #a855f7; --tagcol-abandonado: #ef4444; --tagcol-espera: #06b6d4;
-    --tagcol-emision-text: #ffffff; --tagcol-terminado-text: #ffffff; --tagcol-porempezar-text: #1a1a1a;
-    --tagcol-pendiente-text: #ffffff; --tagcol-abandonado-text: #ffffff; --tagcol-espera-text: #1a1a1a;
+    --tagcol-emision-text: #1a1a1a; --tagcol-terminado-text: #1a1a1a; --tagcol-porempezar-text: #1a1a1a;
+    --tagcol-pendiente-text: #1a1a1a; --tagcol-abandonado-text: #1a1a1a; --tagcol-espera-text: #1a1a1a;
     --tipo-manga: #e94560; --tipo-manhwa: #7c3aed; --tipo-manhua: #f59e0b; --tipo-anime: #22c55e;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1706,7 +1706,7 @@
       const color = statusColores[key];
       if (!color) return;
       document.documentElement.style.setProperty('--tagcol-' + key, color);
-      document.documentElement.style.setProperty('--tagcol-' + key + '-text', contrastTextColor(color));
+      document.documentElement.style.setProperty('--tagcol-' + key + '-text', '#1a1a1a');
     });
   }
 
