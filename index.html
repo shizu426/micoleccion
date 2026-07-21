@@ -283,6 +283,8 @@
     background: var(--surface); color: var(--muted); font-size: 0.75rem; cursor: pointer;
     transition: all 0.2s; font-family: 'Inter', sans-serif; }
   .cat-filter-btn.active { border-color: var(--accent); color: var(--text); background: rgba(233,69,96,0.1); }
+  .filtro-contador { display: inline-block; background: rgba(0,0,0,0.25); border-radius: 10px;
+    padding: 1px 6px; font-size: 0.68rem; font-weight: 700; margin-left: 3px; }
   /* Color permanente por estado (siempre visible, esté o no seleccionado) */
   .cat-filter-btn.fs-emision { background: var(--tagcol-emision); border-color: var(--tagcol-emision); color: var(--tagcol-emision-text); }
   .cat-filter-btn.fs-terminado { background: var(--tagcol-terminado); border-color: var(--tagcol-terminado); color: var(--tagcol-terminado-text); }
@@ -1324,21 +1326,27 @@
   }
 
   // ─── RENDERIZADO UNIFICADO: estados + tags mezclados, en el mismo orden que Config ───
+  const TIPO_POR_CAT = { manga: 'Manga', manhwa: 'Manhwa', manhua: 'Manhua', anime: 'Anime', novela: 'Novela' };
+
   function renderFiltrosCombinados(cat) {
     const cont = document.getElementById('filtrosCombinados-' + cat);
     if (!cont) return;
+    const tipo = TIPO_POR_CAT[cat];
+    const itemsCat = items.filter(i => i.tipo === tipo);
     cont.innerHTML = ordenCombinado.map(entry => {
       if (entry.type === 'status') {
         const key = entry.key;
         const label = statusLabels[key] || key;
         const activo = catFilters[cat] === key ? ' active' : '';
-        return `<button class="cat-filter-btn fs-${key}${activo}" data-statuskey="${key}" onclick="setCatFilter('${cat}','${key}',this)" ondblclick="renombrarEstadoInline(event, '${key}')">${label}</button>`;
+        const cantidad = itemsCat.filter(i => i.status === key).length;
+        return `<button class="cat-filter-btn fs-${key}${activo}" data-statuskey="${key}" onclick="setCatFilter('${cat}','${key}',this)" ondblclick="renombrarEstadoInline(event, '${key}')">${label} <span class="filtro-contador">${cantidad}</span></button>`;
       } else {
         const t = tagsConfig.find(tg => tg.id === entry.id);
         if (!t) return '';
         const activo = catTagFilter[cat] === t.id;
         const textColor = contrastTextColor(t.color);
-        return `<button type="button" class="cat-filter-btn ${activo ? 'active' : ''}" data-tagid="${t.id}" style="background:${t.color};border-color:${t.color};color:${textColor};" onclick="setCatTagFilter('${cat}','${t.id}',this)">${t.nombre}</button>`;
+        const cantidadTag = itemsCat.filter(i => Array.isArray(i.tags) && i.tags.includes(t.id)).length;
+        return `<button type="button" class="cat-filter-btn ${activo ? 'active' : ''}" data-tagid="${t.id}" style="background:${t.color};border-color:${t.color};color:${textColor};" onclick="setCatTagFilter('${cat}','${t.id}',this)">${t.nombre} <span class="filtro-contador">${cantidadTag}</span></button>`;
       }
     }).join('');
   }
@@ -2085,6 +2093,7 @@
 
   function renderList() {
     const q = document.getElementById('searchInput').value.toLowerCase();
+    renderTodosLosFiltrosCombinados();
 
     // Update stats counters (always from full items list)
     const totalManga = items.filter(i => i.tipo === 'Manga').length;
