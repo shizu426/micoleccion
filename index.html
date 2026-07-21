@@ -1756,8 +1756,8 @@
   }
 
   function toggleTagPick(id) {
-    if (selectedTags.includes(id)) selectedTags = selectedTags.filter(t => t !== id);
-    else selectedTags.push(id);
+    // Selección única, igual que Estado: elegir un tag reemplaza al anterior.
+    selectedTags = selectedTags.includes(id) ? [] : [id];
     renderTagPicker();
   }
 
