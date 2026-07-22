@@ -736,7 +736,8 @@
     <p id="notasGuardadoMsg" style="font-size:0.75rem;color:#22c55e;margin-top:8px;display:none;">✅ Nota guardada</p>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="cerrarNotas()">Cerrar</button>
-      <button class="btn-save" onclick="guardarNotas()">💾 Guardar nota</button>
+      <button class="btn-save" id="btnGuardarNota" onclick="guardarNotas()">💾 Guardar nota</button>
+      <button class="btn-save" id="btnConfirmarNota" style="display:none;background:#22c55e;" onclick="confirmarGuardarNotas()">✅ Confirmar</button>
     </div>
   </div>
 </div>
@@ -1755,10 +1756,18 @@
     document.getElementById('notasTitulo').textContent = item.nombre;
     document.getElementById('notasTextarea').value = item.notas || '';
     document.getElementById('notasGuardadoMsg').style.display = 'none';
+    document.getElementById('btnGuardarNota').style.display = '';
+    document.getElementById('btnConfirmarNota').style.display = 'none';
     document.getElementById('notasOverlay').classList.add('open');
   }
 
-  async function guardarNotas() {
+  function guardarNotas() {
+    if (!notasEditandoId) return;
+    document.getElementById('btnGuardarNota').style.display = 'none';
+    document.getElementById('btnConfirmarNota').style.display = '';
+  }
+
+  async function confirmarGuardarNotas() {
     if (!notasEditandoId) return;
     const nuevoTexto = document.getElementById('notasTextarea').value.trim();
     const item = items.find(i => i.id === notasEditandoId);
@@ -1769,6 +1778,8 @@
     const msg = document.getElementById('notasGuardadoMsg');
     msg.style.display = 'block';
     setTimeout(() => { if (msg) msg.style.display = 'none'; }, 2000);
+    document.getElementById('btnConfirmarNota').style.display = 'none';
+    document.getElementById('btnGuardarNota').style.display = '';
   }
 
   function cerrarNotas() {
