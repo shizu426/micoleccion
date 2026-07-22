@@ -697,6 +697,11 @@
       <input type="text" id="inputLink" placeholder="Ej: https://manhuaus.com/manga/..."
         oninput="const t=detectarTipoDesdeUrl(this.value); if(t) autoDetectarTipo(t);">
     </div>
+    <div class="form-group">
+      <label>📝 Notas (opcional)</label>
+      <textarea id="inputNotas" rows="3" placeholder="Ej: Me gusta el desarrollo del protagonista, buen arte, etc."
+        style="width:100%;padding:11px;border-radius:10px;border:1px solid #2a2a38;background:#17171e;color:#e8e8f0;font-size:0.85rem;font-family:Inter,sans-serif;resize:vertical;box-sizing:border-box;"></textarea>
+    </div>
     <div class="form-group" id="searchCoverGroup">
       <button type="button" onclick="fetchCover()" style="width:100%;padding:11px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.4);border-radius:10px;color:#7c3aed;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">🔍 Buscar portada automáticamente</button>
       <p id="coverSearchMsg" style="font-size:0.75rem;color:#7a7a99;margin-top:6px;text-align:center;"></p>
@@ -717,6 +722,18 @@
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
       <button class="btn-delete" id="btnDelete" style="display:none" onclick="deleteItem()">🗑️</button>
       <button class="btn-save" onclick="saveItem()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTAS MODAL -->
+<div class="modal-overlay" id="notasOverlay" onclick="if(event.target===this) cerrarNotas()">
+  <div class="modal" style="max-width:380px;">
+    <h2 style="margin-bottom:14px;">📝 Notas</h2>
+    <p id="notasTitulo" style="font-size:0.8rem;color:#7a7a99;margin-bottom:10px;"></p>
+    <p id="notasContenido" style="font-size:0.9rem;color:#e8e8f0;line-height:1.5;white-space:pre-wrap;max-height:280px;overflow-y:auto;"></p>
+    <div class="modal-btns">
+      <button class="btn-save" style="flex:1;" onclick="cerrarNotas()">Cerrar</button>
     </div>
   </div>
 </div>
@@ -1726,6 +1743,23 @@
     }
   }
 
+  function mostrarNotas(id) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    document.getElementById('notasTitulo').textContent = item.nombre;
+    const notas = (item.notas || '').trim();
+    document.getElementById('notasContenido').textContent = notas
+      ? notas
+      : 'Todavía no agregaste ninguna nota para esta obra.';
+    document.getElementById('notasContenido').style.color = notas ? '#e8e8f0' : '#7a7a99';
+    document.getElementById('notasContenido').style.fontStyle = notas ? 'normal' : 'italic';
+    document.getElementById('notasOverlay').classList.add('open');
+  }
+
+  function cerrarNotas() {
+    document.getElementById('notasOverlay').classList.remove('open');
+  }
+
   function contrastTextColor(hex) {
     if (!hex) return '#ffffff';
     const h = hex.replace('#', '');
@@ -2209,6 +2243,7 @@
             </div>
             
             ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="display:block;margin-top:6px;font-size:0.7rem;color:#7c3aed;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 Leer aquí</a>` : ''}
+            <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:4px 10px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">📝 Notas</button>
           </div>
         </div>`;
     }
@@ -2256,6 +2291,7 @@
             </div>
             
             ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="display:block;margin-top:6px;font-size:0.7rem;color:#7c3aed;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 Ver aquí</a>` : ''}
+            <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:4px 10px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">📝 Notas</button>
           </div>
         </div>
       `).join('');
@@ -2276,6 +2312,7 @@
     document.getElementById('inputCap').placeholder = 'Ej: 24';
     document.getElementById('inputCap').closest('.form-group').querySelector('label').textContent = 'Episodio actual';
     document.getElementById('inputLink').value = '';
+    document.getElementById('inputNotas').value = '';
     document.getElementById('inputLink').placeholder = 'Ej: https://www.crunchyroll.com/...';
     document.getElementById('inputLink').closest('.form-group').querySelector('label').textContent = '🔗 Link donde lo estás viendo (opcional)';
     document.getElementById('inputImg').value = '';
@@ -2301,6 +2338,7 @@
     document.getElementById('inputCap').placeholder = 'Ej: 320';
     document.getElementById('inputCap').closest('.form-group').querySelector('label').textContent = 'Capítulo actual';
     document.getElementById('inputLink').value = '';
+    document.getElementById('inputNotas').value = '';
     document.getElementById('inputLink').placeholder = 'Ej: https://novelarrow.com/novel/...';
     document.getElementById('inputLink').closest('.form-group').querySelector('label').textContent = '🔗 Link donde la estás leyendo (opcional)';
     document.getElementById('inputImg').value = '';
@@ -2327,6 +2365,7 @@
     document.getElementById('inputCap').placeholder = 'Ej: 140';
     document.getElementById('inputCap').closest('.form-group').querySelector('label').textContent = 'Capítulo actual';
     document.getElementById('inputLink').value = '';
+    document.getElementById('inputNotas').value = '';
     document.getElementById('inputLink').placeholder = 'Ej: https://manhuaus.com/manga/...';
     document.getElementById('inputLink').closest('.form-group').querySelector('label').textContent = '🔗 Link donde lo estás leyendo (opcional)';
     document.getElementById('inputImg').value = '';
@@ -2352,6 +2391,7 @@
     document.getElementById('inputTipo').value = item.tipo;
     document.getElementById('inputCap').value = item.cap;
     document.getElementById('inputLink').value = item.link || '';
+    document.getElementById('inputNotas').value = item.notas || '';
     const imgVal = item.img || '';
     document.getElementById('inputImg').value = imgVal;
     if (imgVal) {
@@ -2416,7 +2456,8 @@
       cap: parseInt(document.getElementById('inputCap').value) || 0,
       img: document.getElementById('inputImg').value,
       link: document.getElementById('inputLink').value.trim(),
-      status: selectedStatus
+      status: selectedStatus,
+      notas: document.getElementById('inputNotas').value.trim()
     };
     try {
       await saveToFirestore(item);
