@@ -1957,11 +1957,13 @@
 
       // Click normal (solo si no fue drag)
       card.addEventListener('click', e => {
+        if (e.target.closest('button, a')) return;
         if (!isDragging) openEdit(card.dataset.id);
       });
 
       // Touch start
       card.addEventListener('touchstart', e => {
+        if (e.target.closest('button, a')) return;
         isDragging = false;
         touchDragId = card.dataset.id;
         touchStartX = e.touches[0].clientX;
@@ -2259,7 +2261,7 @@
             </div>
             
             ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="display:block;margin-top:6px;font-size:0.7rem;color:#7c3aed;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 Leer aquí</a>` : ''}
-            <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:4px 10px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">📝 Notas</button>
+            <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:7px 14px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;min-height:32px;">📝 Notas</button>
           </div>
         </div>`;
     }
@@ -2307,7 +2309,7 @@
             </div>
             
             ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="display:block;margin-top:6px;font-size:0.7rem;color:#7c3aed;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 Ver aquí</a>` : ''}
-            <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:4px 10px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">📝 Notas</button>
+            <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:7px 14px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;min-height:32px;">📝 Notas</button>
           </div>
         </div>
       `).join('');
