@@ -112,7 +112,7 @@
   .filter-btn.f-porempezar.active { border-color: var(--porempezar); background: rgba(245,158,11,0.1); color: var(--porempezar); }
   .filter-btn.f-pendiente.active { border-color: var(--pendiente); background: rgba(168,85,247,0.1); color: var(--pendiente); }
   .filter-btn.f-abandonado.active { border-color: var(--abandonado); background: rgba(239,68,68,0.1); color: var(--abandonado); }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 12px; }
   .card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
     transition: transform 0.2s, border-color 0.2s; cursor: pointer; position: relative; }
   .card:hover { transform: translateY(-3px); border-color: var(--accent); }
@@ -2273,8 +2273,8 @@
             </div>
             
             <div style="display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap;">
-              ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="font-size:0.62rem;color:#7c3aed;text-decoration:none;white-space:nowrap;">🔗 Leer aquí</a>` : ''}
-              <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:3px;padding:3px 8px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.62rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap;">📝 Notas</button>
+              ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="font-size:0.68rem;color:#7c3aed;text-decoration:none;white-space:nowrap;">🔗 Leer aquí</a>` : ''}
+              <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap;">📝 Notas</button>
             </div>
           </div>
         </div>`;
@@ -2323,8 +2323,8 @@
             </div>
             
             <div style="display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap;">
-              ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="font-size:0.62rem;color:#7c3aed;text-decoration:none;white-space:nowrap;">🔗 Ver aquí</a>` : ''}
-              <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:3px;padding:3px 8px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.62rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap;">📝 Notas</button>
+              ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="font-size:0.68rem;color:#7c3aed;text-decoration:none;white-space:nowrap;">🔗 Ver aquí</a>` : ''}
+              <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap;">📝 Notas</button>
             </div>
           </div>
         </div>
