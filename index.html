@@ -731,9 +731,12 @@
   <div class="modal" style="max-width:380px;">
     <h2 style="margin-bottom:14px;">📝 Notas</h2>
     <p id="notasTitulo" style="font-size:0.8rem;color:#7a7a99;margin-bottom:10px;"></p>
-    <p id="notasContenido" style="font-size:0.9rem;color:#e8e8f0;line-height:1.5;white-space:pre-wrap;max-height:280px;overflow-y:auto;"></p>
+    <textarea id="notasTextarea" rows="6" placeholder="Ej: El protagonista vuelve al pasado después de morir. Me gusta mucho el desarrollo de los personajes..."
+      style="width:100%;padding:11px;border-radius:10px;border:1px solid #2a2a38;background:#17171e;color:#e8e8f0;font-size:0.85rem;font-family:Inter,sans-serif;resize:vertical;box-sizing:border-box;"></textarea>
+    <p id="notasGuardadoMsg" style="font-size:0.75rem;color:#22c55e;margin-top:8px;display:none;">✅ Nota guardada</p>
     <div class="modal-btns">
-      <button class="btn-save" style="flex:1;" onclick="cerrarNotas()">Cerrar</button>
+      <button class="btn-cancel" onclick="cerrarNotas()">Cerrar</button>
+      <button class="btn-save" onclick="guardarNotas()">💾 Guardar nota</button>
     </div>
   </div>
 </div>
@@ -1743,21 +1746,34 @@
     }
   }
 
+  let notasEditandoId = null;
+
   function mostrarNotas(id) {
     const item = items.find(i => i.id === id);
     if (!item) return;
+    notasEditandoId = id;
     document.getElementById('notasTitulo').textContent = item.nombre;
-    const notas = (item.notas || '').trim();
-    document.getElementById('notasContenido').textContent = notas
-      ? notas
-      : 'Todavía no agregaste ninguna nota para esta obra.';
-    document.getElementById('notasContenido').style.color = notas ? '#e8e8f0' : '#7a7a99';
-    document.getElementById('notasContenido').style.fontStyle = notas ? 'normal' : 'italic';
+    document.getElementById('notasTextarea').value = item.notas || '';
+    document.getElementById('notasGuardadoMsg').style.display = 'none';
     document.getElementById('notasOverlay').classList.add('open');
+  }
+
+  async function guardarNotas() {
+    if (!notasEditandoId) return;
+    const nuevoTexto = document.getElementById('notasTextarea').value.trim();
+    const item = items.find(i => i.id === notasEditandoId);
+    if (item) item.notas = nuevoTexto;
+    if (currentUser) {
+      await db.ref('users/' + currentUser.uid + '/mangas/' + notasEditandoId + '/notas').set(nuevoTexto);
+    }
+    const msg = document.getElementById('notasGuardadoMsg');
+    msg.style.display = 'block';
+    setTimeout(() => { if (msg) msg.style.display = 'none'; }, 2000);
   }
 
   function cerrarNotas() {
     document.getElementById('notasOverlay').classList.remove('open');
+    notasEditandoId = null;
   }
 
   function contrastTextColor(hex) {
@@ -2243,7 +2259,7 @@
             </div>
             
             ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="display:block;margin-top:6px;font-size:0.7rem;color:#7c3aed;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 Leer aquí</a>` : ''}
-            <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;margin-top:6px;padding:6px 10px;background:#ffc107;border:none;border-radius:20px;color:#1a1a1a;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;box-sizing:border-box;">📝 Notas</button>
+            <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:4px 10px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">📝 Notas</button>
           </div>
         </div>`;
     }
@@ -2291,7 +2307,7 @@
             </div>
             
             ${item.link ? `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" style="display:block;margin-top:6px;font-size:0.7rem;color:#7c3aed;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 Ver aquí</a>` : ''}
-            <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;margin-top:6px;padding:6px 10px;background:#ffc107;border:none;border-radius:20px;color:#1a1a1a;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;box-sizing:border-box;">📝 Notas</button>
+            <button type="button" onclick="event.stopPropagation(); mostrarNotas('${item.id}')" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:4px 10px;background:rgba(255,193,7,0.15);border:1px solid rgba(255,193,7,0.4);border-radius:20px;color:#ffc107;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">📝 Notas</button>
           </div>
         </div>
       `).join('');
