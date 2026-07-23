@@ -370,6 +370,10 @@
   .settings-section { display: none; }
   .settings-section.active { display: block; }
   .settings-section h3 { font-size: 0.85rem; color: var(--muted); margin-bottom: 10px; letter-spacing: 0.5px; }
+  .pag-cat-header { display: flex; align-items: center; justify-content: space-between; margin: 18px 0 8px; }
+  .pag-cat-header h3 { margin: 0 !important; font-size: 0.85rem; color: var(--text) !important; letter-spacing: 0.5px; }
+  .pag-add-btn { padding: 6px 14px; background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 20px; color: #fff; font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
   .tag-row { display: flex; align-items: center; gap: 8px; background: var(--surface);
     border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; margin-bottom: 8px; }
   .tag-row-name { flex: 1; font-size: 0.85rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -743,6 +747,60 @@
   </div>
 </div>
 
+<!-- PAGINA FORM MODAL (agregar/editar página recomendada) -->
+<div class="modal-overlay" id="paginaFormOverlay" onclick="if(event.target===this) cerrarFormPagina()">
+  <div class="modal" style="max-width:380px;">
+    <h2 id="paginaFormTitulo" style="margin-bottom:14px;">➕ Agregar página</h2>
+    <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:6px;">Nombre:</label>
+    <input type="text" id="paginaFormNombre" placeholder="Ej: MangaDex"
+      style="width:100%;padding:11px;border-radius:10px;border:1px solid #2a2a38;background:#17171e;color:#e8e8f0;font-size:0.85rem;font-family:Inter,sans-serif;box-sizing:border-box;margin-bottom:12px;">
+    <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:6px;">URL:</label>
+    <input type="text" id="paginaFormUrl" placeholder="https://..."
+      style="width:100%;padding:11px;border-radius:10px;border:1px solid #2a2a38;background:#17171e;color:#e8e8f0;font-size:0.85rem;font-family:Inter,sans-serif;box-sizing:border-box;margin-bottom:12px;">
+    <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:6px;">Categoría:</label>
+    <select id="paginaFormCategoria"
+      style="width:100%;padding:11px;border-radius:10px;border:1px solid #2a2a38;background:#17171e;color:#e8e8f0;font-size:0.85rem;font-family:Inter,sans-serif;box-sizing:border-box;">
+      <option value="anime">🎥 Anime</option>
+      <option value="manga">📖 Manga</option>
+      <option value="manhwa">🌐 Manhwa</option>
+      <option value="manhua">📚 Manhua</option>
+      <option value="novela">📖 Novelas</option>
+    </select>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="cerrarFormPagina()">Cancelar</button>
+      <button class="btn-save" onclick="guardarFormPagina()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGINA MENU MODAL (⋮ Abrir / Editar / Eliminar) -->
+<div class="modal-overlay" id="paginaMenuOverlay" onclick="if(event.target===this) cerrarMenuPagina()">
+  <div class="modal" style="max-width:320px;">
+    <h2 id="paginaMenuTitulo" style="margin-bottom:16px;font-size:1.15rem;"></h2>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn-cancel" style="text-align:left;" onclick="abrirPaginaDesdeMenu()">🌐 Abrir página</button>
+      <button class="btn-cancel" style="text-align:left;" onclick="editarPaginaDesdeMenu()">✏️ Editar</button>
+      <button class="btn-cancel" style="text-align:left;color:#ef4444;" onclick="pedirEliminarPagina()">🗑️ Eliminar</button>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" style="flex:1;" onclick="cerrarMenuPagina()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGINA DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="paginaDeleteOverlay" onclick="if(event.target===this) cerrarDeletePagina()">
+  <div class="modal" style="max-width:320px;">
+    <h2 style="margin-bottom:10px;">¿Eliminar esta página?</h2>
+    <p id="paginaDeleteNombre" style="color:var(--muted);margin-bottom:16px;font-weight:600;"></p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="cerrarDeletePagina()">Cancelar</button>
+      <button class="btn-save" style="background:#ef4444;" onclick="confirmarEliminarPagina()">🗑️ Eliminar</button>
+    </div>
+  </div>
+</div>
+
+
 <!-- SCROLL TOP BUTTON -->
 <button id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
 
@@ -811,6 +869,7 @@
     <div class="settings-tabs">
       <button class="settings-tab active" id="stab-orden" onclick="switchSettingsTab('orden')">📑 Orden</button>
       <button class="settings-tab" id="stab-compartir" onclick="switchSettingsTab('compartir')">🔗 Compartir</button>
+      <button class="settings-tab" id="stab-paginas" onclick="switchSettingsTab('paginas')">📚 Páginas recomendadas</button>
     </div>
 
     <!-- CATEGORY TAB ORDER -->
@@ -836,6 +895,43 @@
         <button onclick="copiarLinkCompartir()" style="padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap;font-family:Inter,sans-serif;">📋 Copiar</button>
       </div>
       <p id="compartirCopiadoMsg" style="font-size:0.75rem;color:#22c55e;margin-top:8px;display:none;">✅ Link copiado al portapapeles</p>
+    </div>
+
+    <!-- PÁGINAS RECOMENDADAS -->
+    <div class="settings-section" id="ssec-paginas">
+      <h3>📚 PÁGINAS RECOMENDADAS</h3>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">
+        Tu lista personal de páginas para ver anime y leer manga, manhwa, manhua y novelas. Es solo tuya: podés editarla o borrarla sin afectar a nadie más.
+      </p>
+      <div class="pag-cat-header">
+        <h3 style="margin:0;">🎥 Anime</h3>
+        <button class="pag-add-btn" onclick="abrirFormPagina('anime')">+ Agregar</button>
+      </div>
+      <div id="paginasList-anime"></div>
+
+      <div class="pag-cat-header">
+        <h3 style="margin:0;">📖 Manga</h3>
+        <button class="pag-add-btn" onclick="abrirFormPagina('manga')">+ Agregar</button>
+      </div>
+      <div id="paginasList-manga"></div>
+
+      <div class="pag-cat-header">
+        <h3 style="margin:0;">🌐 Manhwa</h3>
+        <button class="pag-add-btn" onclick="abrirFormPagina('manhwa')">+ Agregar</button>
+      </div>
+      <div id="paginasList-manhwa"></div>
+
+      <div class="pag-cat-header">
+        <h3 style="margin:0;">📚 Manhua</h3>
+        <button class="pag-add-btn" onclick="abrirFormPagina('manhua')">+ Agregar</button>
+      </div>
+      <div id="paginasList-manhua"></div>
+
+      <div class="pag-cat-header">
+        <h3 style="margin:0;">📖 Novelas</h3>
+        <button class="pag-add-btn" onclick="abrirFormPagina('novela')">+ Agregar</button>
+      </div>
+      <div id="paginasList-novela"></div>
     </div>
 
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
@@ -901,6 +997,59 @@
   let modoCompartido = false;
   const uidCompartido = new URLSearchParams(location.search).get('ver');
   let tagsConfig = []; // [{id, nombre, color}]
+
+  // ─── PÁGINAS RECOMENDADAS ──────────────────────────────────────────
+  const PAGINAS_CATS = ['anime', 'manga', 'manhwa', 'manhua', 'novela'];
+  const PAGINAS_CAT_INFO = {
+    anime: { emoji: '🎥', nombre: 'Anime' },
+    manga: { emoji: '📖', nombre: 'Manga' },
+    manhwa: { emoji: '🌐', nombre: 'Manhwa' },
+    manhua: { emoji: '📚', nombre: 'Manhua' },
+    novela: { emoji: '📖', nombre: 'Novelas' }
+  };
+  const PAGINAS_DEFAULT = {
+    anime: [
+      { id: 'anime_1', nombre: 'AnimeFLV', url: 'https://www3.animeflv.net' },
+      { id: 'anime_2', nombre: 'JKAnime', url: 'https://jkanime.net' },
+      { id: 'anime_3', nombre: 'TioAnime', url: 'https://tioanime.com' }
+    ],
+    manga: [
+      { id: 'manga_1', nombre: 'MangaDex', url: 'https://mangadex.org' },
+      { id: 'manga_2', nombre: 'MangaPlus', url: 'https://mangaplus.shueisha.co.jp' },
+      { id: 'manga_3', nombre: 'MangaOni', url: 'https://mangaoni.com' },
+      { id: 'manga_4', nombre: 'Manga Crab', url: 'https://mangacrab.com' },
+      { id: 'manga_5', nombre: 'TuMangaOnline', url: 'https://visortmo.com' },
+      { id: 'manga_6', nombre: 'LectorManga', url: 'https://lectormanga.com' }
+    ],
+    manhwa: [
+      { id: 'manhwa_1', nombre: 'Olympus Scans', url: 'https://olympusscans.com' },
+      { id: 'manhwa_2', nombre: 'MHS Scans', url: 'https://mhscans.com' },
+      { id: 'manhwa_3', nombre: 'Asura Scans', url: 'https://asuracomic.net' },
+      { id: 'manhwa_4', nombre: 'Reaper Scans', url: 'https://reaperscans.com' },
+      { id: 'manhwa_5', nombre: 'Flame Comics', url: 'https://flamecomics.xyz' },
+      { id: 'manhwa_6', nombre: 'TuMangaOnline', url: 'https://visortmo.com' },
+      { id: 'manhwa_7', nombre: 'LectorManga', url: 'https://lectormanga.com' }
+    ],
+    manhua: [
+      { id: 'manhua_1', nombre: 'ManhuaPlus', url: 'https://manhuaplus.com' },
+      { id: 'manhua_2', nombre: 'Night Scans', url: 'https://nightscans.net' },
+      { id: 'manhua_3', nombre: 'MangaDex', url: 'https://mangadex.org' },
+      { id: 'manhua_4', nombre: 'TuMangaOnline', url: 'https://visortmo.com' }
+    ],
+    novela: [
+      { id: 'novela_1', nombre: 'NovelUpdates', url: 'https://www.novelupdates.com' },
+      { id: 'novela_2', nombre: 'Royal Road', url: 'https://www.royalroad.com' },
+      { id: 'novela_3', nombre: 'WebNovel', url: 'https://www.webnovel.com' },
+      { id: 'novela_4', nombre: 'Kakao Page', url: 'https://page.kakao.com' },
+      { id: 'novela_5', nombre: 'Novelas Ligeras', url: 'https://novelasligeras.net' }
+    ]
+  };
+  let paginasConfig = { anime: [], manga: [], manhwa: [], manhua: [], novela: [] };
+  let paginaFormCategoriaActual = null;
+  let paginaFormEditandoId = null;
+  let paginaMenuCategoriaActual = null;
+  let paginaMenuIdActual = null;
+
   let tipoColores = { Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e', Novela: '#06b6d4' };
   // (selectedTags eliminado — los tags ahora son parte del mismo selector único de estado)
   const PRESET_COLORS = ['#e94560','#ec4899','#7c3aed','#a855f7','#3b82f6','#06b6d4','#22c55e','#84cc16','#f59e0b','#f97316','#ef4444','#64748b'];
@@ -1230,6 +1379,16 @@
         ];
       }
       sincronizarDesdeOrdenCombinado();
+      if (cfg.paginas && typeof cfg.paginas === 'object') {
+        PAGINAS_CATS.forEach(cat => {
+          const val = cfg.paginas[cat];
+          paginasConfig[cat] = Array.isArray(val) ? val : (val ? Object.values(val) : []);
+        });
+      } else {
+        // Primera vez del usuario: sembrar con la lista predeterminada
+        paginasConfig = JSON.parse(JSON.stringify(PAGINAS_DEFAULT));
+        if (currentUser) db.ref('users/' + currentUser.uid + '/config/paginas').set(paginasConfig).catch(() => {});
+      }
     } catch(e) {
       tagsConfig = [];
     }
@@ -1245,6 +1404,138 @@
   async function guardarTabOrder() {
     if (currentUser) await db.ref('users/' + currentUser.uid + '/config/tabOrder').set(tabOrder);
   }
+
+  // ─── PÁGINAS RECOMENDADAS ──────────────────────────────────────────
+  async function guardarPaginasConfig() {
+    if (!currentUser) return;
+    await db.ref('users/' + currentUser.uid + '/config/paginas').set(paginasConfig);
+  }
+
+  function renderPaginasConfig() {
+    PAGINAS_CATS.forEach(cat => {
+      const cont = document.getElementById('paginasList-' + cat);
+      if (!cont) return;
+      const lista = paginasConfig[cat] || [];
+      if (lista.length === 0) {
+        cont.innerHTML = '<p class="tag-picker-empty">Todavía no hay páginas acá.</p>';
+        return;
+      }
+      cont.innerHTML = lista.map(p => `
+        <div class="pag-item">
+          <div class="tag-row">
+            <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="tag-row-name" style="text-decoration:none;color:var(--text);cursor:pointer;">🔗 ${p.nombre}</a>
+            <button class="tag-row-btn" title="Opciones" onclick="abrirMenuPagina('${cat}','${p.id}')">⋮</button>
+          </div>
+          <div style="font-size:0.68rem;color:var(--muted);margin:-4px 0 10px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.url}</div>
+        </div>
+      `).join('');
+    });
+  }
+
+  function abrirFormPagina(categoria) {
+    paginaFormCategoriaActual = categoria;
+    paginaFormEditandoId = null;
+    document.getElementById('paginaFormTitulo').textContent = '➕ Agregar página';
+    document.getElementById('paginaFormNombre').value = '';
+    document.getElementById('paginaFormUrl').value = '';
+    document.getElementById('paginaFormCategoria').value = categoria;
+    document.getElementById('paginaFormOverlay').classList.add('open');
+  }
+
+  function editarFormPagina(categoria, id) {
+    const p = (paginasConfig[categoria] || []).find(x => x.id === id);
+    if (!p) return;
+    paginaFormCategoriaActual = categoria;
+    paginaFormEditandoId = id;
+    document.getElementById('paginaFormTitulo').textContent = '✏️ Editar página';
+    document.getElementById('paginaFormNombre').value = p.nombre;
+    document.getElementById('paginaFormUrl').value = p.url;
+    document.getElementById('paginaFormCategoria').value = categoria;
+    document.getElementById('paginaFormOverlay').classList.add('open');
+  }
+
+  function cerrarFormPagina() {
+    document.getElementById('paginaFormOverlay').classList.remove('open');
+    paginaFormCategoriaActual = null;
+    paginaFormEditandoId = null;
+  }
+
+  async function guardarFormPagina() {
+    const nombre = document.getElementById('paginaFormNombre').value.trim();
+    let url = document.getElementById('paginaFormUrl').value.trim();
+    const nuevaCategoria = document.getElementById('paginaFormCategoria').value;
+    if (!nombre || !url) return;
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+    if (paginaFormEditandoId) {
+      // Sacarla de la categoría vieja (por si cambió de categoría)
+      const catVieja = paginaFormCategoriaActual;
+      const idx = (paginasConfig[catVieja] || []).findIndex(x => x.id === paginaFormEditandoId);
+      let item = idx > -1 ? paginasConfig[catVieja][idx] : null;
+      if (item) {
+        paginasConfig[catVieja].splice(idx, 1);
+        item.nombre = nombre;
+        item.url = url;
+        paginasConfig[nuevaCategoria] = paginasConfig[nuevaCategoria] || [];
+        paginasConfig[nuevaCategoria].push(item);
+      }
+    } else {
+      const nuevoId = 'pag_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+      paginasConfig[nuevaCategoria] = paginasConfig[nuevaCategoria] || [];
+      paginasConfig[nuevaCategoria].push({ id: nuevoId, nombre, url });
+    }
+    await guardarPaginasConfig();
+    renderPaginasConfig();
+    cerrarFormPagina();
+  }
+
+  function abrirMenuPagina(categoria, id) {
+    const p = (paginasConfig[categoria] || []).find(x => x.id === id);
+    if (!p) return;
+    paginaMenuCategoriaActual = categoria;
+    paginaMenuIdActual = id;
+    document.getElementById('paginaMenuTitulo').textContent = '🔗 ' + p.nombre;
+    document.getElementById('paginaMenuOverlay').classList.add('open');
+  }
+
+  function cerrarMenuPagina() {
+    document.getElementById('paginaMenuOverlay').classList.remove('open');
+  }
+
+  function abrirPaginaDesdeMenu() {
+    const p = (paginasConfig[paginaMenuCategoriaActual] || []).find(x => x.id === paginaMenuIdActual);
+    cerrarMenuPagina();
+    if (p) window.open(p.url, '_blank', 'noopener,noreferrer');
+  }
+
+  function editarPaginaDesdeMenu() {
+    const cat = paginaMenuCategoriaActual, id = paginaMenuIdActual;
+    cerrarMenuPagina();
+    editarFormPagina(cat, id);
+  }
+
+  function pedirEliminarPagina() {
+    const p = (paginasConfig[paginaMenuCategoriaActual] || []).find(x => x.id === paginaMenuIdActual);
+    if (!p) return;
+    document.getElementById('paginaDeleteNombre').textContent = p.nombre;
+    cerrarMenuPagina();
+    document.getElementById('paginaDeleteOverlay').classList.add('open');
+  }
+
+  function cerrarDeletePagina() {
+    document.getElementById('paginaDeleteOverlay').classList.remove('open');
+  }
+
+  async function confirmarEliminarPagina() {
+    const cat = paginaMenuCategoriaActual, id = paginaMenuIdActual;
+    if (cat && id) {
+      paginasConfig[cat] = (paginasConfig[cat] || []).filter(x => x.id !== id);
+      await guardarPaginasConfig();
+      renderPaginasConfig();
+    }
+    cerrarDeletePagina();
+  }
+
 
   function moverTab(cat, dir) {
     const i = tabOrder.indexOf(cat);
@@ -1829,6 +2120,7 @@
     renderStatusOrderManager();
     renderTagsManager();
     renderCompartirSettings();
+    renderPaginasConfig();
     document.getElementById('settingsPanel').classList.add('open');
   }
   function closeSettings() { document.getElementById('settingsPanel').classList.remove('open'); }
