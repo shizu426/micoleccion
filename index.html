@@ -282,6 +282,7 @@
   @media (max-width: 480px) {
     .cat-tab { padding: 8px 10px; font-size: 0.76rem; }
     .cat-tab .cat-count { font-size: 0.65rem; padding: 1px 5px; margin-left: 3px; }
+    .settings-tab { font-size: 0.68rem; padding: 8px 3px; }
   }
 
   /* CATEGORY FILTERS (per-section) */
@@ -365,7 +366,8 @@
     color: var(--accent); margin-bottom: 6px; text-align: center; }
   .settings-tabs { display: flex; background: var(--surface); border-radius: 10px; margin: 16px 0; padding: 4px; }
   .settings-tab { flex: 1; padding: 9px; text-align: center; border-radius: 8px; cursor: pointer;
-    font-size: 0.8rem; color: var(--muted); border: none; background: none; font-family: 'Inter', sans-serif; }
+    font-size: 0.8rem; color: var(--muted); border: none; background: none; font-family: 'Inter', sans-serif;
+    min-width: 0; word-break: break-word; }
   .settings-tab.active { background: var(--accent); color: white; font-weight: 600; }
   .settings-section { display: none; }
   .settings-section.active { display: block; }
@@ -1029,7 +1031,7 @@
   };
   const PAGINAS_DEFAULT = {
     anime: [
-      { id: 'anime_1', nombre: 'AnimeFLV', url: 'https://www3.animeflv.net' },
+      { id: 'anime_1', nombre: 'AnimeAV1', url: 'https://animeav1.com' },
       { id: 'anime_2', nombre: 'JKAnime', url: 'https://jkanime.net' },
       { id: 'anime_3', nombre: 'TioAnime', url: 'https://tioanime.com' }
     ],
@@ -1404,6 +1406,14 @@
           const val = cfg.paginas[cat];
           paginasConfig[cat] = Array.isArray(val) ? val : (val ? Object.values(val) : []);
         });
+        // Migración: quienes ya tenían guardado el viejo default "AnimeFLV" pasan a "AnimeAV1" automáticamente.
+        const animeList = paginasConfig.anime || [];
+        const flvIdx = animeList.findIndex(p => p.url === 'https://www3.animeflv.net');
+        if (flvIdx > -1) {
+          animeList[flvIdx].nombre = 'AnimeAV1';
+          animeList[flvIdx].url = 'https://animeav1.com';
+          if (currentUser) db.ref('users/' + currentUser.uid + '/config/paginas/anime').set(animeList).catch(() => {});
+        }
       } else {
         // Primera vez del usuario: sembrar con la lista predeterminada
         paginasConfig = JSON.parse(JSON.stringify(PAGINAS_DEFAULT));
