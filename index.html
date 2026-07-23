@@ -374,6 +374,8 @@
   .pag-cat-header h3 { margin: 0 !important; font-size: 0.85rem; color: var(--text) !important; letter-spacing: 0.5px; }
   .pag-add-btn { padding: 6px 14px; background: linear-gradient(135deg, var(--accent), var(--accent2));
     border: none; border-radius: 20px; color: #fff; font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .pag-cat-block { display: none; }
+  .pag-cat-block.active { display: block; }
   .tag-row { display: flex; align-items: center; gap: 8px; background: var(--surface);
     border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; margin-bottom: 8px; }
   .tag-row-name { flex: 1; font-size: 0.85rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -903,35 +905,53 @@
       <p style="font-size:0.78rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">
         Tu lista personal de páginas para ver anime y leer manga, manhwa, manhua y novelas. Es solo tuya: podés editarla o borrarla sin afectar a nadie más.
       </p>
+      <div class="category-tabs" style="margin-bottom:16px;">
+        <button class="cat-tab pag-cat-tab active" id="pagtab-anime" onclick="switchPaginaCat('anime')">🎥 Anime</button>
+        <button class="cat-tab pag-cat-tab" id="pagtab-manga" onclick="switchPaginaCat('manga')">📖 Manga</button>
+        <button class="cat-tab pag-cat-tab" id="pagtab-manhwa" onclick="switchPaginaCat('manhwa')">🌐 Manhwa</button>
+        <button class="cat-tab pag-cat-tab" id="pagtab-manhua" onclick="switchPaginaCat('manhua')">📚 Manhua</button>
+        <button class="cat-tab pag-cat-tab" id="pagtab-novela" onclick="switchPaginaCat('novela')">📖 Novelas</button>
+      </div>
+
+      <div class="pag-cat-block active" id="pagcat-anime">
       <div class="pag-cat-header">
         <h3 style="margin:0;">🎥 Anime</h3>
         <button class="pag-add-btn" onclick="abrirFormPagina('anime')">+ Agregar</button>
       </div>
       <div id="paginasList-anime"></div>
+      </div>
 
+      <div class="pag-cat-block" id="pagcat-manga">
       <div class="pag-cat-header">
         <h3 style="margin:0;">📖 Manga</h3>
         <button class="pag-add-btn" onclick="abrirFormPagina('manga')">+ Agregar</button>
       </div>
       <div id="paginasList-manga"></div>
+      </div>
 
+      <div class="pag-cat-block" id="pagcat-manhwa">
       <div class="pag-cat-header">
         <h3 style="margin:0;">🌐 Manhwa</h3>
         <button class="pag-add-btn" onclick="abrirFormPagina('manhwa')">+ Agregar</button>
       </div>
       <div id="paginasList-manhwa"></div>
+      </div>
 
+      <div class="pag-cat-block" id="pagcat-manhua">
       <div class="pag-cat-header">
         <h3 style="margin:0;">📚 Manhua</h3>
         <button class="pag-add-btn" onclick="abrirFormPagina('manhua')">+ Agregar</button>
       </div>
       <div id="paginasList-manhua"></div>
+      </div>
 
+      <div class="pag-cat-block" id="pagcat-novela">
       <div class="pag-cat-header">
         <h3 style="margin:0;">📖 Novelas</h3>
         <button class="pag-add-btn" onclick="abrirFormPagina('novela')">+ Agregar</button>
       </div>
       <div id="paginasList-novela"></div>
+      </div>
     </div>
 
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
@@ -1406,6 +1426,15 @@
   }
 
   // ─── PÁGINAS RECOMENDADAS ──────────────────────────────────────────
+  function switchPaginaCat(cat) {
+    document.querySelectorAll('.pag-cat-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.pag-cat-block').forEach(s => s.classList.remove('active'));
+    const tab = document.getElementById('pagtab-' + cat);
+    const block = document.getElementById('pagcat-' + cat);
+    if (tab) tab.classList.add('active');
+    if (block) block.classList.add('active');
+  }
+
   async function guardarPaginasConfig() {
     if (!currentUser) return;
     await db.ref('users/' + currentUser.uid + '/config/paginas').set(paginasConfig);
