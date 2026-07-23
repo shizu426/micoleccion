@@ -29,7 +29,8 @@
     --tipo-manga: #e94560; --tipo-manhwa: #7c3aed; --tipo-manhua: #f59e0b; --tipo-anime: #22c55e;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+  html { overflow-x: hidden; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; max-width: 100vw; }
 
   /* AUTH SCREEN */
   .auth-screen {
@@ -364,7 +365,7 @@
     padding: 24px 20px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
   .settings-box h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px;
     color: var(--accent); margin-bottom: 6px; text-align: center; }
-  .settings-tabs { display: flex; background: var(--surface); border-radius: 10px; margin: 16px 0; padding: 4px; }
+  .settings-tabs { display: flex; flex-wrap: wrap; background: var(--surface); border-radius: 10px; margin: 16px 0; padding: 4px; }
   .settings-tab { flex: 1; padding: 9px; text-align: center; border-radius: 8px; cursor: pointer;
     font-size: 0.8rem; color: var(--muted); border: none; background: none; font-family: 'Inter', sans-serif;
     min-width: 0; word-break: break-word; }
