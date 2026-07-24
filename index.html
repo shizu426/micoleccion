@@ -287,34 +287,94 @@
   }
 
   /* ═══════════ ESTILO BIBLIOTECA ═══════════ */
-  .biblioteca-shell { display: none; min-height: 100vh; }
+  .biblioteca-shell { display: none; min-height: 100vh; flex-direction: column; }
   body.estilo-biblioteca .biblioteca-shell { display: flex; }
-  .biblioteca-sidebar { width: 240px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border);
-    padding: 20px 16px; display: flex; flex-direction: column; gap: 14px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-  .biblioteca-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--text); font-size: 1.05rem; }
+  body.estilo-biblioteca header, body.estilo-biblioteca .donate-banner, body.estilo-biblioteca .container { display: none !important; }
+
+  /* NAVBAR */
+  .biblioteca-navbar { display: flex; align-items: center; gap: 16px; padding: 10px 20px;
+    background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 900; }
+  .biblioteca-menu-toggle-inline { display: none; background: none; border: none; color: var(--text); font-size: 1.3rem; cursor: pointer; }
+  .biblioteca-brand { display: flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: 0.5px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.05rem; }
   .biblioteca-brand img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-  .biblioteca-user { font-size: 0.75rem; color: var(--muted); padding-bottom: 6px; border-bottom: 1px solid var(--border);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .biblioteca-section-title { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.5px; margin-top: 6px; }
-  .biblioteca-nav-slot .category-tabs { display: flex; flex-direction: column; background: none; border: none; padding: 0; gap: 4px; }
-  .biblioteca-nav-slot .cat-tab { text-align: left; display: flex; justify-content: space-between; align-items: center; }
-  .biblioteca-add-slot .add-btn { width: 100%; margin: 0 0 6px 0 !important; font-size: 0.78rem; padding: 9px; }
-  .biblioteca-search-slot .search-bar { width: 100%; box-sizing: border-box; }
-  .biblioteca-sidebar-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .biblioteca-search-slot { flex: 1; max-width: 480px; }
+  .biblioteca-search-slot .search-bar { width: 100%; box-sizing: border-box; margin: 0; }
+  .biblioteca-navbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .biblioteca-navbtn { background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+    padding: 8px 12px; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .biblioteca-badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: #fff;
+    font-size: 0.6rem; border-radius: 999px; padding: 1px 5px; font-weight: 700; }
+  .biblioteca-userchip { position: relative; display: flex; align-items: center; gap: 6px; background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; cursor: pointer; font-size: 0.8rem; color: var(--text); }
+  .biblioteca-avatar { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+  .biblioteca-userchip-menu { display: none; position: absolute; right: 0; top: 110%; background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px; padding: 6px; min-width: 140px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .biblioteca-userchip.open .biblioteca-userchip-menu { display: block; }
+
+  /* BODY: sidebar + main */
+  .biblioteca-body { display: flex; flex: 1; min-height: 0; }
+  .biblioteca-sidebar { width: 230px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border);
+    padding: 16px 14px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 53px; height: calc(100vh - 53px); overflow-y: auto; }
+  .biblioteca-nav-item { display: flex; align-items: center; gap: 8px; background: none; border: none; text-align: left;
+    color: var(--muted); padding: 9px 10px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .biblioteca-nav-item:hover { background: var(--card); color: var(--text); }
+  .biblioteca-nav-item.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; font-weight: 600; }
+  .biblioteca-nav-slot .category-tabs { display: flex; flex-direction: column; background: none; border: none; padding: 0; gap: 2px; }
+  .biblioteca-nav-slot .cat-tab { text-align: left; display: flex; justify-content: space-between; align-items: center;
+    background: none; color: var(--muted); border-radius: 8px; padding: 9px 10px; }
+  .biblioteca-nav-slot .cat-tab:hover { background: var(--card); color: var(--text); }
+  .biblioteca-nav-slot .cat-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+  .biblioteca-nav-divider { height: 1px; background: var(--border); margin: 8px 0; }
+  .biblioteca-sidebar-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 12px; }
+  .biblioteca-donate-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-size: 0.78rem; }
+  .biblioteca-donate-box p { color: var(--muted); margin: 4px 0 8px; }
+  .biblioteca-donate-btn { width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none;
+    border-radius: 8px; color: #fff; padding: 8px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
   .biblioteca-link-btn { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text);
-    padding: 8px 10px; font-size: 0.78rem; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; }
+    padding: 8px 10px; font-size: 0.78rem; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; width: 100%; }
+
+  /* MAIN CONTENT */
   .biblioteca-main { flex: 1; min-width: 0; padding: 20px; overflow-x: hidden; }
-  .biblioteca-menu-toggle { display: none; position: fixed; top: 12px; left: 12px; z-index: 1001;
-    width: 40px; height: 40px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border);
-    color: var(--text); font-size: 1.1rem; cursor: pointer; }
+  .biblioteca-hero { display: flex; justify-content: space-between; align-items: center; gap: 20px;
+    background: linear-gradient(120deg, rgba(233,69,96,0.18), rgba(124,58,237,0.18)), var(--card);
+    border: 1px solid var(--border); border-radius: 18px; padding: 26px; margin-bottom: 16px; flex-wrap: wrap; }
+  .biblioteca-hero-eyebrow { font-size: 0.75rem; letter-spacing: 1px; color: var(--muted); }
+  .biblioteca-hero-text h2 { margin: 4px 0 8px; font-size: 1.6rem; }
+  .biblioteca-hero-text p { color: var(--muted); font-size: 0.85rem; max-width: 420px; }
+  .biblioteca-hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .biblioteca-hero-stat { background: rgba(0,0,0,0.25); border-radius: 12px; padding: 10px 16px; text-align: center; min-width: 90px; }
+  .biblioteca-hero-stat b { display: block; font-size: 1.2rem; }
+  .biblioteca-hero-stat span { font-size: 0.68rem; color: var(--muted); }
+  .biblioteca-add-slot { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .biblioteca-add-slot .add-btn { margin: 0 !important; }
+  .biblioteca-shortcut-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .biblioteca-shortcut-btn { background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text);
+    padding: 10px 16px; font-size: 0.82rem; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; }
+  .biblioteca-back-btn { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); padding: 8px 14px; font-size: 0.8rem; cursor: pointer; margin-bottom: 14px; font-family: 'Inter', sans-serif; }
+
+  /* MOBILE */
   .biblioteca-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 999; }
   @media (max-width: 860px) {
-    body.estilo-biblioteca .biblioteca-menu-toggle { display: block; }
+    body.estilo-biblioteca .biblioteca-menu-toggle-inline { display: block; }
+    body.estilo-biblioteca .biblioteca-search-slot { display: none; }
     body.estilo-biblioteca .biblioteca-sidebar { position: fixed; left: 0; top: 0; z-index: 1000;
-      transform: translateX(-100%); transition: transform 0.25s ease; width: 78vw; max-width: 280px; }
+      transform: translateX(-100%); transition: transform 0.25s ease; width: 78vw; max-width: 280px; height: 100vh; }
     body.estilo-biblioteca .biblioteca-sidebar.open { transform: translateX(0); }
     body.estilo-biblioteca .biblioteca-overlay.open { display: block; }
-    body.estilo-biblioteca .biblioteca-main { padding: 60px 12px 20px; }
+    body.estilo-biblioteca .biblioteca-main { padding: 14px; }
+    body.estilo-biblioteca .biblioteca-hero { flex-direction: column; align-items: stretch; padding: 18px; }
+    body.estilo-biblioteca .biblioteca-hero-stats { grid-template-columns: repeat(3, 1fr); }
+    /* Pantalla Inicio como landing fija en celular (si el usuario la eligió) */
+    body.estilo-biblioteca.mobile-home-inicio #bibliotecaCategoriaContenido { display: none; }
+    body.estilo-biblioteca.mobile-home-inicio.biblioteca-en-categoria #bibliotecaHomeScreen { display: none; }
+    body.estilo-biblioteca.mobile-home-inicio.biblioteca-en-categoria #bibliotecaCategoriaContenido { display: block; }
+    body.estilo-biblioteca.mobile-home-inicio.biblioteca-en-categoria .biblioteca-back-btn { display: inline-block; }
+  }
+  @media (min-width: 861px) {
+    .biblioteca-back-btn { display: none !important; }
   }
   .cat-filters { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
   .cat-filter-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border);
@@ -656,30 +716,77 @@
 
 <!-- ESTILO BIBLIOTECA (alternativo, oculto por defecto) -->
 <div id="bibliotecaShell" class="biblioteca-shell">
-  <button class="biblioteca-menu-toggle" id="bibliotecaMenuToggle" onclick="toggleBibliotecaSidebar()">☰</button>
-  <div class="biblioteca-overlay" id="bibliotecaOverlay" onclick="toggleBibliotecaSidebar(false)"></div>
-  <aside class="biblioteca-sidebar" id="bibliotecaSidebar">
+  <div class="biblioteca-navbar">
+    <button class="biblioteca-menu-toggle-inline" id="bibliotecaMenuToggle" onclick="toggleBibliotecaSidebar()">☰</button>
     <div class="biblioteca-brand">
       <img src="icons/icon-192.png" alt="MiColección">
-      <span>MiColección</span>
+      <span>MICOLECCIÓN</span>
     </div>
-    <div class="biblioteca-user" id="bibliotecaUserEmail"></div>
     <div class="biblioteca-search-slot" id="bibliotecaSearchSlot"></div>
-    <div class="biblioteca-add-slot" id="bibliotecaAddSlot"></div>
-    <div class="biblioteca-section-title">📚 Mi Biblioteca</div>
-    <div class="biblioteca-nav-slot" id="bibliotecaNavSlot"></div>
-    <div class="biblioteca-sidebar-bottom">
-      <button class="biblioteca-link-btn" onclick="openSettings()">⚙️ Configuración</button>
-      <button class="biblioteca-link-btn" onclick="document.getElementById('donateModal').classList.add('open')">💙 Apoyar (donación)</button>
-      <button class="biblioteca-link-btn" onclick="volverEstiloClasico()">🔁 Volver al estilo clásico</button>
-      <button class="biblioteca-link-btn" onclick="logout()">🚪 Cerrar sesión</button>
+    <div class="biblioteca-navbar-actions">
+      <div class="biblioteca-theme-slot" id="bibliotecaThemeSlot"></div>
+      <button class="biblioteca-navbtn" onclick="openSettings()">⚙️ Config</button>
+      <button class="biblioteca-navbtn" title="Próximamente" style="position:relative;">🔔<span class="biblioteca-badge">3</span></button>
+      <div class="biblioteca-userchip" onclick="this.classList.toggle('open')">
+        <span class="biblioteca-avatar">👤</span>
+        <span id="bibliotecaUserName">Usuario</span>
+        <span>▾</span>
+        <div class="biblioteca-userchip-menu">
+          <button class="biblioteca-link-btn" onclick="logout()">🚪 Cerrar sesión</button>
+        </div>
+      </div>
     </div>
-  </aside>
-  <main class="biblioteca-main" id="bibliotecaMainSlot"></main>
+  </div>
+
+  <div class="biblioteca-body">
+    <div class="biblioteca-overlay" id="bibliotecaOverlay" onclick="toggleBibliotecaSidebar(false)"></div>
+    <aside class="biblioteca-sidebar" id="bibliotecaSidebar">
+      <button class="biblioteca-nav-item active" id="bibliotecaNavInicio" onclick="bibliotecaIrInicio()">🏠 Inicio</button>
+      <div class="biblioteca-nav-slot" id="bibliotecaNavSlot"></div>
+      <div class="biblioteca-nav-divider"></div>
+      <button class="biblioteca-nav-item" title="Próximamente">🤍 Favoritos</button>
+      <button class="biblioteca-nav-item" title="Próximamente">🕐 Historial</button>
+      <button class="biblioteca-nav-item" title="Próximamente">📝 Notas</button>
+      <button class="biblioteca-nav-item" onclick="openTagsManager()">🏷️ Tags</button>
+      <button class="biblioteca-nav-item" title="Próximamente">📅 Calendario</button>
+      <button class="biblioteca-nav-item" title="Próximamente">📊 Estadísticas</button>
+      <div class="biblioteca-sidebar-bottom">
+        <div class="biblioteca-donate-box">
+          <strong>💙 ¿Te gusta la app?</strong>
+          <p>Apóyanos con una donación voluntaria</p>
+          <button class="biblioteca-donate-btn" onclick="document.getElementById('donateModal').classList.add('open')">Donar 💙</button>
+        </div>
+        <button class="biblioteca-link-btn" onclick="volverEstiloClasico()">🔁 Volver al estilo clásico</button>
+      </div>
+    </aside>
+
+    <main class="biblioteca-main" id="bibliotecaMainContent">
+      <!-- PANTALLA INICIO (solo celular, si el usuario la eligió como principal) -->
+      <div class="biblioteca-home-screen" id="bibliotecaHomeScreen">
+        <div class="biblioteca-hero">
+          <div class="biblioteca-hero-text">
+            <span class="biblioteca-hero-eyebrow">BIENVENIDO DE NUEVO,</span>
+            <h2 id="bibliotecaHeroNombre">¡Hola! 👋</h2>
+            <p>Organiza tus series, sigue tu progreso y nunca pierdas el rastro de lo que amas.</p>
+          </div>
+          <div class="biblioteca-hero-stats" id="bibliotecaHeroStats"></div>
+        </div>
+        <div class="biblioteca-add-slot" id="bibliotecaAddSlot"></div>
+        <div class="biblioteca-shortcut-row" id="bibliotecaShortcutRow"></div>
+      </div>
+
+      <!-- CONTENIDO REAL (categorías/tarjetas), se muestra siempre en PC y al navegar en celular -->
+      <div id="bibliotecaCategoriaContenido">
+        <button class="biblioteca-back-btn" id="bibliotecaBackBtn" onclick="bibliotecaIrInicio()">← Volver al inicio</button>
+        <div id="bibliotecaSeccionesSlot"></div>
+      </div>
+    </main>
+  </div>
 </div>
 
 <!-- DONATE MODAL -->
 <div class="donate-modal-overlay" id="donateModal" onclick="if(event.target===this)this.classList.remove('open')">
+
   <div class="donate-modal">
     <div class="donate-modal-header">
       <h2>💙 Apoyá el proyecto</h2>
@@ -1040,6 +1147,18 @@
         </button>
       </div>
       <p style="font-size:0.72rem;color:var(--muted);margin-top:10px;">La página se va a recargar para aplicar el cambio.</p>
+
+      <h3 style="margin-top:22px;">📱 PANTALLA PRINCIPAL EN CELULAR (solo estilo Biblioteca)</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn-cancel" style="text-align:left;padding:12px;" onclick="elegirEstiloMobileHome('inicio')">
+          <strong>🏠 Inicio</strong><br>
+          <span style="font-size:0.75rem;color:var(--muted);">Arranca en la pantalla de bienvenida con accesos rápidos, y desde ahí entrás a cada categoría.</span>
+        </button>
+        <button class="btn-cancel" style="text-align:left;padding:12px;" onclick="elegirEstiloMobileHome('directo')">
+          <strong>📚 Directo a la categoría</strong><br>
+          <span style="font-size:0.75rem;color:var(--muted);">Arranca directo mostrando tus tarjetas, sin pantalla de bienvenida.</span>
+        </button>
+      </div>
     </div>
 
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
@@ -1517,6 +1636,7 @@
     aplicarStatusColores();
     renderTagFilterButtons();
     estiloLayoutGuardado = cfg.estiloLayout === 'biblioteca' ? 'biblioteca' : 'clasico';
+    estiloMobileHomeGuardado = cfg.estiloMobileHome === 'directo' ? 'directo' : 'inicio';
     if (estiloLayoutGuardado === 'biblioteca') setTimeout(activarEstiloBiblioteca, 60);
   }
 
@@ -1526,6 +1646,7 @@
 
   // ─── ESTILO BIBLIOTECA (layout alternativo) ──────────────────────────
   let estiloLayoutGuardado = 'clasico';
+  let estiloMobileHomeGuardado = 'inicio'; // 'inicio' o 'directo'
 
   function activarEstiloBiblioteca() {
     const shell = document.getElementById('bibliotecaShell');
@@ -1535,21 +1656,62 @@
       const catTabs = document.querySelector('.category-tabs');
       const addBtns = document.querySelectorAll('.container > .add-btn');
       const sections = document.querySelectorAll('.container .category-section');
+      const themeWrapper = document.querySelector('.theme-wrapper');
       if (searchInput) document.getElementById('bibliotecaSearchSlot').appendChild(searchInput);
       if (catTabs) document.getElementById('bibliotecaNavSlot').appendChild(catTabs);
+      if (themeWrapper) document.getElementById('bibliotecaThemeSlot').appendChild(themeWrapper);
       addBtns.forEach(b => document.getElementById('bibliotecaAddSlot').appendChild(b));
-      sections.forEach(s => document.getElementById('bibliotecaMainSlot').appendChild(s));
+      sections.forEach(s => document.getElementById('bibliotecaSeccionesSlot').appendChild(s));
       shell.dataset.armado = '1';
     }
     const emailTxt = document.getElementById('userEmailDisplay');
-    if (emailTxt) document.getElementById('bibliotecaUserEmail').textContent = emailTxt.textContent;
-    const header = document.querySelector('header');
-    const donateBanner = document.querySelector('.donate-banner');
-    const container = document.querySelector('.container');
-    if (header) header.style.display = 'none';
-    if (donateBanner) donateBanner.style.display = 'none';
-    if (container) container.style.display = 'none';
+    if (emailTxt) {
+      const nombre = (emailTxt.textContent || 'Usuario').split('@')[0];
+      document.getElementById('bibliotecaUserName').textContent = nombre;
+      document.getElementById('bibliotecaHeroNombre').textContent = '¡Bienvenido de nuevo, ' + nombre + '! 👋';
+    }
     document.body.classList.add('estilo-biblioteca');
+    document.body.classList.toggle('mobile-home-inicio', estiloMobileHomeGuardado === 'inicio');
+    document.body.classList.remove('biblioteca-en-categoria');
+    bibliotecaRenderStatsYAtajos();
+  }
+
+  function bibliotecaRenderStatsYAtajos() {
+    const cats = [
+      { key: 'manga', label: 'Manga', emoji: '📚' },
+      { key: 'manhwa', label: 'Manhwa', emoji: '🌐' },
+      { key: 'manhua', label: 'Manhua', emoji: '📖' },
+      { key: 'anime', label: 'Anime', emoji: '🎌' },
+      { key: 'novela', label: 'Novelas', emoji: '📕' }
+    ];
+    let total = 0;
+    const statsHtml = [];
+    const shortcutHtml = [];
+    cats.forEach(c => {
+      const el = document.getElementById('cnt-' + c.key);
+      const n = el ? (parseInt(el.textContent, 10) || 0) : 0;
+      total += n;
+      statsHtml.push(`<div class="biblioteca-hero-stat"><b>${n}</b><span>${c.label}</span></div>`);
+      shortcutHtml.push(`<button class="biblioteca-shortcut-btn" onclick="bibliotecaIrACategoria('${c.key}')">${c.emoji} ${c.label}</button>`);
+    });
+    const statsBox = document.getElementById('bibliotecaHeroStats');
+    if (statsBox) statsBox.innerHTML = `<div class="biblioteca-hero-stat"><b>${total}</b><span>Total Series</span></div>` + statsHtml.join('');
+    const shortcutBox = document.getElementById('bibliotecaShortcutRow');
+    if (shortcutBox) shortcutBox.innerHTML = shortcutHtml.join('');
+  }
+
+  function bibliotecaIrInicio() {
+    document.body.classList.remove('biblioteca-en-categoria');
+    document.getElementById('bibliotecaNavInicio').classList.add('active');
+    document.querySelectorAll('.biblioteca-nav-slot .cat-tab').forEach(b => b.classList.remove('active'));
+    bibliotecaRenderStatsYAtajos();
+  }
+
+  function bibliotecaIrACategoria(cat) {
+    switchCategory(cat);
+    document.body.classList.add('biblioteca-en-categoria');
+    document.getElementById('bibliotecaNavInicio').classList.remove('active');
+    toggleBibliotecaSidebar(false);
   }
 
   function toggleBibliotecaSidebar(forzar) {
@@ -1562,6 +1724,11 @@
 
   async function elegirEstiloLayout(estilo) {
     if (currentUser) await db.ref('users/' + currentUser.uid + '/config/estiloLayout').set(estilo);
+    location.reload();
+  }
+
+  async function elegirEstiloMobileHome(valor) {
+    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/estiloMobileHome').set(valor);
     location.reload();
   }
 
