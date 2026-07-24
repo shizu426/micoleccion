@@ -286,7 +286,36 @@
     .settings-tab { font-size: 0.68rem; padding: 8px 3px; }
   }
 
-  /* CATEGORY FILTERS (per-section) */
+  /* ═══════════ ESTILO BIBLIOTECA ═══════════ */
+  .biblioteca-shell { display: none; min-height: 100vh; }
+  body.estilo-biblioteca .biblioteca-shell { display: flex; }
+  .biblioteca-sidebar { width: 240px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border);
+    padding: 20px 16px; display: flex; flex-direction: column; gap: 14px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .biblioteca-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--text); font-size: 1.05rem; }
+  .biblioteca-brand img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+  .biblioteca-user { font-size: 0.75rem; color: var(--muted); padding-bottom: 6px; border-bottom: 1px solid var(--border);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .biblioteca-section-title { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.5px; margin-top: 6px; }
+  .biblioteca-nav-slot .category-tabs { display: flex; flex-direction: column; background: none; border: none; padding: 0; gap: 4px; }
+  .biblioteca-nav-slot .cat-tab { text-align: left; display: flex; justify-content: space-between; align-items: center; }
+  .biblioteca-add-slot .add-btn { width: 100%; margin: 0 0 6px 0 !important; font-size: 0.78rem; padding: 9px; }
+  .biblioteca-search-slot .search-bar { width: 100%; box-sizing: border-box; }
+  .biblioteca-sidebar-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .biblioteca-link-btn { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+    padding: 8px 10px; font-size: 0.78rem; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .biblioteca-main { flex: 1; min-width: 0; padding: 20px; overflow-x: hidden; }
+  .biblioteca-menu-toggle { display: none; position: fixed; top: 12px; left: 12px; z-index: 1001;
+    width: 40px; height: 40px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); font-size: 1.1rem; cursor: pointer; }
+  .biblioteca-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 999; }
+  @media (max-width: 860px) {
+    body.estilo-biblioteca .biblioteca-menu-toggle { display: block; }
+    body.estilo-biblioteca .biblioteca-sidebar { position: fixed; left: 0; top: 0; z-index: 1000;
+      transform: translateX(-100%); transition: transform 0.25s ease; width: 78vw; max-width: 280px; }
+    body.estilo-biblioteca .biblioteca-sidebar.open { transform: translateX(0); }
+    body.estilo-biblioteca .biblioteca-overlay.open { display: block; }
+    body.estilo-biblioteca .biblioteca-main { padding: 60px 12px 20px; }
+  }
   .cat-filters { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
   .cat-filter-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border);
     background: var(--surface); color: var(--muted); font-size: 0.75rem; cursor: pointer;
@@ -625,6 +654,30 @@
   </div>
 </div>
 
+<!-- ESTILO BIBLIOTECA (alternativo, oculto por defecto) -->
+<div id="bibliotecaShell" class="biblioteca-shell">
+  <button class="biblioteca-menu-toggle" id="bibliotecaMenuToggle" onclick="toggleBibliotecaSidebar()">☰</button>
+  <div class="biblioteca-overlay" id="bibliotecaOverlay" onclick="toggleBibliotecaSidebar(false)"></div>
+  <aside class="biblioteca-sidebar" id="bibliotecaSidebar">
+    <div class="biblioteca-brand">
+      <img src="icons/icon-192.png" alt="MiColección">
+      <span>MiColección</span>
+    </div>
+    <div class="biblioteca-user" id="bibliotecaUserEmail"></div>
+    <div class="biblioteca-search-slot" id="bibliotecaSearchSlot"></div>
+    <div class="biblioteca-add-slot" id="bibliotecaAddSlot"></div>
+    <div class="biblioteca-section-title">📚 Mi Biblioteca</div>
+    <div class="biblioteca-nav-slot" id="bibliotecaNavSlot"></div>
+    <div class="biblioteca-sidebar-bottom">
+      <button class="biblioteca-link-btn" onclick="openSettings()">⚙️ Configuración</button>
+      <button class="biblioteca-link-btn" onclick="document.getElementById('donateModal').classList.add('open')">💙 Apoyar (donación)</button>
+      <button class="biblioteca-link-btn" onclick="volverEstiloClasico()">🔁 Volver al estilo clásico</button>
+      <button class="biblioteca-link-btn" onclick="logout()">🚪 Cerrar sesión</button>
+    </div>
+  </aside>
+  <main class="biblioteca-main" id="bibliotecaMainSlot"></main>
+</div>
+
 <!-- DONATE MODAL -->
 <div class="donate-modal-overlay" id="donateModal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="donate-modal">
@@ -887,6 +940,7 @@
       <button class="settings-tab active" id="stab-orden" onclick="switchSettingsTab('orden')">📑 Orden</button>
       <button class="settings-tab" id="stab-compartir" onclick="switchSettingsTab('compartir')">🔗 Compartir</button>
       <button class="settings-tab" id="stab-paginas" onclick="switchSettingsTab('paginas')">📚 Páginas recomendadas</button>
+      <button class="settings-tab" id="stab-estilo" onclick="switchSettingsTab('estilo')">🎨 Estilo</button>
     </div>
 
     <!-- CATEGORY TAB ORDER -->
@@ -967,6 +1021,25 @@
       </div>
       <div id="paginasList-novela"></div>
       </div>
+    </div>
+
+    <!-- ESTILO -->
+    <div class="settings-section" id="ssec-estilo">
+      <h3>🎨 ESTILO DE LA PÁGINA</h3>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">
+        Elegí cómo se ve tu colección. Este cambio es solo para vos; el resto de los usuarios puede elegir el suyo sin afectarte.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn-cancel" id="btnEstiloClasico" style="text-align:left;padding:14px;" onclick="elegirEstiloLayout('clasico')">
+          <strong>📄 Clásico</strong><br>
+          <span style="font-size:0.75rem;color:var(--muted);">El diseño de siempre, con pestañas arriba.</span>
+        </button>
+        <button class="btn-cancel" id="btnEstiloBiblioteca" style="text-align:left;padding:14px;" onclick="elegirEstiloLayout('biblioteca')">
+          <strong>📚 Biblioteca</strong><br>
+          <span style="font-size:0.75rem;color:var(--muted);">Barra lateral con tu biblioteca, buscador y categorías. En celular se abre como un menú deslizable.</span>
+        </button>
+      </div>
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:10px;">La página se va a recargar para aplicar el cambio.</p>
     </div>
 
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
@@ -1364,9 +1437,10 @@
   // ─── CONFIGURACIÓN GENERAL (tags y colores) ─────────────────────────
   async function cargarConfig() {
     if (!currentUser) return;
+    let cfg = {};
     try {
       const snap = await db.ref('users/' + currentUser.uid + '/config').once('value');
-      const cfg = snap.val() || {};
+      cfg = snap.val() || {};
       tagsConfig = Array.isArray(cfg.tags) ? cfg.tags : (cfg.tags ? Object.values(cfg.tags) : []);
       tipoColores = Object.assign({ Manga: '#e94560', Manhwa: '#7c3aed', Manhua: '#f59e0b', Anime: '#22c55e', Novela: '#06b6d4' }, cfg.tipoColores || {});
       if (Array.isArray(cfg.tabOrder) && cfg.tabOrder.length >= 4) {
@@ -1442,10 +1516,57 @@
     aplicarStatusLabels();
     aplicarStatusColores();
     renderTagFilterButtons();
+    estiloLayoutGuardado = cfg.estiloLayout === 'biblioteca' ? 'biblioteca' : 'clasico';
+    if (estiloLayoutGuardado === 'biblioteca') setTimeout(activarEstiloBiblioteca, 60);
   }
 
   async function guardarTabOrder() {
     if (currentUser) await db.ref('users/' + currentUser.uid + '/config/tabOrder').set(tabOrder);
+  }
+
+  // ─── ESTILO BIBLIOTECA (layout alternativo) ──────────────────────────
+  let estiloLayoutGuardado = 'clasico';
+
+  function activarEstiloBiblioteca() {
+    const shell = document.getElementById('bibliotecaShell');
+    if (!shell) return;
+    if (!shell.dataset.armado) {
+      const searchInput = document.getElementById('searchInput');
+      const catTabs = document.querySelector('.category-tabs');
+      const addBtns = document.querySelectorAll('.container > .add-btn');
+      const sections = document.querySelectorAll('.container .category-section');
+      if (searchInput) document.getElementById('bibliotecaSearchSlot').appendChild(searchInput);
+      if (catTabs) document.getElementById('bibliotecaNavSlot').appendChild(catTabs);
+      addBtns.forEach(b => document.getElementById('bibliotecaAddSlot').appendChild(b));
+      sections.forEach(s => document.getElementById('bibliotecaMainSlot').appendChild(s));
+      shell.dataset.armado = '1';
+    }
+    const emailTxt = document.getElementById('userEmailDisplay');
+    if (emailTxt) document.getElementById('bibliotecaUserEmail').textContent = emailTxt.textContent;
+    const header = document.querySelector('header');
+    const donateBanner = document.querySelector('.donate-banner');
+    const container = document.querySelector('.container');
+    if (header) header.style.display = 'none';
+    if (donateBanner) donateBanner.style.display = 'none';
+    if (container) container.style.display = 'none';
+    document.body.classList.add('estilo-biblioteca');
+  }
+
+  function toggleBibliotecaSidebar(forzar) {
+    const sidebar = document.getElementById('bibliotecaSidebar');
+    const overlay = document.getElementById('bibliotecaOverlay');
+    const abrir = forzar !== undefined ? forzar : !sidebar.classList.contains('open');
+    sidebar.classList.toggle('open', abrir);
+    overlay.classList.toggle('open', abrir);
+  }
+
+  async function elegirEstiloLayout(estilo) {
+    if (currentUser) await db.ref('users/' + currentUser.uid + '/config/estiloLayout').set(estilo);
+    location.reload();
+  }
+
+  function volverEstiloClasico() {
+    elegirEstiloLayout('clasico');
   }
 
   // ─── PÁGINAS RECOMENDADAS ──────────────────────────────────────────
