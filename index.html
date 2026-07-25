@@ -374,6 +374,12 @@
   .biblioteca-carrusel-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
   .biblioteca-carrusel-row::-webkit-scrollbar { display: none; }
   .biblioteca-carrusel-row .card { flex: 0 0 150px; }
+  .biblioteca-progress-ring { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%;
+    background: conic-gradient(var(--accent) calc(var(--pct) * 3.6deg), rgba(255,255,255,0.15) 0deg);
+    display: flex; align-items: center; justify-content: center; z-index: 3; }
+  .biblioteca-progress-ring::before { content: ''; position: absolute; inset: 3px; background: #14141c; border-radius: 50%; }
+  .biblioteca-progress-ring span { position: relative; z-index: 1; font-size: 0.55rem; font-weight: 700; color: #fff; }
+  @media (min-width: 861px) { .biblioteca-progress-ring { display: none !important; } }
   .biblioteca-back-btn { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 8px;
     color: var(--text); padding: 8px 14px; font-size: 0.8rem; cursor: pointer; margin-bottom: 14px; font-family: 'Inter', sans-serif; }
   .biblioteca-bottomnav { display: none; }
@@ -1749,6 +1755,26 @@
     }
   }
 
+  function bibliotecaPctFake(id) {
+    let hash = 0;
+    const s = String(id || '');
+    for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) & 0xffffffff;
+    return Math.abs(hash) % 100;
+  }
+
+  function bibliotecaInyectarAnillos(root) {
+    if (!root) return;
+    root.querySelectorAll('.card').forEach(card => {
+      if (card.querySelector('.biblioteca-progress-ring')) return;
+      const pct = bibliotecaPctFake(card.dataset.id);
+      const ring = document.createElement('div');
+      ring.className = 'biblioteca-progress-ring';
+      ring.style.setProperty('--pct', pct);
+      ring.innerHTML = `<span>${pct}%</span>`;
+      card.appendChild(ring);
+    });
+  }
+
   function bibliotecaRenderCarruseles() {
     const cont = document.getElementById('bibliotecaCarruselesSlot');
     if (!cont) return;
@@ -1790,6 +1816,7 @@
         clone.removeAttribute('ondragend');
         row.appendChild(clone);
       });
+      bibliotecaInyectarAnillos(row);
     });
   }
 
@@ -1809,6 +1836,8 @@
     document.body.classList.add('biblioteca-en-categoria');
     toggleBibliotecaSidebar(false);
     bibliotecaSyncNavYFiltros();
+    const activeSec = document.querySelector('.container .category-section.active');
+    bibliotecaInyectarAnillos(activeSec);
   }
 
   function toggleBibliotecaSidebar(forzar) {
@@ -3063,7 +3092,12 @@
     // Inicializar touch + click en todas las cards
     setTimeout(initTouchAndClick, 50);
     aplicarColoresTipos();
-    if (document.body.classList.contains('estilo-biblioteca')) bibliotecaRenderCarruseles();
+    if (document.body.classList.contains('estilo-biblioteca')) {
+      bibliotecaRenderCarruseles();
+      if (document.body.classList.contains('biblioteca-en-categoria')) {
+        bibliotecaInyectarAnillos(document.querySelector('.container .category-section.active'));
+      }
+    }
   }
 
   function openAnimeModal() {
