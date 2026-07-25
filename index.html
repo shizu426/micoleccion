@@ -1738,7 +1738,8 @@
   function bibliotecaSyncNavYFiltros() {
     const catTabsReal = document.querySelector('.container .category-tabs');
     if (catTabsReal) {
-      const html = catTabsReal.innerHTML;
+      const htmlOriginal = catTabsReal.innerHTML;
+      const html = htmlOriginal.replace(/switchCategory\('(\w+)'\)/g, "bibliotecaIrACategoria('$1')");
       const sideNav = document.getElementById('bibliotecaNavSlot');
       const mobileNav = document.getElementById('bibliotecaNavSlotMobile');
       if (sideNav) {
