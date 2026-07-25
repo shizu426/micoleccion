@@ -367,6 +367,13 @@
   .biblioteca-nav-slot-mobile .cat-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); border-color: transparent; }
   .biblioteca-filtros-slot-mobile { display: none; }
   .biblioteca-filtros-slot-mobile .cat-filters { margin-bottom: 4px; }
+  .biblioteca-carrusel-section { margin-bottom: 18px; }
+  .biblioteca-carrusel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .biblioteca-carrusel-header h4 { margin: 0; font-size: 0.92rem; }
+  .biblioteca-carrusel-header a { color: var(--accent2); font-size: 0.78rem; text-decoration: none; cursor: pointer; white-space: nowrap; }
+  .biblioteca-carrusel-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+  .biblioteca-carrusel-row::-webkit-scrollbar { display: none; }
+  .biblioteca-carrusel-row .card { flex: 0 0 150px; }
   .biblioteca-back-btn { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 8px;
     color: var(--text); padding: 8px 14px; font-size: 0.8rem; cursor: pointer; margin-bottom: 14px; font-family: 'Inter', sans-serif; }
   .biblioteca-bottomnav { display: none; }
@@ -802,6 +809,7 @@
         <div class="biblioteca-search-slot-mobile" id="bibliotecaSearchSlotMobile"></div>
         <div class="biblioteca-nav-slot-mobile" id="bibliotecaNavSlotMobile"></div>
         <div class="biblioteca-filtros-slot-mobile" id="bibliotecaFiltrosSlotMobile"></div>
+        <div id="bibliotecaCarruselesSlot"></div>
       </div>
 
       <!-- CONTENIDO REAL (categorías/tarjetas), se muestra siempre en PC y al navegar en celular -->
@@ -1711,6 +1719,7 @@
     document.body.classList.toggle('mobile-home-inicio', estiloMobileHomeGuardado === 'inicio');
     document.body.classList.remove('biblioteca-en-categoria');
     bibliotecaSyncNavYFiltros();
+    bibliotecaRenderCarruseles();
   }
 
   // Copia (no mueve) la navegación de categorías y los filtros de estado reales
@@ -1733,6 +1742,50 @@
       if (sideFiltros) sideFiltros.innerHTML = `<div class="cat-filters">${html}</div>`;
       if (mobileFiltros) mobileFiltros.innerHTML = `<div class="cat-filters">${html}</div>`;
     }
+  }
+
+  function bibliotecaRenderCarruseles() {
+    const cont = document.getElementById('bibliotecaCarruselesSlot');
+    if (!cont) return;
+    const cats = [
+      { key: 'manga', label: 'Manga', emoji: '🎀', gridId: 'grid' },
+      { key: 'manhwa', label: 'Manhwa', emoji: '📖', gridId: 'gridManhwa' },
+      { key: 'manhua', label: 'Manhua', emoji: '📚', gridId: 'gridManhua' },
+      { key: 'anime', label: 'Anime', emoji: '🎌', gridId: 'gridAnime' },
+      { key: 'novela', label: 'Novela', emoji: '📕', gridId: 'gridNovela' }
+    ];
+    let html = '';
+    cats.forEach(c => {
+      const grid = document.getElementById(c.gridId);
+      if (!grid) return;
+      const cards = Array.from(grid.querySelectorAll('.card')).slice(0, 8);
+      if (cards.length === 0) return;
+      const rowId = 'bibliotecaRow-' + c.key;
+      html += `
+        <div class="biblioteca-carrusel-section">
+          <div class="biblioteca-carrusel-header">
+            <h4>${c.emoji} ${c.label}</h4>
+            <a onclick="bibliotecaIrACategoria('${c.key}')">Ver todo ›</a>
+          </div>
+          <div class="biblioteca-carrusel-row" id="${rowId}"></div>
+        </div>`;
+    });
+    cont.innerHTML = html;
+    cats.forEach(c => {
+      const grid = document.getElementById(c.gridId);
+      const row = document.getElementById('bibliotecaRow-' + c.key);
+      if (!grid || !row) return;
+      Array.from(grid.querySelectorAll('.card')).slice(0, 8).forEach(card => {
+        const clone = card.cloneNode(true);
+        clone.removeAttribute('draggable');
+        clone.removeAttribute('ondragstart');
+        clone.removeAttribute('ondragover');
+        clone.removeAttribute('ondragleave');
+        clone.removeAttribute('ondrop');
+        clone.removeAttribute('ondragend');
+        row.appendChild(clone);
+      });
+    });
   }
 
   function bibliotecaEnfocarBusqueda() {
@@ -2896,7 +2949,7 @@
     document.getElementById('cnt-manhua').textContent = totalManhua;
     document.getElementById('cnt-anime').textContent = totalAnime;
     document.getElementById('cnt-novela').textContent = totalNovela;
-    if (document.body.classList.contains('estilo-biblioteca')) bibliotecaSyncNavYFiltros();
+    if (document.body.classList.contains('estilo-biblioteca')) { bibliotecaSyncNavYFiltros(); bibliotecaRenderCarruseles(); }
 
     function filterItems(tipo) {
       const catKey = tipo.toLowerCase();
