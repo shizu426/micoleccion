@@ -1741,8 +1741,14 @@
       const html = catTabsReal.innerHTML;
       const sideNav = document.getElementById('bibliotecaNavSlot');
       const mobileNav = document.getElementById('bibliotecaNavSlotMobile');
-      if (sideNav) sideNav.innerHTML = `<div class="category-tabs">${html}</div>`;
-      if (mobileNav) mobileNav.innerHTML = `<div class="category-tabs">${html}</div>`;
+      if (sideNav) {
+        sideNav.innerHTML = `<div class="category-tabs">${html}</div>`;
+        sideNav.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+      }
+      if (mobileNav) {
+        mobileNav.innerHTML = `<div class="category-tabs">${html}</div>`;
+        mobileNav.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+      }
     }
     const cat = (typeof currentCategory !== 'undefined' && currentCategory) ? currentCategory : 'manga';
     const filtrosReal = document.getElementById('filtrosCombinados-' + cat);
