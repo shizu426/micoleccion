@@ -395,8 +395,13 @@
     body.estilo-biblioteca .biblioteca-sidebar > .biblioteca-nav-item[onclick*="bibliotecaEnfocarBusqueda"],
     body.estilo-biblioteca .biblioteca-sidebar .biblioteca-filtros-slot { display: none; }
     body.estilo-biblioteca .biblioteca-home-screen { display: block; }
-    body.estilo-biblioteca .biblioteca-hero { display: block; background: linear-gradient(145deg, rgba(124,58,237,0.35), rgba(10,10,20,0.4)), var(--card);
+    body.estilo-biblioteca .biblioteca-hero { display: block; position: relative; overflow: hidden;
+      background: linear-gradient(145deg, rgba(124,58,237,0.35), rgba(10,10,20,0.4)), var(--card);
+      background-size: cover; background-position: center;
       border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+    body.estilo-biblioteca .biblioteca-hero::after { content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(10,10,17,0.75) 30%, rgba(10,10,17,0.15) 100%); pointer-events: none; }
+    body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; }
     body.estilo-biblioteca .biblioteca-add-slot { display: flex; }
     body.estilo-biblioteca .biblioteca-search-slot-mobile { display: block; }
     body.estilo-biblioteca .biblioteca-nav-slot-mobile { display: block; }
@@ -2949,7 +2954,7 @@
     document.getElementById('cnt-manhua').textContent = totalManhua;
     document.getElementById('cnt-anime').textContent = totalAnime;
     document.getElementById('cnt-novela').textContent = totalNovela;
-    if (document.body.classList.contains('estilo-biblioteca')) { bibliotecaSyncNavYFiltros(); bibliotecaRenderCarruseles(); }
+    if (document.body.classList.contains('estilo-biblioteca')) bibliotecaSyncNavYFiltros();
 
     function filterItems(tipo) {
       const catKey = tipo.toLowerCase();
@@ -3058,6 +3063,7 @@
     // Inicializar touch + click en todas las cards
     setTimeout(initTouchAndClick, 50);
     aplicarColoresTipos();
+    if (document.body.classList.contains('estilo-biblioteca')) bibliotecaRenderCarruseles();
   }
 
   function openAnimeModal() {
