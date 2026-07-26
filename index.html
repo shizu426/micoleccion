@@ -371,9 +371,7 @@
   .biblioteca-carrusel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .biblioteca-carrusel-header h4 { margin: 0; font-size: 0.92rem; }
   .biblioteca-carrusel-header a { color: var(--accent2); font-size: 0.78rem; text-decoration: none; cursor: pointer; white-space: nowrap; }
-  .biblioteca-carrusel-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
-  .biblioteca-carrusel-row::-webkit-scrollbar { display: none; }
-  .biblioteca-carrusel-row .card { flex: 0 0 150px; }
+  .biblioteca-carrusel-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .biblioteca-progress-ring { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%;
     background: conic-gradient(var(--accent) calc(var(--pct) * 3.6deg), rgba(255,255,255,0.15) 0deg);
     display: flex; align-items: center; justify-content: center; z-index: 3; }
@@ -1798,7 +1796,7 @@
     cats.forEach(c => {
       const grid = document.getElementById(c.gridId);
       if (!grid) return;
-      const cards = Array.from(grid.querySelectorAll('.card')).slice(0, 8);
+      const cards = Array.from(grid.querySelectorAll('.card')).slice(0, 4);
       if (cards.length === 0) return;
       const rowId = 'bibliotecaRow-' + c.key;
       html += `
@@ -1815,7 +1813,7 @@
       const grid = document.getElementById(c.gridId);
       const row = document.getElementById('bibliotecaRow-' + c.key);
       if (!grid || !row) return;
-      Array.from(grid.querySelectorAll('.card')).slice(0, 8).forEach(card => {
+      Array.from(grid.querySelectorAll('.card')).slice(0, 4).forEach(card => {
         const clone = card.cloneNode(true);
         clone.removeAttribute('draggable');
         clone.removeAttribute('ondragstart');
