@@ -1193,7 +1193,8 @@
     <div class="settings-section" id="ssec-estilo">
       <h3>🎨 ESTILO DE LA PÁGINA</h3>
       <p style="font-size:0.78rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">
-        Elegí cómo se ve tu colección. Este cambio es solo para vos; el resto de los usuarios puede elegir el suyo sin afectarte.
+        Elegí cómo se ve tu colección en <strong>computadora</strong>. Este cambio es solo para vos; el resto de los usuarios puede elegir el suyo sin afectarte.
+        En <strong>celular</strong> siempre se usa el diseño clásico, sin importar lo que elijas acá.
       </p>
       <div style="display:flex;flex-direction:column;gap:10px;">
         <button class="btn-cancel" id="btnEstiloClasico" style="text-align:left;padding:14px;" onclick="elegirEstiloLayout('clasico')">
@@ -1201,23 +1202,11 @@
           <span style="font-size:0.75rem;color:var(--muted);">El diseño de siempre, con pestañas arriba.</span>
         </button>
         <button class="btn-cancel" id="btnEstiloBiblioteca" style="text-align:left;padding:14px;" onclick="elegirEstiloLayout('biblioteca')">
-          <strong>📚 Biblioteca</strong><br>
-          <span style="font-size:0.75rem;color:var(--muted);">Barra lateral con tu biblioteca, buscador y categorías. En celular se abre como un menú deslizable.</span>
+          <strong>📚 Biblioteca (solo PC)</strong><br>
+          <span style="font-size:0.75rem;color:var(--muted);">Barra lateral con tu biblioteca, buscador y categorías.</span>
         </button>
       </div>
       <p style="font-size:0.72rem;color:var(--muted);margin-top:10px;">La página se va a recargar para aplicar el cambio.</p>
-
-      <h3 style="margin-top:22px;">📱 PANTALLA PRINCIPAL EN CELULAR (solo estilo Biblioteca)</h3>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <button class="btn-cancel" style="text-align:left;padding:12px;" onclick="elegirEstiloMobileHome('inicio')">
-          <strong>🏠 Inicio</strong><br>
-          <span style="font-size:0.75rem;color:var(--muted);">Arranca en la pantalla de bienvenida con accesos rápidos, y desde ahí entrás a cada categoría.</span>
-        </button>
-        <button class="btn-cancel" style="text-align:left;padding:12px;" onclick="elegirEstiloMobileHome('directo')">
-          <strong>📚 Directo a la categoría</strong><br>
-          <span style="font-size:0.75rem;color:var(--muted);">Arranca directo mostrando tus tarjetas, sin pantalla de bienvenida.</span>
-        </button>
-      </div>
     </div>
 
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
@@ -1696,7 +1685,7 @@
     renderTagFilterButtons();
     estiloLayoutGuardado = cfg.estiloLayout === 'biblioteca' ? 'biblioteca' : 'clasico';
     estiloMobileHomeGuardado = cfg.estiloMobileHome === 'directo' ? 'directo' : 'inicio';
-    if (estiloLayoutGuardado === 'biblioteca') setTimeout(activarEstiloBiblioteca, 60);
+    if (estiloLayoutGuardado === 'biblioteca' && window.innerWidth > 860) setTimeout(activarEstiloBiblioteca, 60);
   }
 
   async function guardarTabOrder() {
