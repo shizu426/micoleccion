@@ -94,6 +94,8 @@
     border: none; border-radius: 12px; color: white; font-size: 1rem; font-weight: 600;
     cursor: pointer; margin-bottom: 14px; transition: opacity 0.2s; }
   .add-btn:hover { opacity: 0.9; }
+  .add-btn-mobile { display: none; }
+  .add-btn-full { display: inline; }
   .stats { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
   .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
     padding: 8px 14px; font-size: 0.78rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
@@ -378,7 +380,20 @@
   .biblioteca-nav-slot-mobile .cat-tab { border-radius: 20px; padding: 7px 12px; font-size: 0.75rem; background: var(--card); border: 1px solid var(--border); color: var(--text); }
   .biblioteca-nav-slot-mobile .cat-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); border-color: transparent; }
   .biblioteca-filtros-slot-mobile { display: none; }
-  .biblioteca-filtros-slot-mobile .cat-filters { margin-bottom: 4px; }
+  .biblioteca-filtros-slot-mobile .cat-filters { margin-bottom: 4px; display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-wrap: unset; }
+  .biblioteca-filtros-slot-mobile .cat-filter-btn { width: auto !important; flex: none !important; box-sizing: border-box;
+    display: flex !important; align-items: center; justify-content: center; gap: 4px; text-align: center;
+    padding: 8px 6px !important; font-size: 0.72rem !important; border-radius: 12px !important;
+    text-shadow: 0 0 6px rgba(0,0,0,0.4); }
+  .biblioteca-filtros-slot-mobile .cat-filter-btn.cat-filter-todos { background: var(--card) !important;
+    border: 1px solid var(--border) !important; color: var(--text) !important; box-shadow: none !important; }
+  .biblioteca-filtros-slot-mobile .cat-filter-btn.fs-emision { box-shadow: 0 0 12px rgba(233,69,96,0.55); }
+  .biblioteca-filtros-slot-mobile .cat-filter-btn.fs-terminado { box-shadow: 0 0 12px rgba(59,130,246,0.55); }
+  .biblioteca-filtros-slot-mobile .cat-filter-btn.fs-porempezar { box-shadow: 0 0 12px rgba(245,158,11,0.55); }
+  .biblioteca-filtros-slot-mobile .cat-filter-btn.fs-pendiente { box-shadow: 0 0 12px rgba(168,85,247,0.55); }
+  .biblioteca-filtros-slot-mobile .cat-filter-btn.fs-abandonado { box-shadow: 0 0 12px rgba(239,68,68,0.55); }
+  .biblioteca-filtros-slot-mobile .cat-filter-btn.fs-espera { box-shadow: 0 0 12px rgba(6,182,212,0.55); }
+  .biblioteca-filtros-slot-mobile .filtro-contador { background: rgba(0,0,0,0.35) !important; }
   .biblioteca-filtros-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px;
     padding: 14px; margin-bottom: 16px; }
   .biblioteca-filtros-card.cerrado .biblioteca-filtros-slot-mobile { display: none !important; }
@@ -426,12 +441,19 @@
     body.estilo-biblioteca .biblioteca-hero { display: block; position: relative; overflow: hidden;
       background: linear-gradient(145deg, rgba(124,58,237,0.35), rgba(10,10,20,0.4)), var(--card);
       background-size: cover; background-position: center;
-      border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
-    body.estilo-biblioteca .biblioteca-hero::after { content: ''; position: absolute; inset: 0;
+      border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 14px; min-height: 150px; }
+    body.estilo-biblioteca .biblioteca-hero-img { position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+      height: 145%; max-width: 60%; object-fit: contain; object-position: right center; z-index: 0; pointer-events: none; }
+    body.estilo-biblioteca .biblioteca-hero::after { content: ''; position: absolute; inset: 0; z-index: 0;
       background: linear-gradient(90deg, rgba(10,10,17,0.75) 30%, rgba(10,10,17,0.15) 100%); pointer-events: none; }
     body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; }
-    body.estilo-biblioteca .biblioteca-add-slot { display: grid; grid-template-columns: 1fr 1fr; }
-    body.estilo-biblioteca .biblioteca-add-slot .add-btn:first-child { grid-column: 1 / -1; }
+    body.estilo-biblioteca .biblioteca-add-slot { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    body.estilo-biblioteca .biblioteca-add-slot .add-btn { padding: 12px 6px; font-size: 0.8rem; text-align: center;
+      display: flex; align-items: center; justify-content: center; }
+    body.estilo-biblioteca .biblioteca-add-slot .add-btn-full { display: none; }
+    body.estilo-biblioteca .biblioteca-add-slot .add-btn-mobile { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    body.estilo-biblioteca .biblioteca-add-slot .add-btn-icon { font-weight: 700; }
+    body.estilo-biblioteca .biblioteca-add-slot .add-btn-sub { font-weight: 500; opacity: 0.85; font-size: 0.68rem; }
     body.estilo-biblioteca .biblioteca-search-slot-mobile { display: block; }
     body.estilo-biblioteca .biblioteca-search-row-mobile { display: flex; }
     body.estilo-biblioteca .biblioteca-nav-slot-mobile { display: block; }
@@ -721,9 +743,18 @@
   </div>
 
   <div class="container">
-    <button class="add-btn" onclick="openModal()">+ Agregar Manga / Manhwa / Manhua</button>
-    <button class="add-btn" onclick="openAnimeModal()" style="margin-top:-6px;background:linear-gradient(135deg,#7c3aed,#e94560);">🎌 Agregar Anime</button>
-    <button class="add-btn" onclick="openNovelaModal()" style="margin-top:-6px;background:linear-gradient(135deg,#06b6d4,#3b82f6);">📖 Agregar Novela</button>
+    <button class="add-btn" onclick="openModal()">
+      <span class="add-btn-full">+ Agregar Manga / Manhwa / Manhua</span>
+      <span class="add-btn-mobile"><span class="add-btn-icon">📚 + Manga</span><small class="add-btn-sub">Manhwa / Manhua</small></span>
+    </button>
+    <button class="add-btn" onclick="openAnimeModal()" style="margin-top:-6px;background:linear-gradient(135deg,#7c3aed,#e94560);">
+      <span class="add-btn-full">🎌 Agregar Anime</span>
+      <span class="add-btn-mobile"><span class="add-btn-icon">🎌 + Anime</span></span>
+    </button>
+    <button class="add-btn" onclick="openNovelaModal()" style="margin-top:-6px;background:linear-gradient(135deg,#06b6d4,#3b82f6);">
+      <span class="add-btn-full">📖 Agregar Novela</span>
+      <span class="add-btn-mobile"><span class="add-btn-icon">📖 + Novela</span></span>
+    </button>
     <!-- statsRow oculto, solo se usan las pestañas -->
     <div style="display:none">
       <strong id="statManga"></strong><strong id="statManhwa"></strong>
@@ -837,6 +868,7 @@
       <!-- PANTALLA INICIO (solo celular, si el usuario la eligió como principal) -->
       <div class="biblioteca-home-screen" id="bibliotecaHomeScreen">
         <div class="biblioteca-hero biblioteca-donate-hero" onclick="document.getElementById('donateModal').classList.add('open')">
+          <img class="biblioteca-hero-img" src="icons/hero-personaje.png" alt="" onerror="this.style.display='none'">
           <div class="biblioteca-hero-text">
             <span class="biblioteca-hero-eyebrow">💙 ¿Te gusta la app?</span>
             <p>Apóyanos con una donación voluntaria</p>
@@ -1786,15 +1818,21 @@
       if (sideFiltros) sideFiltros.innerHTML = `<div class="cat-filters">${html}</div>`;
       if (mobileFiltros) {
         mobileFiltros.innerHTML = `<div class="cat-filters">${html}</div>`;
-        const iconos = {
+        const iconosPorKey = {
+          emision: '💫', terminado: '✅', porempezar: '▶️', pendiente: '⏰', abandonado: '❌', espera: '⌛'
+        };
+        const iconosPorTexto = {
           'Todos': '🔲', 'En emisión': '💫', 'Por empezar': '▶️', 'Pendiente': '⏰',
           'En espera de nueva temporada': '⌛', 'Terminado': '✅', 'Abandonado': '❌', 'Temporada': '📅'
         };
         mobileFiltros.querySelectorAll('.cat-filter-btn').forEach(btn => {
           if (!btn.firstChild) return;
           const texto = btn.firstChild.textContent.trim();
-          const emoji = iconos[texto];
-          if (emoji) btn.firstChild.textContent = emoji + ' ' + texto;
+          let emoji = null;
+          if (btn.classList.contains('cat-filter-todos')) emoji = '🔲';
+          else if (btn.dataset.statuskey && iconosPorKey[btn.dataset.statuskey]) emoji = iconosPorKey[btn.dataset.statuskey];
+          else if (iconosPorTexto[texto]) emoji = iconosPorTexto[texto];
+          if (emoji && !texto.startsWith(emoji)) btn.firstChild.textContent = emoji + ' ' + texto;
         });
       }
     }
