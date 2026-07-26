@@ -1843,7 +1843,7 @@
     document.body.classList.add('biblioteca-en-categoria');
     toggleBibliotecaSidebar(false);
     bibliotecaSyncNavYFiltros();
-    const activeSec = document.querySelector('.container .category-section.active');
+    const activeSec = document.querySelector('.category-section.active');
     bibliotecaInyectarAnillos(activeSec);
   }
 
@@ -3102,7 +3102,7 @@
     if (document.body.classList.contains('estilo-biblioteca')) {
       bibliotecaRenderCarruseles();
       if (document.body.classList.contains('biblioteca-en-categoria')) {
-        bibliotecaInyectarAnillos(document.querySelector('.container .category-section.active'));
+        bibliotecaInyectarAnillos(document.querySelector('.category-section.active'));
       }
     }
   }
