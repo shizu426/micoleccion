@@ -1731,6 +1731,8 @@
     document.body.classList.remove('biblioteca-en-categoria');
     bibliotecaSyncNavYFiltros();
     bibliotecaRenderCarruseles();
+    // Red de seguridad: si los datos tardan en cargar, reintentar la sincronización
+    setTimeout(() => { bibliotecaSyncNavYFiltros(); bibliotecaRenderCarruseles(); }, 1500);
   }
 
   // Copia (no mueve) la navegación de categorías y los filtros de estado reales
