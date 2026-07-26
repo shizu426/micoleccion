@@ -298,7 +298,19 @@
   .biblioteca-brand { display: flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: 0.5px;
     background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.05rem; }
   .biblioteca-brand img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-  .biblioteca-search-icon-btn { display: none; margin-left: auto; background: none; border: none; color: var(--text); font-size: 1.2rem; cursor: pointer; }
+  .biblioteca-navbar-mobile-actions { display: none; margin-left: auto; gap: 8px; align-items: center; }
+  .biblioteca-gift-btn { background: rgba(255,193,7,0.12); border: 1px solid rgba(255,193,7,0.5); color: #ffc107;
+    width: 38px; height: 38px; border-radius: 10px; font-size: 1.1rem; cursor: pointer; }
+  .biblioteca-navgear-btn { background: var(--card); border: 1px solid var(--border); color: var(--text);
+    width: 38px; height: 38px; border-radius: 10px; font-size: 1.1rem; cursor: pointer; }
+  .biblioteca-donate-hero { cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .biblioteca-donate-hero .biblioteca-hero-text { flex: 1; }
+  .biblioteca-donate-hero p { margin: 4px 0 12px; }
+  .biblioteca-donate-btn-inline { background: linear-gradient(135deg, var(--accent2), var(--accent)); border: none;
+    color: #fff; padding: 9px 18px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .biblioteca-hero-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+  .biblioteca-hero-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.3); }
+  .biblioteca-hero-dots span.on { background: var(--accent); }
 
   /* BODY: sidebar + main */
   .biblioteca-body { display: flex; flex: 1; min-height: 0; }
@@ -369,6 +381,12 @@
   .biblioteca-filtros-slot-mobile .cat-filters { margin-bottom: 4px; }
   .biblioteca-filtros-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px;
     padding: 14px; margin-bottom: 16px; }
+  .biblioteca-filtros-card.cerrado .biblioteca-filtros-slot-mobile { display: none !important; }
+  .biblioteca-filtros-card-titulo { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.8px; margin: 8px 0 8px; font-weight: 700; }
+  .biblioteca-search-row-mobile { display: none; gap: 8px; margin-bottom: 14px; align-items: center; }
+  .biblioteca-search-row-mobile .biblioteca-search-slot-mobile { flex: 1; margin-bottom: 0; }
+  .biblioteca-filter-toggle-btn { width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: var(--card);
+    border: 1px solid var(--border); color: var(--text); font-size: 1rem; cursor: pointer; }
   .biblioteca-carrusel-section { margin-bottom: 18px; }
   .biblioteca-carrusel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .biblioteca-carrusel-header h4 { margin: 0; font-size: 0.92rem; }
@@ -388,7 +406,8 @@
   .biblioteca-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 999; }
   @media (max-width: 860px) {
     body.estilo-biblioteca .biblioteca-menu-toggle-inline { display: block; }
-    body.estilo-biblioteca .biblioteca-search-icon-btn { display: block; }
+    body.estilo-biblioteca .biblioteca-navbar-mobile-actions { display: flex; }
+    body.estilo-biblioteca .biblioteca-sidebar-bottom { display: none; }
     body.estilo-biblioteca .biblioteca-sidebar { position: fixed; left: 0; top: 0; z-index: 1000; justify-content: flex-start;
       transform: translateX(-100%); transition: transform 0.25s ease; width: 78vw; max-width: 280px; height: 100vh;
       box-shadow: 4px 0 24px rgba(0,0,0,0.5);
@@ -411,8 +430,10 @@
     body.estilo-biblioteca .biblioteca-hero::after { content: ''; position: absolute; inset: 0;
       background: linear-gradient(90deg, rgba(10,10,17,0.75) 30%, rgba(10,10,17,0.15) 100%); pointer-events: none; }
     body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; }
-    body.estilo-biblioteca .biblioteca-add-slot { display: flex; }
+    body.estilo-biblioteca .biblioteca-add-slot { display: grid; grid-template-columns: 1fr 1fr; }
+    body.estilo-biblioteca .biblioteca-add-slot .add-btn:first-child { grid-column: 1 / -1; }
     body.estilo-biblioteca .biblioteca-search-slot-mobile { display: block; }
+    body.estilo-biblioteca .biblioteca-search-row-mobile { display: flex; }
     body.estilo-biblioteca .biblioteca-nav-slot-mobile { display: block; }
     body.estilo-biblioteca .biblioteca-filtros-slot-mobile { display: block; }
     body.estilo-biblioteca .biblioteca-bottomnav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 900;
@@ -779,7 +800,10 @@
       <img src="icons/icon-192.png" alt="MiColección">
       <span>MICOLECCIÓN</span>
     </div>
-    <button class="biblioteca-search-icon-btn" id="bibliotecaSearchIconBtn" onclick="bibliotecaEnfocarBusqueda()">🔍</button>
+    <div class="biblioteca-navbar-mobile-actions">
+      <button class="biblioteca-gift-btn" onclick="document.getElementById('donateModal').classList.add('open')">🎁</button>
+      <button class="biblioteca-navgear-btn" onclick="openSettings()">⚙️</button>
+    </div>
   </div>
 
   <div class="biblioteca-body">
@@ -812,17 +836,22 @@
 
       <!-- PANTALLA INICIO (solo celular, si el usuario la eligió como principal) -->
       <div class="biblioteca-home-screen" id="bibliotecaHomeScreen">
-        <div class="biblioteca-hero">
+        <div class="biblioteca-hero biblioteca-donate-hero" onclick="document.getElementById('donateModal').classList.add('open')">
           <div class="biblioteca-hero-text">
-            <span class="biblioteca-hero-eyebrow">Bienvenido,</span>
-            <h2 id="bibliotecaHeroNombre">Usuario 👋</h2>
-            <p>Organiza tus series y sigue tu progreso en un solo lugar.</p>
+            <span class="biblioteca-hero-eyebrow">💙 ¿Te gusta la app?</span>
+            <p>Apóyanos con una donación voluntaria</p>
+            <button class="biblioteca-donate-btn-inline" onclick="event.stopPropagation(); document.getElementById('donateModal').classList.add('open')">Donar 💙</button>
           </div>
+          <div class="biblioteca-hero-dots"><span class="on"></span><span></span><span></span></div>
         </div>
         <div class="biblioteca-add-slot" id="bibliotecaAddSlot"></div>
-        <div class="biblioteca-search-slot-mobile" id="bibliotecaSearchSlotMobile"></div>
-        <div class="biblioteca-filtros-card">
+        <div class="biblioteca-search-row-mobile">
+          <div class="biblioteca-search-slot-mobile" id="bibliotecaSearchSlotMobile"></div>
+          <button class="biblioteca-filter-toggle-btn" onclick="document.getElementById('bibliotecaFiltrosCard').classList.toggle('cerrado')">▽</button>
+        </div>
+        <div class="biblioteca-filtros-card" id="bibliotecaFiltrosCard">
           <div class="biblioteca-nav-slot-mobile" id="bibliotecaNavSlotMobile"></div>
+          <div class="biblioteca-filtros-card-titulo">⚡ ESTADOS</div>
           <div class="biblioteca-filtros-slot-mobile" id="bibliotecaFiltrosSlotMobile"></div>
         </div>
         <div id="bibliotecaCarruselesSlot"></div>
@@ -1685,7 +1714,7 @@
     renderTagFilterButtons();
     estiloLayoutGuardado = cfg.estiloLayout === 'biblioteca' ? 'biblioteca' : 'clasico';
     estiloMobileHomeGuardado = cfg.estiloMobileHome === 'directo' ? 'directo' : 'inicio';
-    if (estiloLayoutGuardado === 'biblioteca' && window.innerWidth > 860) setTimeout(activarEstiloBiblioteca, 60);
+    if ((estiloLayoutGuardado === 'biblioteca' && window.innerWidth > 860) || window.innerWidth <= 860) setTimeout(activarEstiloBiblioteca, 60);
   }
 
   async function guardarTabOrder() {
@@ -1718,7 +1747,6 @@
       const nombre = (emailTxt.textContent || 'Usuario').split('@')[0];
       document.getElementById('bibliotecaUserName').textContent = nombre;
       document.getElementById('bibliotecaAvatarLetter').textContent = nombre.charAt(0).toUpperCase();
-      document.getElementById('bibliotecaHeroNombre').textContent = nombre + ' 👋';
     }
     document.body.classList.add('estilo-biblioteca');
     document.body.classList.toggle('mobile-home-inicio', estiloMobileHomeGuardado === 'inicio');
@@ -1754,7 +1782,19 @@
       const sideFiltros = document.getElementById('bibliotecaFiltrosSlot');
       const mobileFiltros = document.getElementById('bibliotecaFiltrosSlotMobile');
       if (sideFiltros) sideFiltros.innerHTML = `<div class="cat-filters">${html}</div>`;
-      if (mobileFiltros) mobileFiltros.innerHTML = `<div class="cat-filters">${html}</div>`;
+      if (mobileFiltros) {
+        mobileFiltros.innerHTML = `<div class="cat-filters">${html}</div>`;
+        const iconos = {
+          'Todos': '🔲', 'En emisión': '💫', 'Por empezar': '▶️', 'Pendiente': '⏰',
+          'En espera de nueva temporada': '⌛', 'Terminado': '✅', 'Abandonado': '❌', 'Temporada': '📅'
+        };
+        mobileFiltros.querySelectorAll('.cat-filter-btn').forEach(btn => {
+          if (!btn.firstChild) return;
+          const texto = btn.firstChild.textContent.trim();
+          const emoji = iconos[texto];
+          if (emoji) btn.firstChild.textContent = emoji + ' ' + texto;
+        });
+      }
     }
   }
 
