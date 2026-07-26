@@ -1752,6 +1752,9 @@
     document.body.classList.remove('biblioteca-en-categoria');
     bibliotecaSyncNavYFiltros();
     bibliotecaRenderCarruseles();
+    // Predeterminado: mostrar directo la categoría actual (la misma que ya restaura el resto de la app), no Inicio
+    const catRestaurada = (typeof currentCategory !== 'undefined' && currentCategory) ? currentCategory : 'manga';
+    bibliotecaIrACategoria(catRestaurada);
     // Red de seguridad: si los datos tardan en cargar, reintentar la sincronización
     setTimeout(() => { bibliotecaSyncNavYFiltros(); bibliotecaRenderCarruseles(); }, 1500);
   }
