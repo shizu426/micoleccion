@@ -238,7 +238,7 @@
   .donate-mp-link:hover { opacity: 0.9; }
 
   /* SCROLL TOP BUTTON */
-  #scrollTopBtn { display: none; position: fixed; bottom: 24px; right: 20px; z-index: 500;
+  #scrollTopBtn { display: none; position: fixed; bottom: 24px; right: 20px; z-index: 2000;
     width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2));
     border: none; color: white; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 16px rgba(233,69,96,0.4);
     transition: opacity 0.3s, transform 0.3s; align-items: center; justify-content: center; }
@@ -469,12 +469,13 @@
       background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #fff; font-size: 1.6rem; cursor: pointer;
       box-shadow: 0 6px 16px rgba(233,69,96,0.4); }
     /* Antes esto ocultaba Inicio o la categoría (uno u otro). Ahora todo queda junto, en una sola pantalla continua. */
-    body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filters { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-wrap: unset; align-items: stretch; margin-bottom: 14px; }
+    body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filters { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 6px; flex-wrap: unset; align-items: stretch; margin-bottom: 12px; }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn { width: auto !important; flex: none !important; box-sizing: border-box;
-      display: flex !important; align-items: center; justify-content: flex-start; gap: 4px; text-align: left;
-      padding: 9px 8px !important; font-size: 0.7rem !important; line-height: 1.15; border-radius: 10px !important;
-      min-height: 38px; text-shadow: 0 0 4px rgba(0,0,0,0.3); }
-    body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn .filtro-contador { margin-left: auto; flex-shrink: 0; background: rgba(0,0,0,0.35) !important; }
+      display: flex !important; align-items: center; justify-content: flex-start; gap: 3px; text-align: left;
+      padding: 6px 6px !important; font-size: 0.62rem !important; line-height: 1.05; border-radius: 8px !important;
+      min-height: 30px; text-shadow: 0 0 4px rgba(0,0,0,0.3); }
+    body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn.fs-espera { grid-column: span 2; }
+    body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn .filtro-contador { margin-left: auto; flex-shrink: 0; background: rgba(0,0,0,0.35) !important; padding: 1px 6px !important; font-size: 0.6rem !important; }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn.cat-filter-todos { background: var(--card) !important;
       border: 1px solid var(--border) !important; color: var(--text) !important; box-shadow: none !important; }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn.cat-filter-todos::before { content: "🔲"; }
@@ -4146,9 +4147,10 @@
   // SCROLL TOP BUTTON
   window.addEventListener('scroll', () => {
     const btn = document.getElementById('scrollTopBtn');
-    if (window.scrollY > 300) btn.classList.add('visible');
+    const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    if (y > 300) btn.classList.add('visible');
     else btn.classList.remove('visible');
-  });
+  }, { passive: true });
 
   // THEME SYSTEM
   function applyTheme(mode) {
