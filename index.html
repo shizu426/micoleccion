@@ -430,7 +430,7 @@
       background: linear-gradient(160deg, rgba(124,58,237,0.10), rgba(12,12,17,1) 45%); }
     body.estilo-biblioteca .biblioteca-sidebar.open { transform: translateX(0); }
     body.estilo-biblioteca .biblioteca-overlay.open { display: block; }
-    body.estilo-biblioteca .biblioteca-main { padding: 12px 12px 80px; }
+    body.estilo-biblioteca .biblioteca-main { padding: 12px 12px 20px; }
     body.estilo-biblioteca .biblioteca-topbar { display: none; }
     /* En celular el drawer (☰) queda simple: no repetir Mi Biblioteca/Filtros, ya están inline en Inicio */
     body.estilo-biblioteca .biblioteca-sidebar .biblioteca-section-title,
@@ -850,7 +850,6 @@
       <span>MICOLECCIÓN</span>
     </div>
     <div class="biblioteca-navbar-mobile-actions">
-      <button class="biblioteca-gift-btn" onclick="document.getElementById('donateModal').classList.add('open')">🎁</button>
       <button class="biblioteca-navgear-btn" onclick="openSettings()">⚙️</button>
     </div>
   </div>
@@ -908,12 +907,6 @@
         <div id="bibliotecaSeccionesSlot"></div>
       </div>
     </main>
-  </div>
-
-  <div class="biblioteca-bottomnav" id="bibliotecaBottomNav">
-    <button class="biblioteca-bottomnav-btn active" onclick="bibliotecaIrInicio()">🏠<span>Inicio</span></button>
-    <button class="biblioteca-bottomnav-fab" onclick="document.querySelector('.biblioteca-add-slot .add-btn, .container .add-btn')?.click()">+</button>
-    <button class="biblioteca-bottomnav-btn" onclick="openTagsManager()">🏷️<span>Tags</span></button>
   </div>
 </div>
 
