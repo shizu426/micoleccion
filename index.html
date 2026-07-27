@@ -468,10 +468,7 @@
     body.estilo-biblioteca .biblioteca-bottomnav-fab { width: 48px; height: 48px; border-radius: 50%; margin-top: -22px;
       background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #fff; font-size: 1.6rem; cursor: pointer;
       box-shadow: 0 6px 16px rgba(233,69,96,0.4); }
-    /* Pantalla Inicio como landing fija en celular (si el usuario la eligió) */
-    body.estilo-biblioteca.mobile-home-inicio #bibliotecaCategoriaContenido { display: none; }
-    body.estilo-biblioteca.mobile-home-inicio.biblioteca-en-categoria #bibliotecaHomeScreen { display: none; }
-    body.estilo-biblioteca.mobile-home-inicio.biblioteca-en-categoria #bibliotecaCategoriaContenido { display: block; }
+    /* Antes esto ocultaba Inicio o la categoría (uno u otro). Ahora todo queda junto, en una sola pantalla continua. */
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filters { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-wrap: unset; align-items: stretch; margin-bottom: 14px; }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn { width: auto !important; flex: none !important; box-sizing: border-box;
       display: flex !important; align-items: center; justify-content: flex-start; gap: 4px; text-align: left;
@@ -493,7 +490,6 @@
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn.fs-abandonado::before { content: "❌"; }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn.fs-espera { box-shadow: 0 3px 10px -4px var(--tagcol-espera); }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn.fs-espera::before { content: "⌛"; }
-    body.estilo-biblioteca.mobile-home-inicio.biblioteca-en-categoria .biblioteca-back-btn { display: inline-block; }
   }
   @media (min-width: 861px) {
     .biblioteca-back-btn { display: none !important; }
@@ -1933,6 +1929,7 @@
   function bibliotecaIrInicio() {
     document.body.classList.remove('biblioteca-en-categoria');
     document.querySelectorAll('.biblioteca-bottomnav-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function bibliotecaIrACategoria(cat) {
