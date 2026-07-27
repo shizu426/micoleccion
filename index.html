@@ -376,8 +376,9 @@
   .biblioteca-search-slot-mobile { display: none; margin-bottom: 14px; }
   .biblioteca-search-slot-mobile .search-bar { width: 100%; box-sizing: border-box; }
   .biblioteca-nav-slot-mobile { display: none; }
-  .biblioteca-nav-slot-mobile .category-tabs { display: flex; flex-wrap: wrap; gap: 6px; background: none; border: none; padding: 0; margin-bottom: 10px; }
-  .biblioteca-nav-slot-mobile .cat-tab { border-radius: 20px; padding: 7px 12px; font-size: 0.75rem; background: var(--card); border: 1px solid var(--border); color: var(--text); }
+  .biblioteca-nav-slot-mobile .category-tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; background: none; border: none; padding: 0 0 4px; margin-bottom: 10px; -ms-overflow-style: none; scrollbar-width: none; }
+  .biblioteca-nav-slot-mobile .category-tabs::-webkit-scrollbar { display: none; }
+  .biblioteca-nav-slot-mobile .cat-tab { flex: 0 0 auto; white-space: nowrap; border-radius: 20px; padding: 7px 12px; font-size: 0.75rem; background: var(--card); border: 1px solid var(--border); color: var(--text); }
   .biblioteca-nav-slot-mobile .cat-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); border-color: transparent; }
   .biblioteca-filtros-slot-mobile { display: none; }
   .biblioteca-filtros-slot-mobile .cat-filters { margin-bottom: 4px; display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-wrap: unset; align-items: stretch; }
@@ -421,7 +422,10 @@
   /* MOBILE */
   .biblioteca-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 999; }
   @media (max-width: 860px) {
-    body.estilo-biblioteca .biblioteca-menu-toggle-inline { display: block; }
+    body.estilo-biblioteca .biblioteca-menu-toggle-inline { display: none !important; }
+    body.estilo-biblioteca .biblioteca-settings-logout { display: block !important; width: 100%; margin: 10px 0 4px;
+      padding: 10px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); color: #ef4444;
+      border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
     body.estilo-biblioteca .biblioteca-navbar-mobile-actions { display: flex; }
     body.estilo-biblioteca .biblioteca-sidebar-bottom { display: none; }
     body.estilo-biblioteca .biblioteca-sidebar { position: fixed; left: 0; top: 0; z-index: 1000; justify-content: flex-start;
@@ -475,13 +479,13 @@
       background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #fff; font-size: 1.6rem; cursor: pointer;
       box-shadow: 0 6px 16px rgba(233,69,96,0.4); }
     /* Antes esto ocultaba Inicio o la categoría (uno u otro). Ahora todo queda junto, en una sola pantalla continua. */
-    body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filters { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 6px; flex-wrap: unset; align-items: stretch; margin-bottom: 12px; }
+    body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filters { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 5px; flex-wrap: unset; align-items: stretch; margin-bottom: 10px; }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn { width: auto !important; flex: none !important; box-sizing: border-box;
-      display: flex !important; align-items: center; justify-content: flex-start; gap: 3px; text-align: left;
-      padding: 6px 6px !important; font-size: 0.62rem !important; line-height: 1.05; border-radius: 8px !important;
-      min-height: 30px; text-shadow: 0 0 4px rgba(0,0,0,0.3); }
+      display: flex !important; align-items: center; justify-content: flex-start; gap: 2px; text-align: left;
+      padding: 5px 5px !important; font-size: 0.56rem !important; line-height: 1; border-radius: 7px !important;
+      min-height: 26px; text-shadow: 0 0 4px rgba(0,0,0,0.3); }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn.fs-espera { grid-column: span 2; }
-    body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn .filtro-contador { margin-left: auto; flex-shrink: 0; background: rgba(0,0,0,0.35) !important; padding: 1px 6px !important; font-size: 0.6rem !important; }
+    body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn .filtro-contador { margin-left: auto; flex-shrink: 0; background: rgba(0,0,0,0.35) !important; padding: 1px 5px !important; font-size: 0.54rem !important; }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn.cat-filter-todos { background: var(--card) !important;
       border: 1px solid var(--border) !important; color: var(--text) !important; box-shadow: none !important; }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn.cat-filter-todos::before { content: "🔲"; }
@@ -1176,6 +1180,7 @@
 <div id="settingsPanel">
   <div class="settings-box">
     <h2>⚙️ Configuración</h2>
+    <button class="biblioteca-settings-logout" onclick="logout()" style="display:none;">🚪 Cerrar sesión</button>
     <div class="settings-tabs">
       <button class="settings-tab active" id="stab-orden" onclick="switchSettingsTab('orden')">📑 Orden</button>
       <button class="settings-tab" id="stab-compartir" onclick="switchSettingsTab('compartir')">🔗 Compartir</button>
