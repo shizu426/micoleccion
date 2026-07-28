@@ -457,16 +457,16 @@
     /* Paleta "Crimson & Gold" solo para mobile, no toca los colores de PC */
     body.estilo-biblioteca { --accent: #e11d48; --accent2: #f59e0b; }
     body.estilo-biblioteca .biblioteca-hero { display: block; position: relative; overflow: hidden;
-      background: var(--card);
-      border: 1px solid rgba(176,38,255,0.35); border-radius: 16px; padding: 0; margin-bottom: 14px; min-height: 150px;
+      background: linear-gradient(145deg, rgba(220,20,60,0.25), rgba(10,10,20,0.4)), var(--card);
+      background-size: cover; background-position: center;
+      border: 1px solid rgba(176,38,255,0.35); border-radius: 16px; padding: 18px; margin-bottom: 14px; min-height: 150px;
       box-shadow: 0 0 30px 1px rgba(220,20,60,0.25); }
-    body.estilo-biblioteca .biblioteca-hero-img { position: absolute; top: 0; right: 0; bottom: 0; left: 58%;
-      background-size: contain; background-position: center; background-repeat: no-repeat; pointer-events: none;
-      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%);
-      mask-image: linear-gradient(90deg, transparent 0%, #000 18%); }
-    body.estilo-biblioteca .biblioteca-hero::after { display: none; }
-    body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; padding: 16px 14px; padding-right: 44%; }
-    body.estilo-biblioteca .biblioteca-hero-highlight { color: #dc143c; font-weight: 700; }
+    body.estilo-biblioteca .biblioteca-hero-img { position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: 65% 30%; z-index: 0; pointer-events: none; border-radius: 15px; }
+    body.estilo-biblioteca .biblioteca-hero::after { content: ''; position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(90deg, rgba(10,10,17,0.8) 35%, rgba(10,10,17,0.2) 100%); pointer-events: none; }
+    body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; }
+    body.estilo-biblioteca .biblioteca-hero-highlight { color: #ff4d6d; font-weight: 700; }
     body.estilo-biblioteca .biblioteca-hero-text p { color: #fff; font-weight: 700; font-size: 1rem; line-height: 1.35; }
     body.estilo-biblioteca .biblioteca-hero-eyebrow { color: #fff; font-size: 0.85rem; }
     body.estilo-biblioteca .biblioteca-donate-btn-inline { background: linear-gradient(135deg, #dc143c, #b026ff) !important; }
@@ -912,12 +912,12 @@
       <!-- PANTALLA INICIO (solo celular, si el usuario la eligió como principal) -->
       <div class="biblioteca-home-screen" id="bibliotecaHomeScreen">
         <div class="biblioteca-hero biblioteca-donate-hero" onclick="document.getElementById('donateModal').classList.add('open')">
+          <img class="biblioteca-hero-img" src="icons/hero-personaje.jpg" alt="" onerror="this.style.display='none'">
           <div class="biblioteca-hero-text">
             <span class="biblioteca-hero-eyebrow">❤️ ¿Te gusta la app?</span>
             <p>Apóyanos con una <span class="biblioteca-hero-highlight">donación</span> voluntaria</p>
             <button class="biblioteca-donate-btn-inline" onclick="event.stopPropagation(); document.getElementById('donateModal').classList.add('open')">Donar ❤️</button>
           </div>
-          <div class="biblioteca-hero-img" style="background-image:url('icons/hero-personaje.jpg');"></div>
           <div class="biblioteca-hero-dots"><span class="on"></span><span></span><span></span></div>
         </div>
         <div class="biblioteca-add-slot" id="bibliotecaAddSlot"></div>
