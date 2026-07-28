@@ -423,9 +423,10 @@
   .biblioteca-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 999; }
   @media (max-width: 860px) {
     body.estilo-biblioteca .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
-    body.estilo-biblioteca .card-img, body.estilo-biblioteca .card-img-placeholder { aspect-ratio: 4/5 !important; }
-    body.estilo-biblioteca .card-body { padding: 8px !important; }
-    body.estilo-biblioteca .card-linkrow { flex-wrap: nowrap !important; gap: 4px !important; }
+    body.estilo-biblioteca .card-img { aspect-ratio: 1/1 !important; object-position: top !important; }
+    body.estilo-biblioteca .card-img-placeholder { aspect-ratio: 1/1 !important; }
+    body.estilo-biblioteca .card-body { padding: 7px !important; }
+    body.estilo-biblioteca .card-linkrow { flex-wrap: nowrap !important; gap: 4px !important; overflow-x: auto; }
     body.estilo-biblioteca .card-leerlink { font-size: 0.66rem !important; padding: 4px 7px !important;
       background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4); border-radius: 20px; flex-shrink: 0; }
     body.estilo-biblioteca .card-notasbtn { font-size: 0.66rem !important; padding: 3px 6px !important; flex-shrink: 0; }
@@ -606,9 +607,9 @@
   .pag-cat-block.active { display: block; }
   .pag-cat-tabs-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
   .pag-cat-tabs-row .cat-tab { flex: 0 1 auto; }
-  .card-linkrow { display: flex; align-items: center; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
-  .card-leerlink { font-size: 0.78rem; color: #7c3aed; text-decoration: none; white-space: nowrap;
-    padding: 5px 12px; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4); border-radius: 20px; }
+  .card-linkrow { display: flex; align-items: center; gap: 4px; margin-top: 6px; flex-wrap: nowrap; }
+  .card-leerlink { font-size: 0.76rem; color: #7c3aed; text-decoration: none; white-space: nowrap;
+    padding: 5px 10px; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4); border-radius: 20px; }
   .card-notasbtn { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px;
     background: rgba(255,193,7,0.15); border: 1px solid rgba(255,193,7,0.4); border-radius: 20px;
     color: #ffc107; font-size: 0.63rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; }
