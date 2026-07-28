@@ -422,6 +422,11 @@
   /* MOBILE */
   .biblioteca-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 999; }
   @media (max-width: 860px) {
+    body.estilo-biblioteca .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+    body.estilo-biblioteca .card-img, body.estilo-biblioteca .card-img-placeholder { aspect-ratio: 3/4 !important; }
+    body.estilo-biblioteca .card-body { padding: 8px !important; }
+    body.estilo-biblioteca .card-leerlink { font-size: 0.72rem !important; padding: 4px 10px !important;
+      background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4); border-radius: 20px; }
     body.estilo-biblioteca .biblioteca-menu-toggle-inline { display: none !important; }
     body.estilo-biblioteca .biblioteca-settings-logout { display: block !important; width: 100%; margin: 10px 0 4px;
       padding: 10px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); color: #ef4444;
@@ -2229,9 +2234,11 @@
         const t = tagsConfig.find(tg => tg.id === entry.id);
         if (!t) return '';
         const activo = catFilters[cat] === t.id;
-        const textColor = contrastTextColor(t.color);
+        const esMobileBiblioteca = document.body.classList.contains('estilo-biblioteca') && window.innerWidth <= 860;
+        const textColor = esMobileBiblioteca ? t.color : contrastTextColor(t.color);
+        const bgColor = esMobileBiblioteca ? 'var(--card)' : t.color;
         const cantidadTag = itemsCat.filter(i => i.status === t.id).length;
-        return `<button type="button" class="cat-filter-btn ${activo ? 'active' : ''}" data-tagid="${t.id}" style="background:${t.color};border-color:${t.color};color:${textColor};" onclick="setCatFilter('${cat}','${t.id}',this)">${t.nombre} <span class="filtro-contador">${cantidadTag}</span></button>`;
+        return `<button type="button" class="cat-filter-btn ${activo ? 'active' : ''}" data-tagid="${t.id}" style="background:${bgColor};border-color:${t.color};color:${textColor};" onclick="setCatFilter('${cat}','${t.id}',this)">${t.nombre} <span class="filtro-contador">${cantidadTag}</span></button>`;
       }
     }).join('');
   }
