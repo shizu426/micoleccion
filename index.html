@@ -456,16 +456,16 @@
     body.estilo-biblioteca .biblioteca-home-screen { display: block; }
     /* Paleta "Crimson & Gold" solo para mobile, no toca los colores de PC */
     body.estilo-biblioteca { --accent: #e11d48; --accent2: #f59e0b; }
-    body.estilo-biblioteca .biblioteca-hero { display: flex !important; flex-direction: row; align-items: stretch;
-      position: relative; overflow: hidden; gap: 0; background: var(--card);
+    body.estilo-biblioteca .biblioteca-hero { display: block; position: relative; overflow: hidden;
+      background: var(--card);
       border: 1px solid rgba(176,38,255,0.35); border-radius: 16px; padding: 0; margin-bottom: 14px; min-height: 150px;
       box-shadow: 0 0 30px 1px rgba(220,20,60,0.25); }
-    body.estilo-biblioteca .biblioteca-hero-img { position: static; flex: 0 0 42%; width: 42%; height: 100%;
-      align-self: stretch; object-fit: cover; object-position: 60% 30%; pointer-events: none;
+    body.estilo-biblioteca .biblioteca-hero-img { position: absolute; top: 0; right: 0; bottom: 0; width: 42%;
+      object-fit: cover; object-position: 60% 30%; pointer-events: none;
       border-radius: 0; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%);
       mask-image: linear-gradient(90deg, transparent 0%, #000 18%); }
     body.estilo-biblioteca .biblioteca-hero::after { display: none; }
-    body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; flex: 1 1 58%; padding: 16px 14px; min-width: 0; }
+    body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; padding: 16px 14px; padding-right: 44%; }
     body.estilo-biblioteca .biblioteca-hero-highlight { color: #dc143c; font-weight: 700; }
     body.estilo-biblioteca .biblioteca-hero-text p { color: #fff; font-weight: 700; font-size: 1rem; line-height: 1.35; }
     body.estilo-biblioteca .biblioteca-hero-eyebrow { color: #fff; font-size: 0.85rem; }
