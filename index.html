@@ -460,9 +460,9 @@
       background: var(--card);
       border: 1px solid rgba(176,38,255,0.35); border-radius: 16px; padding: 0; margin-bottom: 14px; min-height: 150px;
       box-shadow: 0 0 30px 1px rgba(220,20,60,0.25); }
-    body.estilo-biblioteca .biblioteca-hero-img { position: absolute; top: 0; right: 0; bottom: 0; width: 42%;
-      object-fit: cover; object-position: 60% 30%; pointer-events: none;
-      border-radius: 0; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%);
+    body.estilo-biblioteca .biblioteca-hero-img { position: absolute; top: 0; right: 0; bottom: 0; left: 58%;
+      background-size: cover; background-position: 60% 30%; background-repeat: no-repeat; pointer-events: none;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%);
       mask-image: linear-gradient(90deg, transparent 0%, #000 18%); }
     body.estilo-biblioteca .biblioteca-hero::after { display: none; }
     body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; padding: 16px 14px; padding-right: 44%; }
@@ -917,7 +917,7 @@
             <p>Apóyanos con una <span class="biblioteca-hero-highlight">donación</span> voluntaria</p>
             <button class="biblioteca-donate-btn-inline" onclick="event.stopPropagation(); document.getElementById('donateModal').classList.add('open')">Donar ❤️</button>
           </div>
-          <img class="biblioteca-hero-img" src="icons/hero-personaje.jpg" alt="" onerror="this.style.display='none'">
+          <div class="biblioteca-hero-img" style="background-image:url('icons/hero-personaje.jpg');"></div>
           <div class="biblioteca-hero-dots"><span class="on"></span><span></span><span></span></div>
         </div>
         <div class="biblioteca-add-slot" id="bibliotecaAddSlot"></div>
