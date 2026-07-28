@@ -297,6 +297,7 @@
   .biblioteca-navbar { display: flex; align-items: center; gap: 12px; padding: 10px 16px;
     background: var(--surface); border-bottom: 1px solid var(--border); }
   .biblioteca-menu-toggle-inline { display: none; background: none; border: none; color: var(--text); font-size: 1.3rem; cursor: pointer; }
+  .biblioteca-brand-tagline { display: none; }
   .biblioteca-brand { display: flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: 0.5px;
     background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.05rem; }
   .biblioteca-brand img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
@@ -431,6 +432,8 @@
       background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4); border-radius: 20px; flex-shrink: 0; }
     body.estilo-biblioteca .card-notasbtn { font-size: 0.66rem !important; padding: 3px 6px !important; flex-shrink: 0; }
     body.estilo-biblioteca .biblioteca-menu-toggle-inline { display: none !important; }
+    body.estilo-biblioteca .biblioteca-brand span { display: flex; flex-direction: column; line-height: 1.2; }
+    body.estilo-biblioteca .biblioteca-brand-tagline { display: block; font-size: 0.68rem; font-weight: 500; color: var(--muted); letter-spacing: normal; }
     body.estilo-biblioteca .biblioteca-settings-logout { display: block !important; width: 100%; margin: 10px 0 4px;
       padding: 10px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.4); color: #ef4444;
       border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
@@ -463,6 +466,10 @@
       mask-image: linear-gradient(90deg, transparent 0%, #000 18%); }
     body.estilo-biblioteca .biblioteca-hero::after { display: none; }
     body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; flex: 1 1 58%; padding: 16px 14px; min-width: 0; }
+    body.estilo-biblioteca .biblioteca-hero-highlight { color: #dc143c; font-weight: 700; }
+    body.estilo-biblioteca .biblioteca-hero-text p { color: #fff; font-weight: 700; font-size: 1rem; line-height: 1.35; }
+    body.estilo-biblioteca .biblioteca-hero-eyebrow { color: #fff; font-size: 0.85rem; }
+    body.estilo-biblioteca .biblioteca-donate-btn-inline { background: linear-gradient(135deg, #dc143c, #b026ff) !important; }
     body.estilo-biblioteca .biblioteca-add-slot { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     body.estilo-biblioteca .biblioteca-add-slot .add-btn { padding: 12px 6px; font-size: 0.8rem; text-align: center;
       display: flex; align-items: center; justify-content: center; }
@@ -867,7 +874,7 @@
     <button class="biblioteca-menu-toggle-inline" id="bibliotecaMenuToggle" onclick="toggleBibliotecaSidebar()">☰</button>
     <div class="biblioteca-brand">
       <img src="icons/icon-192.png" alt="MiColección">
-      <span>MICOLECCIÓN</span>
+      <span>MICOLECCIÓN<small class="biblioteca-brand-tagline">Tu colección, organizada.</small></span>
     </div>
     <div class="biblioteca-navbar-mobile-actions">
       <button class="biblioteca-navgear-btn" onclick="openSettings()">⚙️</button>
@@ -905,12 +912,12 @@
       <!-- PANTALLA INICIO (solo celular, si el usuario la eligió como principal) -->
       <div class="biblioteca-home-screen" id="bibliotecaHomeScreen">
         <div class="biblioteca-hero biblioteca-donate-hero" onclick="document.getElementById('donateModal').classList.add('open')">
-          <img class="biblioteca-hero-img" src="icons/hero-personaje.jpg" alt="" onerror="this.style.display='none'">
           <div class="biblioteca-hero-text">
-            <span class="biblioteca-hero-eyebrow">💙 ¿Te gusta la app?</span>
-            <p>Apóyanos con una donación voluntaria</p>
-            <button class="biblioteca-donate-btn-inline" onclick="event.stopPropagation(); document.getElementById('donateModal').classList.add('open')">Donar 💙</button>
+            <span class="biblioteca-hero-eyebrow">❤️ ¿Te gusta la app?</span>
+            <p>Apóyanos con una <span class="biblioteca-hero-highlight">donación</span> voluntaria</p>
+            <button class="biblioteca-donate-btn-inline" onclick="event.stopPropagation(); document.getElementById('donateModal').classList.add('open')">Donar ❤️</button>
           </div>
+          <img class="biblioteca-hero-img" src="icons/hero-personaje.jpg" alt="" onerror="this.style.display='none'">
           <div class="biblioteca-hero-dots"><span class="on"></span><span></span><span></span></div>
         </div>
         <div class="biblioteca-add-slot" id="bibliotecaAddSlot"></div>
