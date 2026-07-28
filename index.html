@@ -453,22 +453,22 @@
     body.estilo-biblioteca .biblioteca-home-screen { display: block; }
     /* Paleta "Crimson & Gold" solo para mobile, no toca los colores de PC */
     body.estilo-biblioteca { --accent: #e11d48; --accent2: #f59e0b; }
-    body.estilo-biblioteca .biblioteca-hero { display: block; position: relative; overflow: hidden;
-      background: linear-gradient(145deg, rgba(220,20,60,0.25), rgba(10,10,20,0.4)), var(--card);
-      background-size: cover; background-position: center;
-      border: 1px solid rgba(176,38,255,0.35); border-radius: 16px; padding: 18px; margin-bottom: 14px; min-height: 150px;
+    body.estilo-biblioteca .biblioteca-hero { display: flex !important; flex-direction: row; align-items: stretch;
+      position: relative; overflow: hidden; gap: 0; background: var(--card);
+      border: 1px solid rgba(176,38,255,0.35); border-radius: 16px; padding: 0; margin-bottom: 14px; min-height: 150px;
       box-shadow: 0 0 30px 1px rgba(220,20,60,0.25); }
-    body.estilo-biblioteca .biblioteca-hero-img { position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: cover; object-position: 65% 30%; z-index: 0; pointer-events: none; border-radius: 15px; }
-    body.estilo-biblioteca .biblioteca-hero::after { content: ''; position: absolute; inset: 0; z-index: 0;
-      background: linear-gradient(90deg, rgba(10,10,17,0.75) 30%, rgba(10,10,17,0.15) 100%); pointer-events: none; }
-    body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; }
+    body.estilo-biblioteca .biblioteca-hero-img { position: static; flex: 0 0 42%; width: 42%; height: auto;
+      align-self: stretch; object-fit: cover; object-position: 60% 30%; pointer-events: none;
+      border-radius: 0; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%);
+      mask-image: linear-gradient(90deg, transparent 0%, #000 18%); }
+    body.estilo-biblioteca .biblioteca-hero::after { display: none; }
+    body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; flex: 1 1 58%; padding: 16px 14px; min-width: 0; }
     body.estilo-biblioteca .biblioteca-add-slot { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     body.estilo-biblioteca .biblioteca-add-slot .add-btn { padding: 12px 6px; font-size: 0.8rem; text-align: center;
       display: flex; align-items: center; justify-content: center; }
-    body.estilo-biblioteca .biblioteca-add-slot .add-btn:nth-child(1) { background: linear-gradient(135deg,#dc143c,#b026ff) !important; }
-    body.estilo-biblioteca .biblioteca-add-slot .add-btn:nth-child(2) { background: linear-gradient(135deg,#b026ff,#eeff00) !important; }
-    body.estilo-biblioteca .biblioteca-add-slot .add-btn:nth-child(3) { background: linear-gradient(135deg,#eeff00,#dc143c) !important; color: #1a0a1f !important; }
+    body.estilo-biblioteca .biblioteca-add-slot .add-btn:nth-child(1) { background: linear-gradient(135deg,#e11d48,#f59e0b) !important; color: #fff !important; }
+    body.estilo-biblioteca .biblioteca-add-slot .add-btn:nth-child(2) { background: linear-gradient(135deg,#f59e0b,#e11d48) !important; color: #fff !important; }
+    body.estilo-biblioteca .biblioteca-add-slot .add-btn:nth-child(3) { background: linear-gradient(135deg,#f97316,#f59e0b) !important; color: #fff !important; }
     body.estilo-biblioteca .biblioteca-add-slot .add-btn-full { display: none; }
     body.estilo-biblioteca .biblioteca-add-slot .add-btn-mobile { display: flex; flex-direction: column; align-items: center; gap: 2px; }
     body.estilo-biblioteca .biblioteca-add-slot .add-btn-icon { font-weight: 700; }
