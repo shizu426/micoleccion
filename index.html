@@ -427,12 +427,6 @@
     body.estilo-biblioteca .card-img { aspect-ratio: 1/1 !important; object-position: top !important; }
     body.estilo-biblioteca .card-img-placeholder { aspect-ratio: 1/1 !important; }
     body.estilo-biblioteca .card-body { padding: 7px !important; }
-    body.estilo-biblioteca .card { border-left: 3px solid transparent; }
-    body.estilo-biblioteca .card[data-tipo="Manga"] { border-left-color: var(--tipo-manga); box-shadow: -2px 0 10px -3px var(--tipo-manga); }
-    body.estilo-biblioteca .card[data-tipo="Manhwa"] { border-left-color: var(--tipo-manhwa); box-shadow: -2px 0 10px -3px var(--tipo-manhwa); }
-    body.estilo-biblioteca .card[data-tipo="Manhua"] { border-left-color: var(--tipo-manhua); box-shadow: -2px 0 10px -3px var(--tipo-manhua); }
-    body.estilo-biblioteca .card[data-tipo="Anime"] { border-left-color: var(--tipo-anime); box-shadow: -2px 0 10px -3px var(--tipo-anime); }
-    body.estilo-biblioteca .card[data-tipo="Novela"] { border-left-color: var(--tipo-novela); box-shadow: -2px 0 10px -3px var(--tipo-novela); }
     body.estilo-biblioteca .card-leerlink { font-size: 0.66rem !important; padding: 4px 7px !important;
       background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4); border-radius: 20px; flex-shrink: 0; }
     body.estilo-biblioteca .card-notasbtn { font-size: 0.66rem !important; padding: 3px 6px !important; flex-shrink: 0; }
@@ -472,11 +466,12 @@
     body.estilo-biblioteca .biblioteca-hero::after { content: ''; position: absolute; inset: 0; z-index: 0;
       background: linear-gradient(90deg, rgba(10,10,17,0.8) 35%, rgba(10,10,17,0.2) 100%); pointer-events: none; }
     body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; }
-    body.estilo-biblioteca .biblioteca-mundo-hero { position: relative; overflow: hidden; border-radius: 16px;
-      border: 1px solid rgba(176,38,255,0.35); min-height: 190px; margin-bottom: 10px; background: var(--card); }
+    body.estilo-biblioteca .biblioteca-mundo-hero { position: relative; border-radius: 16px;
+      border: 1px solid rgba(176,38,255,0.35); margin-bottom: 10px; background: var(--card); overflow: hidden; }
+    body.estilo-biblioteca .biblioteca-mundo-hero-visual { position: relative; overflow: hidden; min-height: 190px; }
     body.estilo-biblioteca .biblioteca-mundo-hero-img { position: absolute; inset: 0; width: 100%; height: 100%;
       object-fit: cover; object-position: 70% 25%; }
-    body.estilo-biblioteca .biblioteca-mundo-hero::after { content: ''; position: absolute; inset: 0;
+    body.estilo-biblioteca .biblioteca-mundo-hero-visual::after { content: ''; position: absolute; inset: 0;
       background: linear-gradient(90deg, rgba(8,6,14,0.92) 42%, rgba(8,6,14,0.25) 100%); }
     body.estilo-biblioteca .biblioteca-mundo-hero-text { position: relative; z-index: 1; padding: 16px 14px; max-width: 68%; }
     body.estilo-biblioteca .biblioteca-mundo-hero-eyebrow { display: block; font-size: 0.68rem; letter-spacing: 0.5px;
@@ -486,14 +481,16 @@
       font-style: italic; margin-bottom: 8px; }
     body.estilo-biblioteca .biblioteca-mundo-hero-text h1 span { color: #b026ff; }
     body.estilo-biblioteca .biblioteca-mundo-hero-text p { color: var(--muted); font-size: 0.78rem; line-height: 1.3; }
-    body.estilo-biblioteca .biblioteca-mundo-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
-    body.estilo-biblioteca .biblioteca-mundo-stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-      padding: 8px 4px; text-align: center; }
+    body.estilo-biblioteca .biblioteca-mundo-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+      background: var(--border); border-top: 1px solid rgba(176,38,255,0.35); }
+    body.estilo-biblioteca .biblioteca-mundo-stat { background: var(--card); padding: 8px 4px; text-align: center; }
     body.estilo-biblioteca .biblioteca-mundo-stat .num { display: block; font-size: 0.95rem; font-weight: 800; color: #fff; }
     body.estilo-biblioteca .biblioteca-mundo-stat .lbl { display: block; font-size: 0.6rem; color: var(--muted); margin-top: 2px; }
-    body.estilo-biblioteca .biblioteca-donate-hero { min-height: auto !important; padding: 12px !important; }
-    body.estilo-biblioteca .biblioteca-donate-hero .biblioteca-hero-text p { font-size: 0.8rem !important; }
-    body.estilo-biblioteca .biblioteca-donate-hero .biblioteca-hero-img { object-position: 80% 30%; }
+    body.estilo-biblioteca .biblioteca-donate-strip { cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; background: var(--card); border: 1px solid rgba(176,38,255,0.25); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; }
+    body.estilo-biblioteca .biblioteca-donate-strip-text { flex: 1; min-width: 0; }
+    body.estilo-biblioteca .biblioteca-donate-strip-text p { font-size: 0.78rem; color: #fff; font-weight: 600; margin: 2px 0 0; line-height: 1.25; }
+    body.estilo-biblioteca .biblioteca-donate-strip .biblioteca-donate-btn-inline { flex-shrink: 0; padding: 8px 14px !important; font-size: 0.8rem !important; }
     body.estilo-biblioteca .biblioteca-hero-highlight { color: #ff4d6d; font-weight: 700; }
     body.estilo-biblioteca .biblioteca-hero-text p { color: #fff; font-weight: 700; font-size: 1rem; line-height: 1.35; }
     body.estilo-biblioteca .biblioteca-hero-eyebrow { color: #fff; font-size: 0.85rem; }
@@ -519,8 +516,9 @@
     body.estilo-biblioteca .biblioteca-hero { margin-bottom: 10px !important; }
     body.estilo-biblioteca .biblioteca-nav-slot-mobile { display: block; }
     body.estilo-biblioteca .biblioteca-filtros-slot-mobile { display: block; }
-    body.estilo-biblioteca .biblioteca-bottomnav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 900;
-      background: var(--surface); border-top: 1px solid var(--border); align-items: center; justify-content: space-around; padding: 8px 0 max(8px, env(safe-area-inset-bottom)); }
+    body.estilo-biblioteca .biblioteca-bottomnav { display: flex !important; position: fixed !important; bottom: 0 !important; left: 0; right: 0; z-index: 99999;
+      background: var(--surface); border-top: 1px solid var(--border); align-items: center; justify-content: space-around;
+      padding: 8px 0 max(8px, env(safe-area-inset-bottom)); transform: translateZ(0); -webkit-transform: translateZ(0); }
     body.estilo-biblioteca .biblioteca-bottomnav-btn { display: flex; flex-direction: column; align-items: center; gap: 2px;
       background: none; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; }
     body.estilo-biblioteca .biblioteca-bottomnav-btn span { font-size: 0.6rem; }
@@ -955,22 +953,22 @@
       <!-- PANTALLA INICIO (solo celular, si el usuario la eligió como principal) -->
       <div class="biblioteca-home-screen" id="bibliotecaHomeScreen">
         <div class="biblioteca-mundo-hero">
-          <img class="biblioteca-mundo-hero-img" src="icons/hero-personaje.jpg" alt="" onerror="this.style.display='none'">
-          <div class="biblioteca-mundo-hero-text">
-            <span class="biblioteca-mundo-hero-eyebrow">ORGANIZA. <span>SIGUE.</span> DISFRUTA.</span>
-            <h1>TU MUNDO<br><span>FAVORITO</span></h1>
-            <p>Todas tus historias.<br>En un solo lugar.</p>
+          <div class="biblioteca-mundo-hero-visual">
+            <img class="biblioteca-mundo-hero-img" src="icons/hero-personaje.jpg" alt="" onerror="this.style.display='none'">
+            <div class="biblioteca-mundo-hero-text">
+              <span class="biblioteca-mundo-hero-eyebrow">ORGANIZA. <span>SIGUE.</span> DISFRUTA.</span>
+              <h1>TU MUNDO<br><span>FAVORITO</span></h1>
+              <p>Todas tus historias.<br>En un solo lugar.</p>
+            </div>
           </div>
+          <div class="biblioteca-mundo-stats" id="bibliotecaMundoStats"></div>
         </div>
-        <div class="biblioteca-mundo-stats" id="bibliotecaMundoStats"></div>
-        <div class="biblioteca-hero biblioteca-donate-hero" onclick="document.getElementById('donateModal').classList.add('open')">
-          <img class="biblioteca-hero-img" src="icons/hero-personaje.jpg" alt="" onerror="this.style.display='none'">
-          <div class="biblioteca-hero-text">
+        <div class="biblioteca-donate-strip" onclick="document.getElementById('donateModal').classList.add('open')">
+          <div class="biblioteca-donate-strip-text">
             <span class="biblioteca-hero-eyebrow">❤️ ¿Te gusta la app?</span>
             <p>Apóyanos con una <span class="biblioteca-hero-highlight">donación</span> voluntaria</p>
-            <button class="biblioteca-donate-btn-inline" onclick="event.stopPropagation(); document.getElementById('donateModal').classList.add('open')">Donar ❤️</button>
           </div>
-          <div class="biblioteca-hero-dots"><span class="on"></span><span></span><span></span></div>
+          <button class="biblioteca-donate-btn-inline" onclick="event.stopPropagation(); document.getElementById('donateModal').classList.add('open')">Donar ❤️</button>
         </div>
         <div class="biblioteca-add-slot" id="bibliotecaAddSlot"></div>
         <div class="biblioteca-search-row-mobile">
