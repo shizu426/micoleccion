@@ -26,7 +26,7 @@
     --tagcol-pendiente: #a855f7; --tagcol-abandonado: #ef4444; --tagcol-espera: #06b6d4;
     --tagcol-emision-text: #1a1a1a; --tagcol-terminado-text: #1a1a1a; --tagcol-porempezar-text: #1a1a1a;
     --tagcol-pendiente-text: #1a1a1a; --tagcol-abandonado-text: #1a1a1a; --tagcol-espera-text: #1a1a1a;
-    --tipo-manga: #e94560; --tipo-manhwa: #7c3aed; --tipo-manhua: #f59e0b; --tipo-anime: #22c55e;
+    --tipo-manga: #e94560; --tipo-manhwa: #7c3aed; --tipo-manhua: #f59e0b; --tipo-anime: #22c55e; --tipo-novela: #06b6d4;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { overflow-x: hidden; }
@@ -427,11 +427,17 @@
     body.estilo-biblioteca .card-img { aspect-ratio: 1/1 !important; object-position: top !important; }
     body.estilo-biblioteca .card-img-placeholder { aspect-ratio: 1/1 !important; }
     body.estilo-biblioteca .card-body { padding: 7px !important; }
-    body.estilo-biblioteca .card-linkrow { flex-wrap: nowrap !important; gap: 4px !important; overflow-x: auto; }
+    body.estilo-biblioteca .card { border-left: 3px solid transparent; }
+    body.estilo-biblioteca .card[data-tipo="Manga"] { border-left-color: var(--tipo-manga); box-shadow: -2px 0 10px -3px var(--tipo-manga); }
+    body.estilo-biblioteca .card[data-tipo="Manhwa"] { border-left-color: var(--tipo-manhwa); box-shadow: -2px 0 10px -3px var(--tipo-manhwa); }
+    body.estilo-biblioteca .card[data-tipo="Manhua"] { border-left-color: var(--tipo-manhua); box-shadow: -2px 0 10px -3px var(--tipo-manhua); }
+    body.estilo-biblioteca .card[data-tipo="Anime"] { border-left-color: var(--tipo-anime); box-shadow: -2px 0 10px -3px var(--tipo-anime); }
+    body.estilo-biblioteca .card[data-tipo="Novela"] { border-left-color: var(--tipo-novela); box-shadow: -2px 0 10px -3px var(--tipo-novela); }
     body.estilo-biblioteca .card-leerlink { font-size: 0.66rem !important; padding: 4px 7px !important;
       background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4); border-radius: 20px; flex-shrink: 0; }
     body.estilo-biblioteca .card-notasbtn { font-size: 0.66rem !important; padding: 3px 6px !important; flex-shrink: 0; }
-    body.estilo-biblioteca .biblioteca-menu-toggle-inline { display: none !important; }
+    body.estilo-biblioteca .biblioteca-navbar { padding: 8px 12px !important; }
+    body.estilo-biblioteca .biblioteca-navgear-btn { display: none !important; }
     body.estilo-biblioteca .biblioteca-brand span { display: flex; flex-direction: column; line-height: 1.2; }
     body.estilo-biblioteca .biblioteca-brand-tagline { display: block; font-size: 0.68rem; font-weight: 500; color: var(--muted); letter-spacing: normal; }
     body.estilo-biblioteca .biblioteca-settings-logout { display: block !important; width: 100%; margin: 10px 0 4px;
@@ -445,7 +451,7 @@
       background: linear-gradient(160deg, rgba(124,58,237,0.10), rgba(12,12,17,1) 45%); }
     body.estilo-biblioteca .biblioteca-sidebar.open { transform: translateX(0); }
     body.estilo-biblioteca .biblioteca-overlay.open { display: block; }
-    body.estilo-biblioteca .biblioteca-main { padding: 12px 12px 20px; }
+    body.estilo-biblioteca .biblioteca-main { padding: 12px 12px 76px; }
     body.estilo-biblioteca .biblioteca-topbar { display: none; }
     /* En celular el drawer (☰) queda simple: no repetir Mi Biblioteca/Filtros, ya están inline en Inicio */
     body.estilo-biblioteca .biblioteca-sidebar .biblioteca-section-title,
@@ -466,11 +472,33 @@
     body.estilo-biblioteca .biblioteca-hero::after { content: ''; position: absolute; inset: 0; z-index: 0;
       background: linear-gradient(90deg, rgba(10,10,17,0.8) 35%, rgba(10,10,17,0.2) 100%); pointer-events: none; }
     body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; }
+    body.estilo-biblioteca .biblioteca-mundo-hero { position: relative; overflow: hidden; border-radius: 16px;
+      border: 1px solid rgba(176,38,255,0.35); min-height: 190px; margin-bottom: 10px; background: var(--card); }
+    body.estilo-biblioteca .biblioteca-mundo-hero-img { position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: 70% 25%; }
+    body.estilo-biblioteca .biblioteca-mundo-hero::after { content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(8,6,14,0.92) 42%, rgba(8,6,14,0.25) 100%); }
+    body.estilo-biblioteca .biblioteca-mundo-hero-text { position: relative; z-index: 1; padding: 16px 14px; max-width: 68%; }
+    body.estilo-biblioteca .biblioteca-mundo-hero-eyebrow { display: block; font-size: 0.68rem; letter-spacing: 0.5px;
+      color: var(--muted); font-weight: 700; margin-bottom: 6px; }
+    body.estilo-biblioteca .biblioteca-mundo-hero-eyebrow span { color: #b026ff; }
+    body.estilo-biblioteca .biblioteca-mundo-hero-text h1 { font-size: 1.5rem; line-height: 1.15; color: #fff; font-weight: 800;
+      font-style: italic; margin-bottom: 8px; }
+    body.estilo-biblioteca .biblioteca-mundo-hero-text h1 span { color: #b026ff; }
+    body.estilo-biblioteca .biblioteca-mundo-hero-text p { color: var(--muted); font-size: 0.78rem; line-height: 1.3; }
+    body.estilo-biblioteca .biblioteca-mundo-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+    body.estilo-biblioteca .biblioteca-mundo-stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 4px; text-align: center; }
+    body.estilo-biblioteca .biblioteca-mundo-stat .num { display: block; font-size: 0.95rem; font-weight: 800; color: #fff; }
+    body.estilo-biblioteca .biblioteca-mundo-stat .lbl { display: block; font-size: 0.6rem; color: var(--muted); margin-top: 2px; }
+    body.estilo-biblioteca .biblioteca-donate-hero { min-height: auto !important; padding: 12px !important; }
+    body.estilo-biblioteca .biblioteca-donate-hero .biblioteca-hero-text p { font-size: 0.8rem !important; }
+    body.estilo-biblioteca .biblioteca-donate-hero .biblioteca-hero-img { object-position: 80% 30%; }
     body.estilo-biblioteca .biblioteca-hero-highlight { color: #ff4d6d; font-weight: 700; }
     body.estilo-biblioteca .biblioteca-hero-text p { color: #fff; font-weight: 700; font-size: 1rem; line-height: 1.35; }
     body.estilo-biblioteca .biblioteca-hero-eyebrow { color: #fff; font-size: 0.85rem; }
     body.estilo-biblioteca .biblioteca-donate-btn-inline { background: linear-gradient(135deg, #dc143c, #b026ff) !important; }
-    body.estilo-biblioteca .biblioteca-add-slot { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    body.estilo-biblioteca .biblioteca-add-slot { display: none !important; }
     body.estilo-biblioteca .biblioteca-add-slot .add-btn { padding: 12px 6px; font-size: 0.8rem; text-align: center;
       display: flex; align-items: center; justify-content: center; }
     body.estilo-biblioteca .biblioteca-add-slot .add-btn:nth-child(1) { background: linear-gradient(135deg,#e11d48,#f59e0b) !important; color: #fff !important; }
@@ -482,6 +510,13 @@
     body.estilo-biblioteca .biblioteca-add-slot .add-btn-sub { font-weight: 500; opacity: 0.85; font-size: 0.68rem; }
     body.estilo-biblioteca .biblioteca-search-slot-mobile { display: block; }
     body.estilo-biblioteca .biblioteca-search-row-mobile { display: flex; }
+    body.estilo-biblioteca .biblioteca-filtros-toggle-btn { flex-shrink: 0; background: var(--card); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+    body.estilo-biblioteca.filtros-ocultos #bibliotecaSeccionesSlot .cat-filters { display: none !important; }
+    body.estilo-biblioteca .biblioteca-search-row-mobile { margin-bottom: 10px !important; }
+    body.estilo-biblioteca .biblioteca-filtros-card { padding: 10px !important; margin-bottom: 10px !important; }
+    body.estilo-biblioteca #bibliotecaSeccionesSlot .btn-agregar-tags { margin-bottom: 8px !important; }
+    body.estilo-biblioteca .biblioteca-hero { margin-bottom: 10px !important; }
     body.estilo-biblioteca .biblioteca-nav-slot-mobile { display: block; }
     body.estilo-biblioteca .biblioteca-filtros-slot-mobile { display: block; }
     body.estilo-biblioteca .biblioteca-bottomnav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 900;
@@ -493,6 +528,14 @@
     body.estilo-biblioteca .biblioteca-bottomnav-fab { width: 48px; height: 48px; border-radius: 50%; margin-top: -22px;
       background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #fff; font-size: 1.6rem; cursor: pointer;
       box-shadow: 0 6px 16px rgba(233,69,96,0.4); }
+    .biblioteca-addmenu-overlay { display: none; }
+    .biblioteca-addmenu { display: none; }
+    body.estilo-biblioteca .biblioteca-addmenu-overlay.open { display: block; position: fixed; inset: 0; z-index: 950; background: rgba(0,0,0,0.5); }
+    body.estilo-biblioteca .biblioteca-addmenu.open { display: flex; flex-direction: column; gap: 8px; position: fixed; z-index: 960;
+      left: 12px; right: 12px; bottom: 74px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 10px; }
+    body.estilo-biblioteca .biblioteca-addmenu button { background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 12px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; text-align: left; cursor: pointer; }
+    body.estilo-biblioteca .biblioteca-addmenu button:active { background: rgba(233,69,96,0.15); }
     /* Antes esto ocultaba Inicio o la categoría (uno u otro). Ahora todo queda junto, en una sola pantalla continua. */
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filters { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 5px; flex-wrap: unset; align-items: stretch; margin-bottom: 10px; }
     body.estilo-biblioteca #bibliotecaSeccionesSlot .cat-filter-btn { width: auto !important; flex: none !important; box-sizing: border-box;
@@ -911,6 +954,15 @@
 
       <!-- PANTALLA INICIO (solo celular, si el usuario la eligió como principal) -->
       <div class="biblioteca-home-screen" id="bibliotecaHomeScreen">
+        <div class="biblioteca-mundo-hero">
+          <img class="biblioteca-mundo-hero-img" src="icons/hero-personaje.jpg" alt="" onerror="this.style.display='none'">
+          <div class="biblioteca-mundo-hero-text">
+            <span class="biblioteca-mundo-hero-eyebrow">ORGANIZA. <span>SIGUE.</span> DISFRUTA.</span>
+            <h1>TU MUNDO<br><span>FAVORITO</span></h1>
+            <p>Todas tus historias.<br>En un solo lugar.</p>
+          </div>
+        </div>
+        <div class="biblioteca-mundo-stats" id="bibliotecaMundoStats"></div>
         <div class="biblioteca-hero biblioteca-donate-hero" onclick="document.getElementById('donateModal').classList.add('open')">
           <img class="biblioteca-hero-img" src="icons/hero-personaje.jpg" alt="" onerror="this.style.display='none'">
           <div class="biblioteca-hero-text">
@@ -923,6 +975,7 @@
         <div class="biblioteca-add-slot" id="bibliotecaAddSlot"></div>
         <div class="biblioteca-search-row-mobile">
           <div class="biblioteca-search-slot-mobile" id="bibliotecaSearchSlotMobile"></div>
+          <button class="biblioteca-filtros-toggle-btn" onclick="bibliotecaToggleFiltrosVisibles()">⚡ Filtros</button>
         </div>
         <div class="biblioteca-filtros-card" id="bibliotecaFiltrosCard">
           <div class="biblioteca-nav-slot-mobile" id="bibliotecaNavSlotMobile"></div>
@@ -934,6 +987,18 @@
         <div id="bibliotecaSeccionesSlot"></div>
       </div>
     </main>
+  </div>
+
+  <div class="biblioteca-bottomnav" id="bibliotecaBottomNav">
+    <button class="biblioteca-bottomnav-btn active" onclick="bibliotecaIrInicio()">🏠<span>Inicio</span></button>
+    <button class="biblioteca-bottomnav-fab" onclick="bibliotecaToggleAddMenu()">+</button>
+    <button class="biblioteca-bottomnav-btn" onclick="openSettings()">⚙️<span>Config</span></button>
+  </div>
+  <div class="biblioteca-addmenu-overlay" id="bibliotecaAddMenuOverlay" onclick="bibliotecaToggleAddMenu(false)"></div>
+  <div class="biblioteca-addmenu" id="bibliotecaAddMenu">
+    <button onclick="bibliotecaToggleAddMenu(false); openModal();">📚 Manga / Manhwa / Manhua</button>
+    <button onclick="bibliotecaToggleAddMenu(false); openAnimeModal();">🎌 Anime</button>
+    <button onclick="bibliotecaToggleAddMenu(false); openNovelaModal();">📖 Novela</button>
   </div>
 </div>
 
@@ -1944,6 +2009,16 @@
     if (input) { input.scrollIntoView({ behavior: 'smooth', block: 'center' }); input.focus(); }
   }
 
+  function bibliotecaToggleFiltrosVisibles() {
+    document.body.classList.toggle('filtros-ocultos');
+  }
+  function bibliotecaToggleAddMenu(forzar) {
+    const menu = document.getElementById('bibliotecaAddMenu');
+    const overlay = document.getElementById('bibliotecaAddMenuOverlay');
+    const abrir = forzar !== undefined ? forzar : !menu.classList.contains('open');
+    menu.classList.toggle('open', abrir);
+    overlay.classList.toggle('open', abrir);
+  }
   function bibliotecaIrInicio() {
     document.body.classList.remove('biblioteca-en-categoria');
     document.querySelectorAll('.biblioteca-bottomnav-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
@@ -3099,6 +3174,18 @@
     document.getElementById('statManhua').textContent = totalManhua;
     document.getElementById('statAnime').textContent = totalAnime;
     document.getElementById('statNovela').textContent = totalNovela;
+    const mundoStatsEl = document.getElementById('bibliotecaMundoStats');
+    if (mundoStatsEl) {
+      const totalSeries = items.length;
+      const totalCapitulos = items.reduce((acc, i) => acc + (parseInt(i.cap) || 0), 0);
+      const totalEmision = items.filter(i => i.status === 'emision').length;
+      const totalAlDia = items.filter(i => i.status === 'terminado').length;
+      mundoStatsEl.innerHTML = `
+        <div class="biblioteca-mundo-stat"><span class="num">${totalSeries}</span><span class="lbl">Series</span></div>
+        <div class="biblioteca-mundo-stat"><span class="num">${totalCapitulos}</span><span class="lbl">Capítulos</span></div>
+        <div class="biblioteca-mundo-stat"><span class="num">${totalEmision}</span><span class="lbl">En emisión</span></div>
+        <div class="biblioteca-mundo-stat"><span class="num">${totalAlDia}</span><span class="lbl">Al día</span></div>`;
+    }
     document.getElementById('cnt-manga').textContent = totalManga;
     document.getElementById('cnt-manhwa').textContent = totalManhwa;
     document.getElementById('cnt-manhua').textContent = totalManhua;
