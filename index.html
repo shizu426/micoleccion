@@ -424,12 +424,12 @@
   .biblioteca-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 999; }
   /* ===== HERO "TU MUNDO FAVORITO" + stats + donación + agregar: base para PC (celular los reescala abajo) ===== */
   body.estilo-biblioteca .biblioteca-mundo-hero { position: relative; border-radius: 16px;
-    border: 1px solid rgba(176,38,255,0.35); margin-bottom: 16px; background: var(--card); overflow: hidden; }
-  body.estilo-biblioteca .biblioteca-mundo-hero-visual { position: relative; overflow: hidden; min-height: 240px; }
+    border: 1px solid rgba(176,38,255,0.35); margin-bottom: 16px; overflow: hidden; }
   body.estilo-biblioteca .biblioteca-mundo-hero-img { position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; object-position: 75% 20%; }
-  body.estilo-biblioteca .biblioteca-mundo-hero-visual::after { content: ''; position: absolute; inset: 0;
-    background: linear-gradient(90deg, rgba(8,6,14,0.9) 38%, rgba(8,6,14,0.1) 100%); }
+    object-fit: cover; object-position: 75% 20%; z-index: 0; }
+  body.estilo-biblioteca .biblioteca-mundo-hero::after { content: ''; position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(90deg, rgba(8,6,14,0.9) 38%, rgba(8,6,14,0.35) 100%); }
+  body.estilo-biblioteca .biblioteca-mundo-hero-visual { min-height: 240px; }
   body.estilo-biblioteca .biblioteca-mundo-hero-text { position: relative; z-index: 1; padding: 26px 28px; max-width: 60%; }
   body.estilo-biblioteca .biblioteca-mundo-hero-eyebrow { display: block; font-size: 0.85rem; letter-spacing: 0.5px;
     color: var(--muted); font-weight: 700; margin-bottom: 10px; }
@@ -438,9 +438,9 @@
     font-style: italic; margin-bottom: 12px; }
   body.estilo-biblioteca .biblioteca-mundo-hero-text h1 span { color: #b026ff; }
   body.estilo-biblioteca .biblioteca-mundo-hero-text p { color: var(--muted); font-size: 1rem; line-height: 1.4; }
-  body.estilo-biblioteca .biblioteca-mundo-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
-    background: var(--border); border-top: 1px solid rgba(176,38,255,0.35); }
-  body.estilo-biblioteca .biblioteca-mundo-stat { background: var(--card); padding: 14px 8px; text-align: center; }
+  body.estilo-biblioteca .biblioteca-mundo-stats { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: rgba(176,38,255,0.35); border-top: 1px solid rgba(176,38,255,0.35); }
+  body.estilo-biblioteca .biblioteca-mundo-stat { background: rgba(8,6,14,0.55); padding: 14px 8px; text-align: center; }
   body.estilo-biblioteca .biblioteca-mundo-stat .num { display: block; font-size: 1.4rem; font-weight: 800; color: #fff; }
   body.estilo-biblioteca .biblioteca-mundo-stat .lbl { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
   body.estilo-biblioteca .biblioteca-donate-strip { cursor: pointer; display: flex; align-items: center; justify-content: space-between;
@@ -451,13 +451,13 @@
   body.estilo-biblioteca .biblioteca-hero-highlight { color: #ff4d6d; font-weight: 700; }
   .biblioteca-add-row-desktop { display: none; }
   body.estilo-biblioteca .biblioteca-add-row-desktop { display: flex; gap: 10px; margin-bottom: 16px; }
-  body.estilo-biblioteca .biblioteca-add-btn-desktop { padding: 11px 20px; border-radius: 12px; border: 1px solid #8E46FF;
+  body.estilo-biblioteca .biblioteca-add-btn-desktop { padding: 9px 16px; border-radius: 12px; border: 1px solid #8E46FF;
     border-top: 1px solid #B97CFF;
-    color: #FFFFFF; font-weight: 700; font-size: 0.92rem; cursor: pointer;
+    color: #0d0a14; font-weight: 700; font-size: 0.85rem; cursor: pointer;
     background: linear-gradient(180deg, #2D1553 0%, #43235F 45%, #12012D 100%);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 8px rgba(142,70,255,.18), 0 2px 10px rgba(0,0,0,.35);
     transition: filter 0.15s; }
-  body.estilo-biblioteca .add-btn-desktop-icon { color: #F3E8FF; }
+  body.estilo-biblioteca .add-btn-desktop-icon { color: #B97CFF; }
   body.estilo-biblioteca .biblioteca-add-btn-desktop:hover { filter: brightness(1.08); }
   body.estilo-biblioteca .card { border-width: 1px !important; }
   body.estilo-biblioteca .grid .card:nth-of-type(7n+1) { border-color: #a855f7 !important; box-shadow: 0 0 6px 0px rgba(168,85,247,0.28); }
@@ -513,12 +513,12 @@
       background: linear-gradient(90deg, rgba(10,10,17,0.8) 35%, rgba(10,10,17,0.2) 100%); pointer-events: none; }
     body.estilo-biblioteca .biblioteca-hero-text { position: relative; z-index: 1; }
     body.estilo-biblioteca .biblioteca-mundo-hero { position: relative; border-radius: 16px;
-      border: 1px solid rgba(176,38,255,0.35); margin-bottom: 10px; background: var(--card); overflow: hidden; }
-    body.estilo-biblioteca .biblioteca-mundo-hero-visual { position: relative; overflow: hidden; min-height: 190px; }
+      border: 1px solid rgba(176,38,255,0.35); margin-bottom: 10px; overflow: hidden; }
+    body.estilo-biblioteca .biblioteca-mundo-hero-visual { min-height: 190px; }
     body.estilo-biblioteca .biblioteca-mundo-hero-img { position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: cover; object-position: 70% 25%; }
-    body.estilo-biblioteca .biblioteca-mundo-hero-visual::after { content: ''; position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(8,6,14,0.92) 42%, rgba(8,6,14,0.25) 100%); }
+      object-fit: cover; object-position: 70% 25%; z-index: 0; }
+    body.estilo-biblioteca .biblioteca-mundo-hero::after { content: ''; position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(90deg, rgba(8,6,14,0.92) 42%, rgba(8,6,14,0.4) 100%); }
     body.estilo-biblioteca .biblioteca-mundo-hero-text { position: relative; z-index: 1; padding: 16px 14px; max-width: 68%; }
     body.estilo-biblioteca .biblioteca-mundo-hero-eyebrow { display: block; font-size: 0.68rem; letter-spacing: 0.5px;
       color: var(--muted); font-weight: 700; margin-bottom: 6px; }
@@ -527,9 +527,9 @@
       font-style: italic; margin-bottom: 8px; }
     body.estilo-biblioteca .biblioteca-mundo-hero-text h1 span { color: #b026ff; }
     body.estilo-biblioteca .biblioteca-mundo-hero-text p { color: var(--muted); font-size: 0.78rem; line-height: 1.3; }
-    body.estilo-biblioteca .biblioteca-mundo-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
-      background: var(--border); border-top: 1px solid rgba(176,38,255,0.35); }
-    body.estilo-biblioteca .biblioteca-mundo-stat { background: var(--card); padding: 8px 4px; text-align: center; }
+    body.estilo-biblioteca .biblioteca-mundo-stats { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+      background: rgba(176,38,255,0.35); border-top: 1px solid rgba(176,38,255,0.35); }
+    body.estilo-biblioteca .biblioteca-mundo-stat { background: rgba(8,6,14,0.55); padding: 8px 4px; text-align: center; }
     body.estilo-biblioteca .biblioteca-mundo-stat .num { display: block; font-size: 0.95rem; font-weight: 800; color: #fff; }
     body.estilo-biblioteca .biblioteca-mundo-stat .lbl { display: block; font-size: 0.6rem; color: var(--muted); margin-top: 2px; }
     body.estilo-biblioteca .biblioteca-donate-strip { cursor: pointer; display: flex; align-items: center; justify-content: space-between;
