@@ -451,11 +451,13 @@
   body.estilo-biblioteca .biblioteca-hero-highlight { color: #ff4d6d; font-weight: 700; }
   .biblioteca-add-row-desktop { display: none; }
   body.estilo-biblioteca .biblioteca-add-row-desktop { display: flex; gap: 10px; margin-bottom: 16px; }
-  body.estilo-biblioteca .biblioteca-add-btn-desktop { padding: 11px 20px; border-radius: 15px; border: 1px solid rgba(150,130,190,0.28);
-    color: #fff; font-weight: 700; font-size: 0.92rem; cursor: pointer;
-    background: linear-gradient(180deg, #8B5CF6 0%, #7C3AED 45%, #6D28D9 100%);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.25), 0 0 8px rgba(124,58,237,0.13), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -6px 10px rgba(0,0,0,0.15);
+  body.estilo-biblioteca .biblioteca-add-btn-desktop { padding: 11px 20px; border-radius: 12px; border: 1px solid #8E46FF;
+    border-top: 1px solid #B97CFF;
+    color: #FFFFFF; font-weight: 700; font-size: 0.92rem; cursor: pointer;
+    background: linear-gradient(180deg, #2D1553 0%, #43235F 45%, #12012D 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 8px rgba(142,70,255,.18), 0 2px 10px rgba(0,0,0,.35);
     transition: filter 0.15s; }
+  body.estilo-biblioteca .add-btn-desktop-icon { color: #F3E8FF; }
   body.estilo-biblioteca .biblioteca-add-btn-desktop:hover { filter: brightness(1.08); }
   body.estilo-biblioteca .card { border-width: 1px !important; }
   body.estilo-biblioteca .grid .card:nth-of-type(7n+1) { border-color: #a855f7 !important; box-shadow: 0 0 6px 0px rgba(168,85,247,0.28); }
@@ -1019,9 +1021,9 @@
 
       <!-- Botones + Agregar: version PC (siempre visibles en escritorio) -->
       <div class="biblioteca-add-row-desktop">
-        <button class="biblioteca-add-btn-desktop" onclick="openModal()">➕ Agregar Manga, Manhwa, Manhua</button>
-        <button class="biblioteca-add-btn-desktop" onclick="openAnimeModal()">➕ Agregar Anime</button>
-        <button class="biblioteca-add-btn-desktop" onclick="openNovelaModal()">➕ Agregar Novela</button>
+        <button class="biblioteca-add-btn-desktop" onclick="openModal()"><span class="add-btn-desktop-icon">➕</span> Agregar Manga, Manhwa, Manhua</button>
+        <button class="biblioteca-add-btn-desktop" onclick="openAnimeModal()"><span class="add-btn-desktop-icon">➕</span> Agregar Anime</button>
+        <button class="biblioteca-add-btn-desktop" onclick="openNovelaModal()"><span class="add-btn-desktop-icon">➕</span> Agregar Novela</button>
       </div>
 
       <!-- PANTALLA INICIO (solo celular, si el usuario la eligió como principal) -->
