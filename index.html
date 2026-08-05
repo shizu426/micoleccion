@@ -318,28 +318,28 @@
   /* BODY: sidebar + main */
   .biblioteca-body { display: flex; flex: 1; min-height: 0; }
   .biblioteca-sidebar { width: 250px; flex-shrink: 0; background: #0c0c11; border-right: 1px solid var(--border);
-    padding: 16px 14px; display: flex; flex-direction: column; gap: 3px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-  .biblioteca-user-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .biblioteca-avatar-sq { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2));
+    padding: 12px 12px; display: flex; flex-direction: column; gap: 2px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .biblioteca-user-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .biblioteca-avatar-sq { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2));
     display: inline-flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; flex-shrink: 0; }
-  .biblioteca-user-name { font-size: 0.85rem; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .biblioteca-user-name { font-size: 0.82rem; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
   .biblioteca-gear-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; }
   .biblioteca-logout-btn { display: flex; align-items: center; gap: 8px; background: none; border: none; text-align: left;
-    color: var(--accent); padding: 8px 6px; font-size: 0.82rem; cursor: pointer; font-family: 'Inter', sans-serif; margin-bottom: 10px; }
-  .biblioteca-section-title { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.8px; margin: 10px 6px 4px; font-weight: 600; }
+    color: var(--accent); padding: 6px 6px; font-size: 0.8rem; cursor: pointer; font-family: 'Inter', sans-serif; margin-bottom: 6px; }
+  .biblioteca-section-title { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.8px; margin: 6px 6px 3px; font-weight: 600; }
   .biblioteca-nav-item { display: flex; align-items: center; gap: 8px; background: none; border: none; text-align: left;
-    color: var(--muted); padding: 9px 10px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-family: 'Inter', sans-serif; }
+    color: var(--muted); padding: 6px 10px; border-radius: 8px; font-size: 0.82rem; cursor: pointer; font-family: 'Inter', sans-serif; }
   .biblioteca-nav-item:hover { background: var(--card); color: var(--text); }
   .biblioteca-nav-slot .category-tabs { display: flex; flex-direction: column; background: none; border: none; padding: 0; gap: 2px; }
   .biblioteca-nav-slot .cat-tab { text-align: left; display: flex; justify-content: space-between; align-items: center;
-    background: none; color: var(--text); border-radius: 8px; padding: 9px 10px; }
+    background: none; color: var(--text); border-radius: 8px; padding: 7px 10px; }
   .biblioteca-nav-slot .cat-tab .cat-count { background: rgba(255,255,255,0.08); }
   .biblioteca-nav-slot .cat-tab:hover { background: var(--card); }
   .biblioteca-nav-slot .cat-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; font-weight: 600; }
   .biblioteca-nav-slot .cat-tab.active .cat-count { background: rgba(255,255,255,0.25); }
   .biblioteca-filtros-slot .cat-filters { display: flex; flex-direction: column; gap: 2px; margin: 0; }
   .biblioteca-filtros-slot .cat-filter-btn { display: flex; justify-content: space-between; align-items: center; width: 100%;
-    box-sizing: border-box; text-align: left; border-radius: 8px; padding: 8px 10px 8px 26px; font-size: 0.8rem;
+    box-sizing: border-box; text-align: left; border-radius: 8px; padding: 6px 10px 6px 26px; font-size: 0.78rem;
     background: rgba(255,255,255,0.04) !important; color: var(--text) !important; position: relative; }
   .biblioteca-filtros-slot .cat-filter-btn::before { content: ''; position: absolute; left: 10px; top: 50%;
     transform: translateY(-50%); width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
@@ -350,10 +350,10 @@
   .biblioteca-filtros-slot .cat-filter-btn.fs-abandonado::before { background: var(--tagcol-abandonado); }
   .biblioteca-filtros-slot .cat-filter-btn.fs-espera::before { background: var(--tagcol-espera); }
   .biblioteca-filtros-slot .cat-filter-btn.active { background: rgba(233,69,96,0.12) !important; }
-  .biblioteca-filtros-slot .filtro-contador { background: rgba(0,0,0,0.25); border-radius: 20px; padding: 1px 8px; font-size: 0.72rem; }
-  .biblioteca-sidebar-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 12px; }
+  .biblioteca-filtros-slot .filtro-contador { background: rgba(0,0,0,0.25); border-radius: 20px; padding: 1px 8px; font-size: 0.7rem; }
+  .biblioteca-sidebar-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 6px; padding-top: 8px; }
   .biblioteca-link-btn { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text);
-    padding: 8px 10px; font-size: 0.78rem; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; width: 100%; }
+    padding: 6px 10px; font-size: 0.76rem; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; width: 100%; }
 
   /* MAIN CONTENT */
   .biblioteca-main { flex: 1; min-width: 0; padding: 18px 22px; overflow-x: hidden; }
@@ -982,7 +982,7 @@
       <button class="biblioteca-logout-btn" onclick="logout()">⏻ Cerrar sesión</button>
       <div class="biblioteca-section-title">MI BIBLIOTECA</div>
       <div class="biblioteca-nav-slot" id="bibliotecaNavSlot"></div>
-      <button class="biblioteca-nav-item" onclick="bibliotecaEnfocarBusqueda()">🔍 Buscador Global</button>
+
       <div class="biblioteca-section-title">FILTROS DE ESTADO</div>
       <div class="biblioteca-filtros-slot" id="bibliotecaFiltrosSlot"></div>
       <button class="biblioteca-nav-item" title="Próximamente">❓ Soporte</button>
