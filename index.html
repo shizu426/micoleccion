@@ -1159,7 +1159,7 @@
     <div class="form-group">
       <label>🔗 Link donde lo estás leyendo (opcional)</label>
       <input type="text" id="inputLink" placeholder="Ej: https://manhuaus.com/manga/..."
-        oninput="const t=detectarTipoDesdeUrl(this.value); if(t) autoDetectarTipo(t);">
+        oninput="const t=detectarTipoDesdeUrl(this.value); if(t) autoDetectarTipo(t, 'baja');">
     </div>
     <div class="form-group">
       <label>📝 Notas (opcional)</label>
@@ -3425,6 +3425,7 @@
   }
 
   function openModal() {
+    ultimaConfianzaTipo = null;
     document.getElementById('inputTipo').closest('.form-group').style.display = 'block';
     document.getElementById('searchCoverGroup').style.display = 'block';
     editingId = null;
@@ -3688,7 +3689,11 @@
   const PORTADA_URL_FN = 'https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/portada-desde-url';
 
   // Auto-detectar tipo y setear el select si el usuario no eligió manualmente
-  function autoDetectarTipo(tipo) {
+  // confianza: 'alta' (viene de datos reales, ej. AniList) o 'baja' (suposición por la fuente, ej. "esto vino de Olympus asi que probablemente sea Manhwa")
+  // Una detección de baja confianza NUNCA pisa una de alta confianza ya puesta.
+  let ultimaConfianzaTipo = null;
+  function autoDetectarTipo(tipo, confianza) {
+    confianza = confianza || 'baja';
     const sel = document.getElementById('inputTipo');
     if (!sel) return;
     // Si el campo Tipo está oculto, significa que está fijo (modal de Anime o Novela)
@@ -3698,9 +3703,14 @@
       console.log('[AutoTipo] Ignorado (tipo bloqueado en este modal):', tipo);
       return;
     }
+    if (ultimaConfianzaTipo === 'alta' && confianza === 'baja') {
+      console.log('[AutoTipo] Ignorado (ya hay una detección de alta confianza):', tipo, 'vs', sel.value);
+      return;
+    }
     const valido = ['Manga', 'Manhwa', 'Manhua', 'Anime'];
     if (valido.includes(tipo)) {
       sel.value = tipo;
+      ultimaConfianzaTipo = confianza;
       const ind = document.getElementById('tipoAutoIndicador');
       if (ind) {
         ind.textContent = '🤖 Detectado: ' + tipo;
@@ -3709,7 +3719,7 @@
         ind.style.fontSize = '0.78rem';
         ind.style.marginBottom = '4px';
       }
-      console.log('[AutoTipo] Detectado:', tipo);
+      console.log('[AutoTipo] Detectado:', tipo, '(confianza:', confianza + ')');
     }
   }
 
@@ -3938,19 +3948,22 @@
     const linkActual = document.getElementById('inputLink')?.value?.trim();
     if (linkActual && !esAnime) {
       const tipoUrl = detectarTipoDesdeUrl(linkActual);
-      if (tipoUrl) autoDetectarTipo(tipoUrl);
+      if (tipoUrl) autoDetectarTipo(tipoUrl, 'baja');
     }
     // Consultar Olympus en paralelo para detectar tipo (sin esperar resultado)
-    if (!esAnime && !linkActual) {
-      const proxyUrl = 'https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/olympus-proxy?nombre=' + encodeURIComponent(nombre);
-      fetch(proxyUrl).then(r => r.json()).then(data => {
-        if (data.series?.length > 0 && data.series[0].score >= 0.5) {
-          console.log('[AutoTipo] Olympus encontró:', data.series[0].name, '→ Manhwa');
-          autoDetectarTipo('Manhwa');
-        }
-      }).catch(() => {});
-      // También consultar AniList en paralelo
-      detectarTipoPorNombre(nombre).then(tipo => { if (tipo) autoDetectarTipo(tipo); });
+    if (!esAnime) {
+      if (!linkActual) {
+        const proxyUrl = 'https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/olympus-proxy?nombre=' + encodeURIComponent(nombre);
+        fetch(proxyUrl).then(r => r.json()).then(data => {
+          if (data.series?.length > 0 && data.series[0].score >= 0.5) {
+            console.log('[AutoTipo] Olympus encontró:', data.series[0].name, '→ Manhwa');
+            autoDetectarTipo('Manhwa', 'baja');
+          }
+        }).catch(() => {});
+      }
+      // Consultar AniList siempre, sin importar de qué web (MangaCrab, MHS, Olympus) salga la portada.
+      // Como es de 'alta' confianza, corrige cualquier suposición de baja confianza sin pisar otra detección de alta confianza.
+      detectarTipoPorNombre(nombre).then(tipo => { if (tipo) autoDetectarTipo(tipo, 'alta'); });
     }
 
     // 1. Verificar caché en Firebase primero
@@ -3972,7 +3985,7 @@
           if (data.opciones?.length) {
             opciones = data.opciones;
             fuente = data.fuente || 'scraping';
-            if (!esAnime && data.tipoDetectado) autoDetectarTipo(data.tipoDetectado);
+            if (!esAnime && data.tipoDetectado) autoDetectarTipo(data.tipoDetectado, 'baja');
             console.log(`%c[Portada] Fuente: ${fuente} — ${opciones.length} opciones (${Date.now()-t0}ms)`, 'color:#3b82f6;font-weight:bold');
           }
         }
@@ -3985,23 +3998,11 @@
       if (olympusImgs.length) {
         opciones = olympusImgs;
         fuente = 'Olympus (proxy)';
-        autoDetectarTipo('Manhwa'); // Olympus es principalmente Manhwa
+        autoDetectarTipo('Manhwa', 'baja'); // Olympus es principalmente Manhwa (suposicion, no dato verificado)
         console.log(`%c[Portada] Fuente: ${fuente} — ${opciones.length} opciones`, 'color:#a855f7;font-weight:bold');
       }
     }
-
-    // Detectar tipo — solo si no se detectó ya desde la fuente
-    if (!esAnime && opciones.length > 0) {
-      const tipoActual = document.getElementById('inputTipo')?.value;
-      const indAuto = document.getElementById('tipoAutoIndicador');
-      const yaDetectado = indAuto && indAuto.style.display !== 'none' && indAuto.textContent.includes('Detectado');
-      if (!yaDetectado) {
-        // Solo consultar AniList si no vino de Olympus/MHS
-        if (fuente !== 'Olympus (proxy)') {
-          detectarTipoPorNombre(nombre).then(tipo => { if (tipo) autoDetectarTipo(tipo); });
-        }
-      }
-    }
+    // (La consulta a AniList ya se hizo en paralelo más arriba, sin importar la fuente de la portada)
 
     // 4. APIs directas — SOLO para anime
     if (!opciones.length && esAnime) {
