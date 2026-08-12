@@ -3717,17 +3717,39 @@
   async function detectarTipoPorNombre(nombre) {
     // Intentar con AniList (acepta CORS desde browsers)
     try {
-      const query = `query($s:String){Page(perPage:3){media(search:$s,type:MANGA,sort:SEARCH_MATCH){title{romaji english}countryOfOrigin}}}`;
+      const query = `query($s:String){Page(perPage:5){media(search:$s,type:MANGA,sort:SEARCH_MATCH){title{romaji english native}countryOfOrigin}}}`;
       const r = await fetch('https://graphql.anilist.co', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ query, variables: { s: nombre } })
       });
       const d = await r.json();
-      const media = d?.data?.Page?.media;
-      if (media?.length) {
-        const pais = media[0].countryOfOrigin;
-        console.log('[AutoTipo] AniList país:', pais, 'para:', nombre);
+      const lista = d?.data?.Page?.media;
+      if (lista?.length) {
+        // Elegir el resultado cuyo título (romaji o inglés) más se parezca al buscado,
+        // en vez de asumir a ciegas que el primero es el correcto.
+        const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const objetivo = norm(nombre);
+        let mejor = lista[0], mejorScore = -1;
+        for (const m of lista) {
+          const candidatos = [m.title?.romaji, m.title?.english].filter(Boolean).map(norm);
+          const score = candidatos.some(c => c === objetivo) ? 2
+            : candidatos.some(c => c.includes(objetivo) || objetivo.includes(c)) ? 1 : 0;
+          if (score > mejorScore) { mejorScore = score; mejor = m; }
+        }
+        const pais = mejor.countryOfOrigin;
+        const nativo = mejor.title?.native || '';
+        // Chequeo cruzado por escritura del título nativo: el país declarado por AniList
+        // a veces viene mal cargado, pero el alfabeto del título nativo casi no falla.
+        const tieneHangul = /[\uAC00-\uD7A3]/.test(nativo);
+        const tieneKana = /[\u3040-\u30FF]/.test(nativo);
+        const tieneHanzi = /[\u4E00-\u9FFF]/.test(nativo);
+        let porEscritura = null;
+        if (tieneHangul) porEscritura = 'Manhwa';
+        else if (tieneKana) porEscritura = 'Manga';
+        else if (tieneHanzi) porEscritura = 'Manhua';
+        console.log('[AutoTipo] AniList país:', pais, '| escritura del título nativo:', porEscritura, '| match score:', mejorScore, 'para:', nombre);
+        if (porEscritura) return porEscritura;
         if (pais === 'JP') return 'Manga';
         if (pais === 'KR') return 'Manhwa';
         if (pais === 'CN' || pais === 'TW') return 'Manhua';
