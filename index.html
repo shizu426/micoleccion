@@ -3747,6 +3747,10 @@
             : candidatos.some(c => c.includes(objetivo) || objetivo.includes(c)) ? 1 : 0;
           if (score > mejorScore) { mejorScore = score; mejor = m; }
         }
+        if (mejorScore === 0) {
+          console.log('[AutoTipo] AniList: ningún resultado coincide de verdad con "' + nombre + '" (probablemente el nombre está en español) — no se arriesga una respuesta.');
+          return null;
+        }
         const pais = mejor.countryOfOrigin;
         const nativo = mejor.title?.native || '';
         // Chequeo cruzado por escritura del título nativo: el país declarado por AniList
