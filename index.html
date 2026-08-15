@@ -1158,8 +1158,7 @@
     </div>
     <div class="form-group">
       <label>🔗 Link donde lo estás leyendo (opcional)</label>
-      <input type="text" id="inputLink" placeholder="Ej: https://manhuaus.com/manga/..."
-        oninput="const t=detectarTipoDesdeUrl(this.value); if(t) autoDetectarTipo(t, 'baja');">
+      <input type="text" id="inputLink" placeholder="Ej: https://manhuaus.com/manga/...">
     </div>
     <div class="form-group">
       <label>📝 Notas (opcional)</label>
@@ -3688,23 +3687,25 @@
 
   const PORTADA_URL_FN = 'https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/portada-desde-url';
 
-  // Auto-detectar tipo y setear el select si el usuario no eligió manualmente
-  // confianza: 'alta' (viene de datos reales, ej. AniList) o 'baja' (suposición por la fuente, ej. "esto vino de Olympus asi que probablemente sea Manhwa")
-  // Una detección de baja confianza NUNCA pisa una de alta confianza ya puesta.
+  // Auto-detectar tipo y setear el select — pero SOLO con detecciones basadas en identificar la obra real
+  // (nunca por "de qué scan/web salió la portada"). confianza: 'alta' o 'media'. Una detección de menor
+  // rango nunca pisa una de mayor rango que ya esté puesta.
+  const RANGO_CONFIANZA = { alta: 2, media: 1 };
   let ultimaConfianzaTipo = null;
   function autoDetectarTipo(tipo, confianza) {
-    confianza = confianza || 'baja';
     const sel = document.getElementById('inputTipo');
     if (!sel) return;
     // Si el campo Tipo está oculto, significa que está fijo (modal de Anime o Novela)
     // y no debe ser sobreescrito por la detección automática.
     const grupo = sel.closest('.form-group');
     if (grupo && grupo.style.display === 'none') {
-      console.log('[AutoTipo] Ignorado (tipo bloqueado en este modal):', tipo);
+      console.log('[TipoObra] Ignorado (tipo bloqueado en este modal):', tipo);
       return;
     }
-    if (ultimaConfianzaTipo === 'alta' && confianza === 'baja') {
-      console.log('[AutoTipo] Ignorado (ya hay una detección de alta confianza):', tipo, 'vs', sel.value);
+    const rangoNuevo = RANGO_CONFIANZA[confianza] || 0;
+    const rangoActual = RANGO_CONFIANZA[ultimaConfianzaTipo] || 0;
+    if (rangoNuevo < rangoActual) {
+      console.log('[TipoObra] Ignorado (ya hay una detección de mayor confianza):', tipo, 'vs', sel.value);
       return;
     }
     const valido = ['Manga', 'Manhwa', 'Manhua', 'Anime'];
@@ -3713,7 +3714,8 @@
       ultimaConfianzaTipo = confianza;
       const ind = document.getElementById('tipoAutoIndicador');
       if (ind) {
-        ind.textContent = '🤖 Detectado: ' + tipo;
+        const icono = confianza === 'alta' ? '🟢' : '🟡';
+        ind.textContent = '🤖 Detectado: ' + tipo + ' · ' + icono + ' confianza ' + confianza;
         ind.style.display = 'block';
         ind.style.color = 'var(--accent2)';
         ind.style.fontSize = '0.78rem';
@@ -3723,9 +3725,10 @@
     }
   }
 
-  // Detectar tipo desde MangaDex por idioma original
+  // Identifica la obra real (vía AniList: título original, país de origen) para determinar
+  // si es Manga, Manhwa o Manhua. Devuelve {tipo, confianza} o null si no hay certeza suficiente.
+  // confianza: 'alta' (coincidencia exacta de título + país/escritura) | 'media' (coincidencia parcial)
   async function detectarTipoPorNombre(nombre) {
-    // Intentar con AniList (acepta CORS desde browsers)
     try {
       const query = `query($s:String){Page(perPage:5){media(search:$s,type:MANGA,sort:SEARCH_MATCH){title{romaji english native}countryOfOrigin}}}`;
       const r = await fetch('https://graphql.anilist.co', {
@@ -3735,58 +3738,60 @@
       });
       const d = await r.json();
       const lista = d?.data?.Page?.media;
-      if (lista?.length) {
-        // Elegir el resultado cuyo título (romaji o inglés) más se parezca al buscado,
-        // en vez de asumir a ciegas que el primero es el correcto.
-        const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-        const objetivo = norm(nombre);
-        let mejor = lista[0], mejorScore = -1;
-        for (const m of lista) {
-          const candidatos = [m.title?.romaji, m.title?.english].filter(Boolean).map(norm);
-          const score = candidatos.some(c => c === objetivo) ? 2
-            : candidatos.some(c => c.includes(objetivo) || objetivo.includes(c)) ? 1 : 0;
-          if (score > mejorScore) { mejorScore = score; mejor = m; }
-        }
-        if (mejorScore === 0) {
-          console.log('[AutoTipo] AniList: ningún resultado coincide de verdad con "' + nombre + '" (probablemente el nombre está en español) — no se arriesga una respuesta.');
-          return null;
-        }
-        const pais = mejor.countryOfOrigin;
-        const nativo = mejor.title?.native || '';
-        // Chequeo cruzado por escritura del título nativo: el país declarado por AniList
-        // a veces viene mal cargado, pero el alfabeto del título nativo casi no falla.
-        const tieneHangul = /[\uAC00-\uD7A3]/.test(nativo);
-        const tieneKana = /[\u3040-\u30FF]/.test(nativo);
-        const tieneHanzi = /[\u4E00-\u9FFF]/.test(nativo);
-        let porEscritura = null;
-        if (tieneHangul) porEscritura = 'Manhwa';
-        else if (tieneKana) porEscritura = 'Manga';
-        else if (tieneHanzi) porEscritura = 'Manhua';
-        console.log('[AutoTipo] AniList país:', pais, '| escritura del título nativo:', porEscritura, '| match score:', mejorScore, 'para:', nombre);
-        if (porEscritura) return porEscritura;
-        if (pais === 'JP') return 'Manga';
-        if (pais === 'KR') return 'Manhwa';
-        if (pais === 'CN' || pais === 'TW') return 'Manhua';
+      if (!lista?.length) return null;
+
+      // Elegir el resultado cuyo título (romaji o inglés) más se parezca al buscado.
+      const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const objetivo = norm(nombre);
+      let mejor = lista[0], mejorScore = -1;
+      for (const m of lista) {
+        const candidatos = [m.title?.romaji, m.title?.english].filter(Boolean).map(norm);
+        const score = candidatos.some(c => c === objetivo) ? 2
+          : candidatos.some(c => c.includes(objetivo) || objetivo.includes(c)) ? 1 : 0;
+        if (score > mejorScore) { mejorScore = score; mejor = m; }
       }
-    } catch(e) { console.warn('[AutoTipo] AniList falló:', e.message); }
-    return null;
+      if (mejorScore === 0) {
+        console.log('[TipoObra] Ningún resultado de AniList coincide de verdad con "' + nombre + '" (posiblemente el nombre está en español/traducido) — no se arriesga una respuesta.');
+        return null;
+      }
+
+      const pais = mejor.countryOfOrigin;
+      const nativo = mejor.title?.native || '';
+      // Chequeo por escritura del título original: casi nunca falla, y es independiente del
+      // campo "país" (que a veces viene mal cargado en la base de datos).
+      const tieneHangul = /[\uAC00-\uD7A3]/.test(nativo);
+      const tieneKana = /[\u3040-\u30FF]/.test(nativo);
+      const tieneHanzi = /[\u4E00-\u9FFF]/.test(nativo);
+      let porEscritura = null;
+      if (tieneHangul) porEscritura = 'Manhwa';
+      else if (tieneKana) porEscritura = 'Manga';
+      else if (tieneHanzi) porEscritura = 'Manhua';
+
+      let porPais = null;
+      if (pais === 'JP') porPais = 'Manga';
+      else if (pais === 'KR') porPais = 'Manhwa';
+      else if (pais === 'CN' || pais === 'TW') porPais = 'Manhua';
+
+      const tipoFinal = porEscritura || porPais;
+      console.log('[TipoObra]', nombre, '→ obra identificada:', mejor.title?.romaji || mejor.title?.english,
+        '| país:', pais, '| escritura título original:', porEscritura, '| match score:', mejorScore);
+      if (!tipoFinal) return null;
+
+      // Alta confianza: coincide el título exacto Y coinciden país + escritura (o al menos una señal clara).
+      // Media confianza: coincidencia parcial del título, o país/escritura contradicen entre sí.
+      const contradiccion = porEscritura && porPais && porEscritura !== porPais;
+      const confianza = (mejorScore === 2 && !contradiccion) ? 'alta' : 'media';
+      return { tipo: tipoFinal, confianza };
+    } catch(e) {
+      console.warn('[TipoObra] AniList falló:', e.message);
+      return null;
+    }
   }
 
-  // Detectar tipo desde el URL de la fuente
-  function detectarTipoDesdeUrl(url) {
-    if (!url) return null;
-    const u = url.toLowerCase();
-    // Manhwa (coreano)
-    if (u.includes('olympusxyz.com')) return 'Manhwa';
-    if (u.includes('mhscans.com')) return 'Manhwa';
-    if (u.includes('manhwatop') || u.includes('manhwahere') || u.includes('manhwaclan')) return 'Manhwa';
-    if (u.includes('webtoon') || u.includes('lezhin')) return 'Manhwa';
-    // Manhua (chino)
-    if (u.includes('manhuaus') || u.includes('manhuafast') || u.includes('manhuabox')) return 'Manhua';
-    if (u.includes('manhuascan') || u.includes('manhuaplus') || u.includes('isekaiscan')) return 'Manhua';
-    // MangaCrab puede tener ambos — no auto-detectar
-    return null;
-  }
+
+  // NOTA: se eliminó "detectarTipoDesdeUrl" — el dominio/fuente de una portada (Olympus, MHS, ManhuaUS, etc.)
+  // NO determina el tipo de la obra. Esas webs pueden tener Manga, Manhwa o Manhua indistintamente.
+  // El tipo ahora se determina únicamente identificando la obra real (ver detectarTipoPorNombre, más abajo).
 
   async function buscarEnOlympusBrowser(nombre) {
     try {
@@ -3948,26 +3953,24 @@
     const t0 = Date.now();
     let opciones = [];
     let fuente = 'desconocida';
-    // Detectar tipo desde el URL del link si ya está puesto
     const linkActual = document.getElementById('inputLink')?.value?.trim();
-    if (linkActual && !esAnime) {
-      const tipoUrl = detectarTipoDesdeUrl(linkActual);
-      if (tipoUrl) autoDetectarTipo(tipoUrl, 'baja');
-    }
-    // Consultar Olympus en paralelo para detectar tipo (sin esperar resultado)
+    // El tipo (Manga/Manhwa/Manhua) NUNCA se decide por la fuente de la portada (Olympus, MHS, MangaCrab, etc).
+    // La fuente solo sirve para conseguir la imagen. El tipo se determina identificando la obra real (AniList).
     if (!esAnime) {
-      if (!linkActual) {
-        const proxyUrl = 'https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/olympus-proxy?nombre=' + encodeURIComponent(nombre);
-        fetch(proxyUrl).then(r => r.json()).then(data => {
-          if (data.series?.length > 0 && data.series[0].score >= 0.5) {
-            console.log('[AutoTipo] Olympus encontró:', data.series[0].name, '→ Manhwa');
-            autoDetectarTipo('Manhwa', 'baja');
-          }
-        }).catch(() => {});
-      }
-      // Consultar AniList siempre, sin importar de qué web (MangaCrab, MHS, Olympus) salga la portada.
-      // Como es de 'alta' confianza, corrige cualquier suposición de baja confianza sin pisar otra detección de alta confianza.
-      detectarTipoPorNombre(nombre).then(tipo => { if (tipo) autoDetectarTipo(tipo, 'alta'); });
+      const indPrevio = document.getElementById('tipoAutoIndicador');
+      if (indPrevio) { indPrevio.style.display = 'none'; }
+      ultimaConfianzaTipo = null;
+      detectarTipoPorNombre(nombre).then(res => {
+        if (res) { autoDetectarTipo(res.tipo, res.confianza); return; }
+        const ind = document.getElementById('tipoAutoIndicador');
+        if (ind && !ultimaConfianzaTipo) {
+          ind.textContent = '⚠️ Tipo no confirmado — elegí manualmente';
+          ind.style.display = 'block';
+          ind.style.color = '#f59e0b';
+          ind.style.fontSize = '0.78rem';
+          ind.style.marginBottom = '4px';
+        }
+      });
     }
 
     // 1. Verificar caché en Firebase primero
@@ -3989,24 +3992,26 @@
           if (data.opciones?.length) {
             opciones = data.opciones;
             fuente = data.fuente || 'scraping';
-            if (!esAnime && data.tipoDetectado) autoDetectarTipo(data.tipoDetectado, 'baja');
+            // Nota: NO usamos data.tipoDetectado — ese campo venía inferido de la fuente del scraper,
+            // no de una identificación real de la obra. El tipo lo decide únicamente AniList (arriba).
             console.log(`%c[Portada] Fuente: ${fuente} — ${opciones.length} opciones (${Date.now()-t0}ms)`, 'color:#3b82f6;font-weight:bold');
           }
         }
       } catch(e) { console.warn('[Portada] Backend no disponible'); }
     }
 
-    // 3. Si es manga, buscar en Olympus via proxy
+    // 3. Si es manga, buscar en Olympus via proxy (esto es SOLO para conseguir la imagen de portada,
+    // no dice nada sobre si la obra es Manga/Manhwa/Manhua)
     if (!opciones.length && !esAnime) {
       const olympusImgs = await buscarEnOlympusBrowser(nombre);
       if (olympusImgs.length) {
         opciones = olympusImgs;
         fuente = 'Olympus (proxy)';
-        autoDetectarTipo('Manhwa', 'baja'); // Olympus es principalmente Manhwa (suposicion, no dato verificado)
         console.log(`%c[Portada] Fuente: ${fuente} — ${opciones.length} opciones`, 'color:#a855f7;font-weight:bold');
       }
     }
-    // (La consulta a AniList ya se hizo en paralelo más arriba, sin importar la fuente de la portada)
+    // El tipo ya se está resolviendo en paralelo con AniList, identificando la obra real — sin importar
+    // de qué fuente salió la portada (Olympus, MHS, MangaCrab, etc. pueden tener obras de cualquier tipo).
 
     // 4. APIs directas — SOLO para anime
     if (!opciones.length && esAnime) {
