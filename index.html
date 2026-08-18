@@ -3553,7 +3553,58 @@
   // COVER SELECTOR - selector visual de portadas
   // ============================================================
   const NETLIFY_FN = 'https://majestic-gingersnap-f640c5.netlify.app/.netlify/functions/buscar-portada';
+  const LENS_FN = 'https://micoleccion.lucas-sasp-13.workers.dev/lens-detect';
   let portadaSeleccionada = null;
+
+  // Hash simple y estable para usar como key de caché (no necesita ser criptográfico)
+  function hashSimple(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) { h = ((h << 5) - h + str.charCodeAt(i)) | 0; }
+    return Math.abs(h).toString(36);
+  }
+
+  // Caché de resultados de Google Lens en Firebase — para no repetir la misma consulta a SerpApi
+  // dos veces con la misma portada (SerpApi tiene un límite mensual de consultas gratis).
+  async function getLensCache(imageUrl) {
+    try {
+      const key = 'lens_' + hashSimple(imageUrl);
+      const snap = await db.ref(`lensCache/${key}`).once('value');
+      const data = snap.val();
+      if (data && (data.titulo || data.titulo === null)) {
+        console.log('[Lens] Caché HIT para esta portada');
+        return data;
+      }
+    } catch(e) {}
+    return null;
+  }
+
+  async function saveLensCache(imageUrl, resultado) {
+    if (!currentUser) return;
+    try {
+      const key = 'lens_' + hashSimple(imageUrl);
+      await db.ref(`lensCache/${key}`).set({ ...resultado, imageUrl, time: Date.now() });
+    } catch(e) {}
+  }
+
+  // Identifica la obra a partir de la imagen de portada, vía Google Lens (SerpApi, en el backend
+  // del Worker de Cloudflare — la clave de API nunca viaja al navegador). Devuelve {titulo, tituloAlt} o null.
+  async function identificarConGoogleLens(imageUrl) {
+    if (!imageUrl) return null;
+    const cache = await getLensCache(imageUrl);
+    if (cache) return cache.titulo ? cache : null;
+    try {
+      const url = LENS_FN + '?imageUrl=' + encodeURIComponent(imageUrl);
+      const r = await fetch(url);
+      if (!r.ok) return null;
+      const data = await r.json();
+      await saveLensCache(imageUrl, data);
+      if (!data?.titulo) return null;
+      return data;
+    } catch(e) {
+      console.warn('[Lens] Falló la consulta:', e.message);
+      return null;
+    }
+  }
 
   // Cache de portadas en Firebase
   async function getCoverCache(nombre, esAnime) {
@@ -4037,6 +4088,25 @@
 
     // saveCoverCache deshabilitado
 
+    // Si encontramos portadas pero todavía no logramos confirmar el tipo por nombre (típico
+    // cuando el nombre buscado está en español/traducido), le pedimos a Google Lens que
+    // identifique la obra real a partir de la imagen, y reintentamos con ESE título.
+    if (!esAnime && opciones.length && !ultimaConfianzaTipo) {
+      const lensRes = await identificarConGoogleLens(opciones[0]);
+      if (lensRes?.titulo) {
+        console.log('[Lens] Obra identificada:', lensRes.titulo);
+        const ind = document.getElementById('tipoAutoIndicador');
+        if (ind) { ind.textContent = '🔎 Obra identificada: ' + lensRes.titulo + ' — verificando...'; ind.style.display = 'block'; ind.style.color = 'var(--muted)'; }
+        let res = await detectarTipoPorNombre(lensRes.titulo);
+        if (!res && lensRes.tituloAlt) res = await detectarTipoPorNombre(lensRes.tituloAlt);
+        if (res && !ultimaConfianzaTipo) {
+          autoDetectarTipo(res.tipo, res.confianza);
+        } else if (!ultimaConfianzaTipo) {
+          if (ind) { ind.textContent = '⚠️ Tipo no confirmado — elegí manualmente'; ind.style.color = '#f59e0b'; }
+        }
+      }
+    }
+
     console.log(`[Portada] Total: ${opciones.length} opciones | Tiempo: ${Date.now()-t0}ms | Fuente: ${fuente}`);
 
     // Renderizar
@@ -4064,7 +4134,7 @@
       document.getElementById('csBtnUsar').disabled = true;
       msg.textContent = '❌ Sin resultados automáticos';
     } else {
-      document.getElementById('csSub').textContent = `${opciones.length} portada${opciones.length > 1 ? 's' : ''} encontrada${opciones.length > 1 ? 's' : ''} — elegí una:`;
+      document.getElementById('csSub').textContent = `📷 Fuente: ${fuente} — ${opciones.length} portada${opciones.length > 1 ? 's' : ''} encontrada${opciones.length > 1 ? 's' : ''}`;
       renderCoverOptions(opciones);
       msg.textContent = `✅ ${opciones.length} opciones encontradas`;
     }
