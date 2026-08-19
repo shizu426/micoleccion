@@ -3779,7 +3779,7 @@
   // Identifica la obra real (vía AniList: título original, país de origen) para determinar
   // si es Manga, Manhwa o Manhua. Devuelve {tipo, confianza} o null si no hay certeza suficiente.
   // confianza: 'alta' (coincidencia exacta de título + país/escritura) | 'media' (coincidencia parcial)
-  async function detectarTipoPorNombre(nombre) {
+  async function detectarTipoPorAniList(nombre) {
     try {
       const query = `query($s:String){Page(perPage:5){media(search:$s,type:MANGA,sort:SEARCH_MATCH){title{romaji english native}countryOfOrigin}}}`;
       const r = await fetch('https://graphql.anilist.co', {
@@ -3837,6 +3837,47 @@
       console.warn('[TipoObra] AniList falló:', e.message);
       return null;
     }
+  }
+
+  // MangaDex, a diferencia de AniList, guarda títulos alternativos en muchos idiomas (incluyendo
+  // traducciones hechas por la comunidad en español), así que puede reconocer el nombre buscado
+  // aunque esté traducido — sin depender de encontrar la portada en un sitio en inglés.
+  async function detectarTipoPorMangaDex(nombre) {
+    try {
+      const url = 'https://api.mangadex.org/manga?title=' + encodeURIComponent(nombre)
+        + '&limit=5&order[relevance]=desc';
+      const r = await fetch(url);
+      if (!r.ok) { console.log('[TipoObra] MangaDex respondió con error', r.status); return null; }
+      const d = await r.json();
+      const lista = d?.data;
+      if (!lista?.length) { console.log('[TipoObra] MangaDex no devolvió ningún resultado para "' + nombre + '"'); return null; }
+
+      const mejor = lista[0];
+      const idioma = mejor.attributes?.originalLanguage; // 'ja' | 'ko' | 'zh' | 'zh-hk' | ...
+      const tituloEncontrado = mejor.attributes?.title?.en || Object.values(mejor.attributes?.title || {})[0];
+      let tipo = null;
+      if (idioma === 'ja') tipo = 'Manga';
+      else if (idioma === 'ko') tipo = 'Manhwa';
+      else if (idioma === 'zh' || idioma === 'zh-hk') tipo = 'Manhua';
+      console.log('[TipoObra] MangaDex:', nombre, '→ obra identificada:', tituloEncontrado, '| idioma original:', idioma);
+      if (!tipo) return null;
+      // MangaDex no nos da un "score" de coincidencia como AniList, así que esto siempre es confianza media
+      // (buena pista, pero sin la verificación cruzada por escritura que sí hacemos con AniList).
+      return { tipo, confianza: 'media' };
+    } catch(e) {
+      console.warn('[TipoObra] MangaDex falló:', e.message);
+      return null;
+    }
+  }
+
+  // Prueba varias fuentes de datos reales (AniList primero, MangaDex como respaldo) antes de
+  // rendirse. Nunca usa la fuente de la portada (Olympus/MHS/MangaCrab) para decidir el tipo.
+  async function detectarTipoPorNombre(nombre) {
+    const porAniList = await detectarTipoPorAniList(nombre);
+    if (porAniList) return porAniList;
+    const porMangaDex = await detectarTipoPorMangaDex(nombre);
+    if (porMangaDex) return porMangaDex;
+    return null;
   }
 
 
