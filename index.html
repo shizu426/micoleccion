@@ -3789,7 +3789,7 @@
       });
       const d = await r.json();
       const lista = d?.data?.Page?.media;
-      if (!lista?.length) return null;
+      if (!lista?.length) { console.log('[TipoObra] AniList no devolvió ningún resultado para "' + nombre + '"'); return null; }
 
       // Elegir el resultado cuyo título (romaji o inglés) más se parezca al buscado.
       const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -4095,10 +4095,14 @@
       const lensRes = await identificarConGoogleLens(opciones[0]);
       if (lensRes?.titulo) {
         console.log('[Lens] Obra identificada:', lensRes.titulo);
+        // Limpieza extra por si el backend no separó bien el nombre del sitio (ej: "Título — MangaVault")
+        const limpiarTituloLens = (t) => t ? t.split(/\s[-–—|]\s/)[0].trim() : t;
+        const tituloLimpio = limpiarTituloLens(lensRes.titulo);
+        const tituloAltLimpio = limpiarTituloLens(lensRes.tituloAlt);
         const ind = document.getElementById('tipoAutoIndicador');
-        if (ind) { ind.textContent = '🔎 Obra identificada: ' + lensRes.titulo + ' — verificando...'; ind.style.display = 'block'; ind.style.color = 'var(--muted)'; }
-        let res = await detectarTipoPorNombre(lensRes.titulo);
-        if (!res && lensRes.tituloAlt) res = await detectarTipoPorNombre(lensRes.tituloAlt);
+        if (ind) { ind.textContent = '🔎 Obra identificada: ' + tituloLimpio + ' — verificando...'; ind.style.display = 'block'; ind.style.color = 'var(--muted)'; }
+        let res = await detectarTipoPorNombre(tituloLimpio);
+        if (!res && tituloAltLimpio) res = await detectarTipoPorNombre(tituloAltLimpio);
         if (res && !ultimaConfianzaTipo) {
           autoDetectarTipo(res.tipo, res.confianza);
         } else if (!ultimaConfianzaTipo) {
