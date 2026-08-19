@@ -51,7 +51,7 @@ async function handleLensDetect(request, env) {
     const limpiar = (t) => {
       if (!t) return null;
       let s = t;
-      s = s.split(/\s[-–|]\s/)[0];
+      s = s.split(/\s[-–—|]\s/)[0];
       s = s.replace(/\b(read|manga|manhwa|manhua|online|chapter|capitulo|cap\.?|free)\b/gi, '');
       s = s.replace(/\s{2,}/g, ' ').trim();
       return s.length >= 2 ? s : null;
