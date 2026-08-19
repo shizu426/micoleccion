@@ -4090,19 +4090,25 @@
 
     // Si encontramos portadas pero todavía no logramos confirmar el tipo por nombre (típico
     // cuando el nombre buscado está en español/traducido), le pedimos a Google Lens que
-    // identifique la obra real a partir de la imagen, y reintentamos con ESE título.
+    // identifique la obra real a partir de la imagen, y probamos con varios títulos candidatos
+    // (Lens a veces solo encuentra el sitio en ruso/español/etc, así que probamos varios hasta
+    // encontrar uno que AniList reconozca).
     if (!esAnime && opciones.length && !ultimaConfianzaTipo) {
       const lensRes = await identificarConGoogleLens(opciones[0]);
       if (lensRes?.titulo) {
-        console.log('[Lens] Obra identificada:', lensRes.titulo);
         // Limpieza extra por si el backend no separó bien el nombre del sitio (ej: "Título — MangaVault")
         const limpiarTituloLens = (t) => t ? t.split(/\s[-–—|]\s/)[0].trim() : t;
-        const tituloLimpio = limpiarTituloLens(lensRes.titulo);
-        const tituloAltLimpio = limpiarTituloLens(lensRes.tituloAlt);
+        // Compatibilidad: el backend puede devolver "candidatos" (varios) o el formato viejo (titulo/tituloAlt)
+        const candidatosRaw = lensRes.candidatos?.length ? lensRes.candidatos : [lensRes.titulo, lensRes.tituloAlt].filter(Boolean);
+        const candidatos = [...new Set(candidatosRaw.map(limpiarTituloLens).filter(Boolean))];
+        console.log('[Lens] Candidatos encontrados:', candidatos);
         const ind = document.getElementById('tipoAutoIndicador');
-        if (ind) { ind.textContent = '🔎 Obra identificada: ' + tituloLimpio + ' — verificando...'; ind.style.display = 'block'; ind.style.color = 'var(--muted)'; }
-        let res = await detectarTipoPorNombre(tituloLimpio);
-        if (!res && tituloAltLimpio) res = await detectarTipoPorNombre(tituloAltLimpio);
+        if (ind) { ind.textContent = '🔎 Obra identificada: ' + candidatos[0] + ' — verificando...'; ind.style.display = 'block'; ind.style.color = 'var(--muted)'; }
+        let res = null;
+        for (const cand of candidatos) {
+          res = await detectarTipoPorNombre(cand);
+          if (res) { console.log('[Lens] "' + cand + '" coincidió en AniList ✓'); break; }
+        }
         if (res && !ultimaConfianzaTipo) {
           autoDetectarTipo(res.tipo, res.confianza);
         } else if (!ultimaConfianzaTipo) {
