@@ -52,15 +52,29 @@ async function handleLensDetect(request, env) {
       if (!t) return null;
       let s = t;
       s = s.split(/\s[-–—|]\s/)[0];
-      s = s.replace(/\b(read|manga|manhwa|manhua|online|chapter|capitulo|cap\.?|free)\b/gi, '');
+      // Palabras de ruido en varios idiomas ("leer" / "read" / etc, nombres de sitios genéricos)
+      s = s.replace(/\b(read|manga|manhwa|manhua|online|chapter|capitulo|cap\.?|free|leer|читать)\b/gi, '');
       s = s.replace(/\s{2,}/g, ' ').trim();
       return s.length >= 2 ? s : null;
     };
 
-    const titulo = limpiar(matches[0] && matches[0].title);
-    const tituloAlt = matches[1] ? limpiar(matches[1].title) : null;
+    // Tomamos varios candidatos (no solo los primeros 2), porque a veces el resultado mejor
+    // rankeado por Google no está en el idioma que AniList indexa (inglés/romaji), pero alguno
+    // de los siguientes resultados sí. El frontend los va a probar en orden hasta que uno funcione.
+    const candidatos = matches
+      .slice(0, 8)
+      .map(m => limpiar(m.title))
+      .filter(Boolean)
+      // Descartamos los que tienen muy pocas letras latinas (probablemente ruso/coreano/chino/etc,
+      // que casi seguro tampoco va a matchear en AniList) — mejor priorizar los que sí tienen chance.
+      .sort((a, b) => {
+        const latino = (s) => (s.match(/[a-zA-Z]/g) || []).length / Math.max(s.length, 1);
+        return latino(b) - latino(a);
+      });
+    // Sacamos duplicados manteniendo el orden
+    const unicos = [...new Set(candidatos)];
 
-    return json({ titulo: titulo || null, tituloAlt: tituloAlt || null });
+    return json({ titulo: unicos[0] || null, candidatos: unicos.slice(0, 6) });
   } catch (e) {
     return json({ error: e.message }, 500);
   }
