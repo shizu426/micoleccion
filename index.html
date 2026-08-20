@@ -3779,106 +3779,26 @@
   // Identifica la obra real (vía AniList: título original, país de origen) para determinar
   // si es Manga, Manhwa o Manhua. Devuelve {tipo, confianza} o null si no hay certeza suficiente.
   // confianza: 'alta' (coincidencia exacta de título + país/escritura) | 'media' (coincidencia parcial)
-  async function detectarTipoPorAniList(nombre) {
-    try {
-      const query = `query($s:String){Page(perPage:5){media(search:$s,type:MANGA,sort:SEARCH_MATCH){title{romaji english native}countryOfOrigin}}}`;
-      const r = await fetch('https://graphql.anilist.co', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ query, variables: { s: nombre } })
-      });
-      const d = await r.json();
-      const lista = d?.data?.Page?.media;
-      if (!lista?.length) { console.log('[TipoObra] AniList no devolvió ningún resultado para "' + nombre + '"'); return null; }
-
-      // Elegir el resultado cuyo título (romaji o inglés) más se parezca al buscado.
-      const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-      const objetivo = norm(nombre);
-      let mejor = lista[0], mejorScore = -1;
-      for (const m of lista) {
-        const candidatos = [m.title?.romaji, m.title?.english].filter(Boolean).map(norm);
-        const score = candidatos.some(c => c === objetivo) ? 2
-          : candidatos.some(c => c.includes(objetivo) || objetivo.includes(c)) ? 1 : 0;
-        if (score > mejorScore) { mejorScore = score; mejor = m; }
-      }
-      if (mejorScore === 0) {
-        console.log('[TipoObra] Ningún resultado de AniList coincide de verdad con "' + nombre + '" (posiblemente el nombre está en español/traducido) — no se arriesga una respuesta.');
-        return null;
-      }
-
-      const pais = mejor.countryOfOrigin;
-      const nativo = mejor.title?.native || '';
-      // Chequeo por escritura del título original: casi nunca falla, y es independiente del
-      // campo "país" (que a veces viene mal cargado en la base de datos).
-      const tieneHangul = /[\uAC00-\uD7A3]/.test(nativo);
-      const tieneKana = /[\u3040-\u30FF]/.test(nativo);
-      const tieneHanzi = /[\u4E00-\u9FFF]/.test(nativo);
-      let porEscritura = null;
-      if (tieneHangul) porEscritura = 'Manhwa';
-      else if (tieneKana) porEscritura = 'Manga';
-      else if (tieneHanzi) porEscritura = 'Manhua';
-
-      let porPais = null;
-      if (pais === 'JP') porPais = 'Manga';
-      else if (pais === 'KR') porPais = 'Manhwa';
-      else if (pais === 'CN' || pais === 'TW') porPais = 'Manhua';
-
-      const tipoFinal = porEscritura || porPais;
-      console.log('[TipoObra]', nombre, '→ obra identificada:', mejor.title?.romaji || mejor.title?.english,
-        '| país:', pais, '| escritura título original:', porEscritura, '| match score:', mejorScore);
-      if (!tipoFinal) return null;
-
-      // Alta confianza: coincide el título exacto Y coinciden país + escritura (o al menos una señal clara).
-      // Media confianza: coincidencia parcial del título, o país/escritura contradicen entre sí.
-      const contradiccion = porEscritura && porPais && porEscritura !== porPais;
-      const confianza = (mejorScore === 2 && !contradiccion) ? 'alta' : 'media';
-      return { tipo: tipoFinal, confianza };
-    } catch(e) {
-      console.warn('[TipoObra] AniList falló:', e.message);
-      return null;
-    }
-  }
-
-  // MangaDex, a diferencia de AniList, guarda títulos alternativos en muchos idiomas (incluyendo
-  // traducciones hechas por la comunidad en español), así que puede reconocer el nombre buscado
-  // aunque esté traducido — sin depender de encontrar la portada en un sitio en inglés.
-  async function detectarTipoPorMangaDex(nombre) {
-    try {
-      const url = 'https://api.mangadex.org/manga?title=' + encodeURIComponent(nombre)
-        + '&limit=5&order[relevance]=desc';
-      const r = await fetch(url);
-      if (!r.ok) { console.log('[TipoObra] MangaDex respondió con error', r.status); return null; }
-      const d = await r.json();
-      const lista = d?.data;
-      if (!lista?.length) { console.log('[TipoObra] MangaDex no devolvió ningún resultado para "' + nombre + '"'); return null; }
-
-      const mejor = lista[0];
-      const idioma = mejor.attributes?.originalLanguage; // 'ja' | 'ko' | 'zh' | 'zh-hk' | ...
-      const tituloEncontrado = mejor.attributes?.title?.en || Object.values(mejor.attributes?.title || {})[0];
-      let tipo = null;
-      if (idioma === 'ja') tipo = 'Manga';
-      else if (idioma === 'ko') tipo = 'Manhwa';
-      else if (idioma === 'zh' || idioma === 'zh-hk') tipo = 'Manhua';
-      console.log('[TipoObra] MangaDex:', nombre, '→ obra identificada:', tituloEncontrado, '| idioma original:', idioma);
-      if (!tipo) return null;
-      // MangaDex no nos da un "score" de coincidencia como AniList, así que esto siempre es confianza media
-      // (buena pista, pero sin la verificación cruzada por escritura que sí hacemos con AniList).
-      return { tipo, confianza: 'media' };
-    } catch(e) {
-      console.warn('[TipoObra] MangaDex falló:', e.message);
-      return null;
-    }
-  }
-
-  // Prueba varias fuentes de datos reales (AniList primero, MangaDex como respaldo) antes de
-  // rendirse. Nunca usa la fuente de la portada (Olympus/MHS/MangaCrab) para decidir el tipo.
+  // Prueba varias bases de datos reales en el backend (AniList, MangaDex, Jikan, Kitsu) para
+  // identificar Manga/Manhwa/Manhua. Se hace en el Worker (no en el navegador) porque algunas
+  // de estas APIs (como MangaDex) bloquean pedidos directos desde el navegador (CORS).
+  const TIPO_DETECT_FN = 'https://micoleccion.lucas-sasp-13.workers.dev/tipo-detect';
   async function detectarTipoPorNombre(nombre) {
-    const porAniList = await detectarTipoPorAniList(nombre);
-    if (porAniList) return porAniList;
-    const porMangaDex = await detectarTipoPorMangaDex(nombre);
-    if (porMangaDex) return porMangaDex;
-    return null;
+    try {
+      const url = TIPO_DETECT_FN + '?nombre=' + encodeURIComponent(nombre);
+      const r = await fetch(url);
+      if (!r.ok) return null;
+      const data = await r.json();
+      if (data.intentos) console.log('[TipoObra] "' + nombre + '" — intentos:', data.intentos.join(' | '));
+      if (!data.tipo) return null;
+      console.log('[TipoObra] Detectado vía', data.fuente + ':', data.obra, '→', data.tipo);
+      return { tipo: data.tipo, confianza: data.confianza };
+    } catch(e) {
+      console.warn('[TipoObra] Backend de detección falló:', e.message);
+      return null;
+    }
   }
+
 
 
   // NOTA: se eliminó "detectarTipoDesdeUrl" — el dominio/fuente de una portada (Olympus, MHS, ManhuaUS, etc.)
