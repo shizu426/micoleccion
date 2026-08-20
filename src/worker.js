@@ -64,16 +64,49 @@ async function probarAniList(nombre) {
 // --- Fuente 2: MangaDex (guarda títulos alternativos en muchos idiomas, incluido español) ---
 async function probarMangaDex(nombre) {
   try {
-    const r = await fetch('https://api.mangadex.org/manga?title=' + encodeURIComponent(nombre) + '&limit=5&order[relevance]=desc');
+    // limit=10: pedimos más candidatos, porque el orden de relevancia de MangaDex no siempre
+    // pone primero la obra correcta cuando se busca en un idioma distinto al original.
+    const r = await fetch('https://api.mangadex.org/manga?title=' + encodeURIComponent(nombre) + '&limit=10&order[relevance]=desc');
     if (!r.ok) return null;
     const d = await r.json();
-    const mejor = d?.data?.[0];
-    if (!mejor) return null;
+    const lista = d?.data;
+    if (!lista?.length) return null;
+
+    const objetivo = normalizar(nombre);
+    // Orden de prioridad de idiomas para desempatar cuando hay más de un título que coincide:
+    // español latino y español van primero, como pediste.
+    const ORDEN_IDIOMAS = ['es-la', 'es', 'en', 'ja-ro', 'ko-ro', 'zh-ro'];
+
+    let mejor = null, mejorScore = -1, mejorObra = null;
+    for (const m of lista) {
+      const attrs = m.attributes || {};
+      // "localizedTitles": el título principal (título en su idioma original, ej. {ja: "..."})
+      // más TODOS los títulos alternativos (attrs.altTitles), cada uno como {idioma: texto}.
+      // Acá es donde suelen vivir las traducciones hechas por la comunidad en español.
+      const localizedTitles = [attrs.title, ...(attrs.altTitles || [])].filter(Boolean);
+      let scoreObra = 0, obraNombre = null;
+      for (const entry of localizedTitles) {
+        for (const [idioma, texto] of Object.entries(entry)) {
+          const t = normalizar(texto);
+          if (!t) continue;
+          const prioridad = ORDEN_IDIOMAS.includes(idioma) ? (ORDEN_IDIOMAS.length - ORDEN_IDIOMAS.indexOf(idioma)) : 0;
+          let matchScore = t === objetivo ? 3 : (t.includes(objetivo) || objetivo.includes(t)) ? 2 : 0;
+          if (matchScore === 0) continue;
+          const total = matchScore * 10 + prioridad; // el match real pesa mucho más que el idioma; el idioma solo desempata
+          if (total > scoreObra) { scoreObra = total; obraNombre = texto; }
+        }
+      }
+      if (scoreObra > mejorScore) { mejorScore = scoreObra; mejor = m; mejorObra = obraNombre; }
+    }
+
+    // Si ninguna obra tuvo, en NINGÚN idioma, un título que coincida de verdad con lo buscado,
+    // no arriesgamos una respuesta (mismo criterio que con AniList).
+    if (!mejor || mejorScore <= 0) return null;
+
     const idioma = mejor.attributes?.originalLanguage;
     const tipo = idioma === 'ja' ? 'Manga' : idioma === 'ko' ? 'Manhwa' : (idioma === 'zh' || idioma === 'zh-hk') ? 'Manhua' : null;
     if (!tipo) return null;
-    const obra = mejor.attributes?.title?.en || Object.values(mejor.attributes?.title || {})[0];
-    return { tipo, confianza: 'media', fuente: 'MangaDex', obra };
+    return { tipo, confianza: mejorScore >= 30 ? 'alta' : 'media', fuente: 'MangaDex', obra: mejorObra };
   } catch (e) { return null; }
 }
 
