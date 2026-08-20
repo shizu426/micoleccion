@@ -3372,6 +3372,9 @@
   }
 
   function openAnimeModal() {
+    ultimaConfianzaTipo = null;
+    const indAnime = document.getElementById('tipoAutoIndicador');
+    if (indAnime) indAnime.style.display = 'none';
     document.getElementById('searchCoverGroup').style.display = 'block';
     editingId = null;
     document.getElementById('modalTitle').textContent = 'Agregar Anime';
@@ -3398,6 +3401,9 @@
   }
 
   function openNovelaModal() {
+    ultimaConfianzaTipo = null;
+    const indNovela = document.getElementById('tipoAutoIndicador');
+    if (indNovela) indNovela.style.display = 'none';
     document.getElementById('searchCoverGroup').style.display = 'none';
     editingId = null;
     document.getElementById('modalTitle').textContent = 'Agregar Novela';
@@ -3425,6 +3431,8 @@
 
   function openModal() {
     ultimaConfianzaTipo = null;
+    const indTipoReset = document.getElementById('tipoAutoIndicador');
+    if (indTipoReset) indTipoReset.style.display = 'none';
     document.getElementById('inputTipo').closest('.form-group').style.display = 'block';
     document.getElementById('searchCoverGroup').style.display = 'block';
     editingId = null;
@@ -3455,6 +3463,9 @@
     const item = items.find(i => i.id === id);
     if (!item) return;
     editingId = id;
+    ultimaConfianzaTipo = null;
+    const indEdit = document.getElementById('tipoAutoIndicador');
+    if (indEdit) indEdit.style.display = 'none';
     document.getElementById('inputTipo').closest('.form-group').style.display = 'block';
     document.getElementById('searchCoverGroup').style.display = (item.tipo === 'Novela') ? 'none' : 'block';
     document.getElementById('modalTitle').textContent = 'Editar';
