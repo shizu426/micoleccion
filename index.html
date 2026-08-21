@@ -990,6 +990,7 @@
       <div class="biblioteca-filtros-slot" id="bibliotecaFiltrosSlot"></div>
       <button class="biblioteca-nav-item" title="Próximamente">❓ Soporte</button>
       <button class="biblioteca-nav-item" onclick="document.getElementById('donateModal').classList.add('open')">❤️ Apoyar (donación)</button>
+      <button class="biblioteca-nav-item" id="btnAdminSidebar" onclick="openAdmin()" style="display:none;color:#e94560;">🔐 Panel Admin</button>
       <div class="biblioteca-sidebar-bottom">
         <button class="biblioteca-link-btn" onclick="volverEstiloClasico()">🔁 Volver al estilo clásico</button>
       </div>
@@ -1325,6 +1326,7 @@
   <div class="settings-box">
     <h2>⚙️ Configuración</h2>
     <button class="biblioteca-settings-logout" onclick="logout()" style="display:none;">🚪 Cerrar sesión</button>
+    <button id="btnAdminSettings" onclick="openAdmin()" style="display:none;width:100%;margin:0 0 10px;padding:10px;background:rgba(233,69,96,0.12);border:1px solid rgba(233,69,96,0.4);color:#e94560;border-radius:10px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:Inter,sans-serif;">🔐 Panel Admin</button>
     <div class="settings-tabs">
       <button class="settings-tab active" id="stab-orden" onclick="switchSettingsTab('orden')">📑 Orden</button>
       <button class="settings-tab" id="stab-compartir" onclick="switchSettingsTab('compartir')">🔗 Compartir</button>
@@ -1598,10 +1600,14 @@
       localStorage.setItem('mc_email', user.email || '');
       // Mostrar botón admin solo para el administrador
       const btnAdmin = document.getElementById('btnAdminSecret');
-      if (btnAdmin) btnAdmin.style.display = user.uid === ADMIN_UID ? 'block' : 'none';
+      if (btnAdmin) btnAdmin.style.display = user.email === ADMIN_EMAIL ? 'block' : 'none';
+      const btnAdminSidebar = document.getElementById('btnAdminSidebar');
+      if (btnAdminSidebar) btnAdminSidebar.style.display = user.email === ADMIN_EMAIL ? 'flex' : 'none';
+      const btnAdminSettings = document.getElementById('btnAdminSettings');
+      if (btnAdminSettings) btnAdminSettings.style.display = user.email === ADMIN_EMAIL ? 'block' : 'none';
       // Mostrar botones de imagen admin
       const adminImgBtns = document.getElementById('adminImgBtns');
-      if (adminImgBtns) adminImgBtns.classList.toggle('visible', user.uid === ADMIN_UID);
+      if (adminImgBtns) adminImgBtns.classList.toggle('visible', user.email === ADMIN_EMAIL);
       registrarPresencia();
       cargarConfig();
       loadItems();
@@ -1626,6 +1632,8 @@
     document.querySelectorAll('.add-btn').forEach(b => b.style.display = 'none');
     document.querySelector('.donate-banner')?.style.setProperty('display', 'none');
     document.getElementById('btnAdminSecret')?.style.setProperty('display', 'none');
+    document.getElementById('btnAdminSidebar')?.style.setProperty('display', 'none');
+    document.getElementById('btnAdminSettings')?.style.setProperty('display', 'none');
     document.getElementById('btnInstalarApp')?.style.setProperty('display', 'none');
     document.querySelector('.settings-btn-header')?.style.setProperty('display', 'none');
     document.querySelector('.logout-btn')?.style.setProperty('display', 'none');
@@ -4454,9 +4462,9 @@
   // ============================================================
   // ADMIN PANEL — solo accesible para el UID administrador
   // ============================================================
-  const ADMIN_UID = 'UXRjP79pGkTpnPZ8Q7taJFaxQVy2';
+  const ADMIN_EMAIL = 'lucas.larrosa.358@gmail.com';
 
-  function isAdmin() { return currentUser && currentUser.uid === ADMIN_UID; }
+  function isAdmin() { return currentUser && currentUser.email === ADMIN_EMAIL; }
 
   function registrarPresencia() {
     if (!currentUser) return;
