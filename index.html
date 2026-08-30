@@ -474,6 +474,9 @@
   body.estilo-biblioteca .grid .card:nth-of-type(7n+6) { border-color: #ef4444 !important; box-shadow: 0 0 6px 0px rgba(239,68,68,0.28); }
   body.estilo-biblioteca .grid .card:nth-of-type(7n+7) { border-color: #ec4899 !important; box-shadow: 0 0 6px 0px rgba(236,72,153,0.28); }
 
+  @media (min-width: 861px) {
+    body.estilo-biblioteca .biblioteca-navbar { display: none; }
+  }
   @media (max-width: 860px) {
     body.estilo-biblioteca .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
     body.estilo-biblioteca .card-img { aspect-ratio: 1/1 !important; object-position: top !important; }
