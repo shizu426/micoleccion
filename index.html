@@ -362,9 +362,9 @@
   .biblioteca-search-slot .search-bar { width: 100%; box-sizing: border-box; margin: 0; }
   .biblioteca-theme-gear { width: 38px; height: 38px; flex-shrink: 0; border-radius: 8px; background: var(--card);
     border: 1px solid var(--border); cursor: pointer; }
-  .biblioteca-theme-slot { flex-shrink: 0; }
+  .biblioteca-theme-slot { flex-shrink: 0; width: 100%; }
   .biblioteca-theme-slot .theme-btn { background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--text);
-    padding: 9px 14px; font-size: 0.8rem; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; }
+    padding: 9px 14px; font-size: 0.8rem; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; width: 100%; text-align: left; }
   .biblioteca-navbtn { background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--text);
     padding: 9px 14px; font-size: 0.8rem; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; flex-shrink: 0; }
   .biblioteca-home-screen { display: none; }
@@ -986,6 +986,7 @@
       </div>
       <button class="biblioteca-logout-btn" onclick="logout()">⏻ Cerrar sesión</button>
       <button class="biblioteca-nav-item" onclick="openSettings()" style="border:1px solid var(--border);border-radius:8px;margin-bottom:6px;">⚙️ Config</button>
+      <div class="biblioteca-theme-slot" id="bibliotecaThemeSlot" style="margin-bottom:6px;"></div>
       <div class="biblioteca-section-title">MI BIBLIOTECA</div>
       <div class="biblioteca-nav-slot" id="bibliotecaNavSlot"></div>
 
@@ -995,15 +996,11 @@
       <button class="biblioteca-nav-item" onclick="document.getElementById('donateModal').classList.add('open')">❤️ Apoyar (donación)</button>
       <button class="biblioteca-nav-item" id="btnAdminSidebar" onclick="openAdmin()" style="display:none;color:#e94560;">🔐 Panel Admin</button>
       <div class="biblioteca-sidebar-bottom">
-        <button class="biblioteca-link-btn" onclick="volverEstiloClasico()">🔁 Volver al estilo clásico</button>
+
       </div>
     </aside>
 
     <main class="biblioteca-main" id="bibliotecaMainContent">
-      <div class="biblioteca-topbar">
-        <div class="biblioteca-theme-slot" id="bibliotecaThemeSlot"></div>
-      </div>
-
       <!-- HERO "TU MUNDO FAVORITO" + stats: visible en PC y celular -->
       <div class="biblioteca-mundo-hero">
         <div class="biblioteca-mundo-hero-visual">
@@ -1916,9 +1913,9 @@
     aplicarStatusLabels();
     aplicarStatusColores();
     renderTagFilterButtons();
-    estiloLayoutGuardado = cfg.estiloLayout === 'biblioteca' ? 'biblioteca' : 'clasico';
+    estiloLayoutGuardado = 'biblioteca'; // el diseño nuevo es el único que existe ahora, en PC y celular
     estiloMobileHomeGuardado = cfg.estiloMobileHome === 'directo' ? 'directo' : 'inicio';
-    if ((estiloLayoutGuardado === 'biblioteca' && window.innerWidth > 860) || window.innerWidth <= 860) setTimeout(activarEstiloBiblioteca, 60);
+    setTimeout(activarEstiloBiblioteca, 60);
   }
 
   async function guardarTabOrder() {
