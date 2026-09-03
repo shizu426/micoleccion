@@ -1330,7 +1330,6 @@
       <button class="settings-tab active" id="stab-orden" onclick="switchSettingsTab('orden')">📑 Orden</button>
       <button class="settings-tab" id="stab-compartir" onclick="switchSettingsTab('compartir')">🔗 Compartir</button>
       <button class="settings-tab" id="stab-paginas" onclick="switchSettingsTab('paginas')">📚 Páginas recomendadas</button>
-      <button class="settings-tab" id="stab-estilo" onclick="switchSettingsTab('estilo')">🎨 Estilo</button>
     </div>
 
     <!-- CATEGORY TAB ORDER -->
@@ -1411,26 +1410,6 @@
       </div>
       <div id="paginasList-novela"></div>
       </div>
-    </div>
-
-    <!-- ESTILO -->
-    <div class="settings-section" id="ssec-estilo">
-      <h3>🎨 ESTILO DE LA PÁGINA</h3>
-      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:14px;line-height:1.5;">
-        Elegí cómo se ve tu colección en <strong>computadora</strong>. Este cambio es solo para vos; el resto de los usuarios puede elegir el suyo sin afectarte.
-        En <strong>celular</strong> siempre se usa el diseño clásico, sin importar lo que elijas acá.
-      </p>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <button class="btn-cancel" id="btnEstiloClasico" style="text-align:left;padding:14px;" onclick="elegirEstiloLayout('clasico')">
-          <strong>📄 Clásico</strong><br>
-          <span style="font-size:0.75rem;color:var(--muted);">El diseño de siempre, con pestañas arriba.</span>
-        </button>
-        <button class="btn-cancel" id="btnEstiloBiblioteca" style="text-align:left;padding:14px;" onclick="elegirEstiloLayout('biblioteca')">
-          <strong>📚 Biblioteca (solo PC)</strong><br>
-          <span style="font-size:0.75rem;color:var(--muted);">Barra lateral con tu biblioteca, buscador y categorías.</span>
-        </button>
-      </div>
-      <p style="font-size:0.72rem;color:var(--muted);margin-top:10px;">La página se va a recargar para aplicar el cambio.</p>
     </div>
 
     <button class="settings-close" onclick="closeSettings()">Cerrar</button>
