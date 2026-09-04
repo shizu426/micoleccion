@@ -862,14 +862,6 @@
       <span class="user-email" id="userEmailDisplay"></span>
       <button id="btnAdminSecret" onclick="openAdmin()" style="display:none;padding:6px 10px;background:rgba(233,69,96,0.15);border:1px solid rgba(233,69,96,0.3);border-radius:8px;color:#e94560;font-size:0.75rem;cursor:pointer;font-family:Inter,sans-serif;">🔐</button>
       <button class="settings-btn-header" onclick="openSettings()">⚙️ Config</button>
-      <div class="theme-wrapper">
-        <button class="theme-btn" id="themeBtnToggle" onclick="toggleThemeDropdown()">🌙 Tema</button>
-        <div class="theme-dropdown" id="themeDropdown">
-          <div class="theme-option" id="opt-dark" onclick="setTheme('dark')">🌙 Oscuro</div>
-          <div class="theme-option" id="opt-light" onclick="setTheme('light')">☀️ Claro</div>
-          <div class="theme-option" id="opt-auto" onclick="setTheme('auto')">⚙️ Automático</div>
-        </div>
-      </div>
       <button id="btnInstalarApp" onclick="instalarApp()" style="display:none;align-items:center;gap:6px;padding:6px 12px;background:linear-gradient(135deg,#e94560,#7c3aed);border:none;border-radius:8px;color:white;font-size:0.75rem;cursor:pointer;font-family:Inter,sans-serif;">📲 Instalar app</button>
       <button class="logout-btn" onclick="logout()">🚪 Cerrar sesión</button>
     </div>
@@ -986,7 +978,6 @@
       </div>
       <button class="biblioteca-logout-btn" onclick="logout()">⏻ Cerrar sesión</button>
       <button class="biblioteca-nav-item" onclick="openSettings()" style="border:1px solid var(--border);border-radius:8px;margin-bottom:6px;">⚙️ Config</button>
-      <div class="biblioteca-theme-slot" id="bibliotecaThemeSlot" style="margin-bottom:6px;"></div>
       <div class="biblioteca-section-title">MI BIBLIOTECA</div>
       <div class="biblioteca-nav-slot" id="bibliotecaNavSlot"></div>
 
@@ -4428,10 +4419,10 @@
       document.getElementById('themeDropdown')?.classList.remove('open');
     }
   });
-  // Apply saved theme on load
+  // El tema ahora es siempre oscuro (ya no hay botón para elegir claro/automático)
   (function() {
-    const saved = localStorage.getItem('theme') || 'dark';
-    applyTheme(saved);
+    localStorage.setItem('theme', 'dark');
+    applyTheme('dark');
   })();
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (localStorage.getItem('theme') === 'auto') applyTheme('auto');
